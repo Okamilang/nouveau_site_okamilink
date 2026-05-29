@@ -7,6 +7,7 @@ export default defineConfig({
   integrations: [mdx()],
   build: {
     format: 'directory',
+    assets: 'assets', // Remplace '_astro' par 'assets' pour éviter les blocages sur IONOS / Apache
   },
   server: {
     port: 3000,
