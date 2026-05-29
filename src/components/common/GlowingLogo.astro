@@ -1,0 +1,44 @@
+---
+interface Props {
+  width?: string;
+  height?: string;
+}
+
+const { width = "40", height = "40" } = Astro.props;
+---
+
+<div class="glowing-logo-container">
+  <img 
+    src="/logo.png" 
+    alt="Logo Okamilink" 
+    width={width} 
+    height={height}
+    class="glowing-logo logo-shape"
+    style={`width: ${width}px; height: ${height}px; object-fit: contain;`}
+  />
+</div>
+
+<style>
+  .glowing-logo-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .glowing-logo {
+    overflow: visible;
+  }
+
+  .logo-shape {
+    transition: filter 0.3s ease, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform-origin: center;
+    /* Basic glow for the image */
+    filter: drop-shadow(0 0 5px color-mix(in oklch, var(--accent-purple) 60%, transparent));
+  }
+
+  .glowing-logo-container:hover .logo-shape {
+    filter: drop-shadow(0 0 20px var(--accent-purple)) drop-shadow(0 0 10px var(--accent-pink));
+    transform: scale(1.1);
+  }
+</style>

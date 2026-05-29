@@ -1,0 +1,152 @@
+---
+const philosophyPoints = [
+  {
+    title: "L'Artisanat du Code",
+    description: "Fini les thèmes préfabriqués. Chaque projet est codé sur-mesure, de A à Z, avec une précision chirurgicale pour garantir unicité et pérennité."
+  },
+  {
+    title: "Performance Native",
+    description: "Pas de bibliothèques superflues. Une utilisation experte des technologies web natives pour des temps de réponse instantanés."
+  },
+  {
+    title: "Approche \"Direct-to-Dev\"",
+    description: "Vous échangez directement avec l'architecte de votre projet. Pas d'intermédiaires, une communication fluide et des itérations rapides."
+  },
+  {
+    title: "Scalabilité Assurée",
+    description: "Une base de code propre, documentée et structurée pour évoluer facilement avec la croissance de vos ambitions numériques."
+  }
+];
+---
+
+<section class="philosophy-container scroll-reveal">
+  <div class="section-visual" aria-hidden="true">
+    <div class="glow-orb" style="width: 600px; height: 600px; background: radial-gradient(circle, color-mix(in oklch, var(--accent-blue) 60%, transparent) 0%, transparent 70%); top: 10%; left: -20%;"></div>
+    <div class="glow-orb" style="width: 400px; height: 400px; background: radial-gradient(circle, color-mix(in oklch, var(--accent-purple) 60%, transparent) 0%, transparent 70%); bottom: 10%; right: -10%; animation-delay: -6s;"></div>
+  </div>
+
+  <div class="philosophy-header">
+    <h2>Ma <span class="text-gradient">Philosophie</span></h2>
+    <p>Une approche hybride alliant la proximité d'un artisan à l'exigence d'une agence de luxe.</p>
+  </div>
+
+  <div class="philosophy-grid">
+    {philosophyPoints.map((point) => (
+      <div class="philosophy-card">
+        <div class="card-glow" aria-hidden="true"></div>
+        <h3>{point.title}</h3>
+        <p>{point.description}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .philosophy-container {
+    position: relative;
+    max-width: 1200px;
+    margin: 8rem auto;
+    padding: 0 2rem;
+  }
+
+  .section-visual {
+    position: absolute;
+    inset: -50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .philosophy-header {
+    text-align: center;
+    margin-bottom: 4rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  .philosophy-header h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 1rem;
+  }
+
+  .philosophy-header p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+  }
+
+  /* Bento Grid Layout pour Philosophie */
+  .philosophy-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  @media (min-width: 640px) {
+    .philosophy-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .philosophy-grid {
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: minmax(220px, auto);
+    }
+    
+    /* Layout Bento asymétrique différent de l'expertise */
+    .philosophy-card:nth-child(2) {
+      grid-column: span 2;
+    }
+    
+    .philosophy-card:nth-child(3) {
+      grid-column: span 2;
+    }
+  }
+
+  .philosophy-card {
+    background: color-mix(in oklch, var(--bg-surface) 50%, transparent);
+    border: 1px solid color-mix(in oklch, var(--text-main) 10%, transparent);
+    padding: 2rem;
+    border-radius: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+
+  .philosophy-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .card-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, color-mix(in oklch, var(--accent-purple) 15%, transparent) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .philosophy-card:hover .card-glow {
+    opacity: 1;
+  }
+
+  .philosophy-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: var(--text-main);
+    position: relative;
+    z-index: 1;
+  }
+
+  .philosophy-card p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+  }
+</style>

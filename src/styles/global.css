@@ -1,0 +1,167 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* Dark Mode Palette - Midnight Blue / Dark Slate */
+  --bg-color: oklch(0.18 0.02 260); /* Deep Midnight */
+  --bg-surface: oklch(0.22 0.03 260);
+  --bg-surface-glass: oklch(0.22 0.03 260 / 0.6);
+  --text-main: oklch(0.95 0.01 260);
+  --text-muted: oklch(0.75 0.02 260);
+
+  /* Holographic / Iridescent Accents - Pastel from Logo */
+  --accent-purple: oklch(0.85 0.10 300); /* Pastel purple */
+  --accent-pink: oklch(0.88 0.10 340);   /* Pastel pink */
+  --accent-blue: oklch(0.88 0.10 240);   /* Pastel/Silver blue */
+  --holographic-gradient: linear-gradient(135deg, var(--accent-purple), var(--accent-pink), var(--accent-blue));
+  
+  --glow-shadow: 0 0 25px oklch(0.85 0.10 300 / 0.35);
+  
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  --container-width: 1200px;
+  
+  /* Scroll Timeline setup */
+  --scroll-progress: 0;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  cursor: none; /* Cacher le curseur par défaut partout pour le remplacer par CustomCursor */
+}
+
+/* Restauration du curseur par défaut sur mobile / touch devices */
+@media (hover: none) and (pointer: coarse) {
+  * {
+    cursor: auto;
+  }
+}
+
+html {
+  font-family: var(--font-sans);
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  scroll-behavior: smooth;
+  /* Scroll timeline setup */
+  scroll-timeline: --page-scroll block;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+ul {
+  list-style: none;
+}
+
+/* Scroll Animations */
+@supports (animation-timeline: scroll()) {
+  .scroll-reveal {
+    animation: reveal both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 30%;
+  }
+
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Fallback for browsers without scroll-timeline */
+@supports not (animation-timeline: scroll()) {
+  .scroll-reveal {
+    animation: reveal-fallback 1s ease-out forwards;
+  }
+  
+  @keyframes reveal-fallback {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* Kinetic Typography - Text Reveal Animation */
+.reveal-text {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+  display: inline-block;
+}
+
+.reveal-text span {
+  display: inline-block;
+  transform: translateY(100%);
+  opacity: 0;
+  animation: slide-up-text 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slide-up-text {
+  0% { transform: translateY(100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Staggered delays for kinetic typography */
+.delay-1 { animation-delay: 0.1s !important; }
+.delay-2 { animation-delay: 0.3s !important; }
+.delay-3 { animation-delay: 0.5s !important; }
+.delay-4 { animation-delay: 0.7s !important; }
+
+/* Global Orbs & Smoke Animation */
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  animation: smoke-drift 7s ease-in-out infinite alternate, shape-morph 5s ease-in-out infinite alternate;
+  opacity: 0.5;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes smoke-drift {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  33% { transform: translate(15%, -15%) scale(1.2) rotate(15deg); }
+  66% { transform: translate(-10%, 20%) scale(0.8) rotate(-15deg); }
+  100% { transform: translate(-15%, -10%) scale(1.1) rotate(5deg); }
+}
+
+@keyframes shape-morph {
+  0% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+  33% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; }
+  66% { border-radius: 40% 60% 30% 70% / 60% 40% 50% 40%; }
+  100% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+}
+
+@keyframes holographic-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.text-gradient {
+  background: var(--holographic-gradient);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: holographic-shift 8s ease infinite;
+}

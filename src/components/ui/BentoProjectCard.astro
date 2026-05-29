@@ -1,0 +1,131 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, description, tags, coverImage, featured } = project.data;
+---
+
+<a href={`/realisations/${project.slug}`} class={`bento-card ${featured ? 'featured' : ''}`}>
+  <div class="card-inner">
+    {coverImage && (
+      <div class="image-wrapper">
+        <Image 
+          src={coverImage} 
+          alt={title}
+          width={800}
+          height={600}
+          class="cover-image"
+          transition:name={`cover-${project.slug}`}
+        />
+        <div class="image-overlay"></div>
+      </div>
+    )}
+    
+    <div class="content">
+      <h3 class="title" transition:name={`title-${project.slug}`}>{title}</h3>
+      <p class="description">{description}</p>
+      
+      <div class="tags">
+        {tags.map((tag) => (
+          <span class="tag">{tag}</span>
+        ))}
+      </div>
+    </div>
+  </div>
+</a>
+
+<style>
+  .bento-card {
+    display: block;
+    text-decoration: none;
+    border-radius: 24px;
+    background: color-mix(in oklch, var(--bg-surface) 50%, transparent);
+    border: 1px solid color-mix(in oklch, var(--text-main) 10%, transparent);
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
+  }
+
+  .bento-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px -15px color-mix(in oklch, var(--accent-purple) 20%, transparent);
+    border-color: color-mix(in oklch, var(--accent-cyan) 30%, transparent);
+  }
+
+  .card-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .featured .image-wrapper {
+    aspect-ratio: 16 / 10;
+  }
+
+  .cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .bento-card:hover .cover-image {
+    transform: scale(1.05);
+  }
+
+  .image-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, var(--bg-surface) 0%, transparent 100%);
+    opacity: 0.8;
+  }
+
+  .content {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    z-index: 2;
+    margin-top: -3rem; /* Overlap effect */
+  }
+
+  .title {
+    font-size: 1.5rem;
+    color: var(--text-main);
+    margin-bottom: 0.5rem;
+  }
+
+  .description {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    background: color-mix(in oklch, var(--text-main) 5%, transparent);
+    color: var(--text-main);
+    border: 1px solid color-mix(in oklch, var(--text-main) 10%, transparent);
+  }
+</style>

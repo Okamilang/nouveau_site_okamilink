@@ -1,0 +1,175 @@
+---
+const expertises = [
+  {
+    title: "Ingénierie Front-End",
+    description: "Développement de plateformes ultra-performantes et interactives, exploitant les derniers standards HTML5/CSS pour une fluidité absolue.",
+    icon: "⚡"
+  },
+  {
+    title: "Écosystèmes Modernes",
+    description: "Conception d'architectures robustes et évolutives, pensées pour des cas d'usage complexes sans jamais sacrifier la vitesse de chargement.",
+    icon: "🏗️"
+  },
+  {
+    title: "Design Interactif & UI",
+    description: "Intégration de micro-animations, de transitions natives et de designs adaptatifs (CSS Subgrid, Container Queries) pour une interface vivante.",
+    icon: "✨"
+  },
+  {
+    title: "Optimisation & Accessibilité",
+    description: "Un code sémantique irréprochable, pensé pour le SEO technique et garanti 100% accessible.",
+    icon: "👁️"
+  }
+];
+---
+
+<section class="expertise scroll-reveal">
+  <div class="section-visual" aria-hidden="true">
+    <div class="glow-orb" style="width: 500px; height: 500px; background: radial-gradient(circle, color-mix(in oklch, var(--accent-pink) 60%, transparent) 0%, transparent 70%); top: -20%; right: -10%;"></div>
+    <div class="glow-orb" style="width: 700px; height: 700px; background: radial-gradient(circle, color-mix(in oklch, var(--accent-purple) 50%, transparent) 0%, transparent 70%); bottom: -20%; left: -20%; animation-delay: -3s;"></div>
+  </div>
+
+  <div class="expertise-header">
+    <h2>Nos Domaines d'<span class="text-gradient">Expertise</span></h2>
+    <p>Une maîtrise technique totale pour des résultats exceptionnels.</p>
+  </div>
+
+  <div class="expertise-grid">
+    {expertises.map((item) => (
+      <article class="expertise-card">
+        <div class="card-icon">{item.icon}</div>
+        <h3 class="card-title">{item.title}</h3>
+        <p class="card-desc">{item.description}</p>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .expertise {
+    position: relative;
+    padding: 8rem 2rem;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    /* overflow: hidden a été retiré pour permettre au halo de déborder naturellement */
+  }
+
+  .section-visual {
+    position: absolute;
+    inset: -50%; /* Permet aux orbes de déborder très loin sans être coupées */
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .expertise-header {
+    text-align: center;
+    margin-bottom: 4rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  .expertise-header h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 1rem;
+  }
+
+  .expertise-header p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+  }
+
+  /* Bento Grid Layout */
+  .expertise-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  @media (min-width: 640px) {
+    .expertise-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .expertise-grid {
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: minmax(280px, auto);
+    }
+    
+    /* Asymmetric Bento Grid Items */
+    .expertise-card:nth-child(1) {
+      grid-column: span 2;
+    }
+    
+    .expertise-card:nth-child(4) {
+      grid-column: span 2;
+    }
+  }
+
+  /* Retrait des anciennes @container queries qui causaient le retour à la ligne forcé */
+
+  .expertise-card {
+    background: var(--bg-surface);
+    border: 1px solid color-mix(in oklch, var(--text-main) 5%, transparent);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    display: grid;
+    /* Setup for subgrid if needed for alignment, here we just use flex-like grid for rows */
+    grid-template-rows: auto auto 1fr;
+    gap: 1rem;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Hover glow effect via border-image / pseudo element */
+  .expertise-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 1.5rem;
+    padding: 1px;
+    background: var(--holographic-gradient);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .expertise-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--glow-shadow);
+  }
+
+  .expertise-card:hover::before {
+    opacity: 1;
+  }
+
+  .card-icon {
+    font-size: 2.5rem;
+    background: color-mix(in oklch, var(--bg-color) 80%, transparent);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem;
+    border: 1px solid color-mix(in oklch, var(--accent-blue) 30%, transparent);
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .card-desc {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+</style>

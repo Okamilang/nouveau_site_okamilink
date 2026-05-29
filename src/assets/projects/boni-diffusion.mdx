@@ -1,0 +1,56 @@
+---
+title: "Boni Diffusion"
+description: "Création d'une plateforme e-commerce B2B headless ultra-rapide pour l'industrie de l'outillage."
+client: "Boni Diffusion"
+date: 2025-10-15
+tags: ["E-commerce", "Headless", "Astro", "Tailwind"]
+featured: true
+# coverImage: "../../assets/projects/boni-cover.png" # Décommentez et ajoutez l'image
+---
+
+import BrowserWindow from '../../components/mockups/BrowserWindow.astro';
+import MobileDevice from '../../components/mockups/MobileDevice.astro';
+import ScrollingMockup from '../../components/mockups/ScrollingMockup.astro';
+
+## Le Défi
+
+Boni Diffusion, acteur majeur dans l'outillage industriel, souffrait d'une plateforme vieillissante (PrestaShop) qui peinait à charger les catalogues complexes avec des milliers de références. L'objectif était clair : **diviser le temps de chargement par 4** tout en repensant complètement l'UX B2B pour la rendre aussi fluide qu'une application B2C premium.
+
+## L'Approche Technique (Headless)
+
+Nous avons opté pour une architecture **Headless**. Le front-end a été intégralement reconstruit avec **Astro** et **React**, connecté à une API GraphQL sur mesure. Ce découplage permet un rendu statique ultrarapide des milliers de pages produits (SSG) tout en conservant l'interactivité côté client grâce aux Islands Astro.
+
+<BrowserWindow title="boni-diffusion.com">
+  <div style="background: #111; color: white; padding: 4rem; text-align: center; border-radius: 8px;">
+    <!-- Remplacez ce div par : <img src="../../assets/projects/boni-desktop.png" alt="Boni Desktop" /> -->
+    <h3 style="color: white;">[Mockup Desktop à insérer ici]</h3>
+    <p>Placez votre screenshot dans src/assets/projects/ et appelez l'image ici.</p>
+  </div>
+</BrowserWindow>
+
+## Interface & Performance
+
+L'interface a été épurée, mettant en valeur les produits techniques grâce à un fond sombre et des accents colorés pour guider la conversion. L'intégration d'un moteur de recherche instantané propulsé par Algolia permet de filtrer des catalogues massifs sans aucun rafraîchissement.
+
+<div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+  <MobileDevice>
+    <div style="background: #111; color: white; height: 800px; padding: 2rem; text-align: center;">
+      <!-- Remplacez ce div par : <img src="../../assets/projects/boni-mobile.png" alt="Boni Mobile" /> -->
+      <h3 style="color: white; margin-top: 50%;">[Mobile]</h3>
+    </div>
+  </MobileDevice>
+</div>
+
+## Résultat
+
+- **Temps de chargement (LCP)** passé de 4.2s à 0.8s.
+- **Taux de conversion B2B** augmenté de +35%.
+- **Accessibilité (A11y)** score parfait à 100/100 sur Lighthouse.
+
+<ScrollingMockup height="500px">
+  <div style="background: linear-gradient(to bottom, #111, #222); color: white; height: 1500px; padding: 4rem; text-align: center;">
+    <!-- Remplacez ce div par : <img src="../../assets/projects/boni-fullpage.png" alt="Boni Fullpage" /> -->
+    <h3 style="color: white;">[Mockup Full-Page à insérer ici]</h3>
+    <p>Ce mockup simule un très long scroll pour les grandes maquettes de landing page.</p>
+  </div>
+</ScrollingMockup>

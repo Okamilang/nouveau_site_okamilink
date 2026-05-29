@@ -1,0 +1,110 @@
+---
+// Composant Navbar
+---
+
+<header class="navbar">
+  <div class="nav-container">
+    <a href="/" class="brand" transition:name="brand-logo">
+      <img src="/logo.png" alt="Okamilink Développement Web" class="brand-logo" width="180" />
+    </a>
+    
+    <nav class="nav-links">
+      <a href="/realisations" class="nav-link">Réalisations</a>
+      <a href="/expertise" class="nav-link">Expertise</a>
+      <a href="/contact" class="nav-link contact-link">Initialiser le contact</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: color-mix(in oklch, var(--bg-surface) 60%, transparent);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid color-mix(in oklch, var(--text-main) 5%, transparent);
+    transition: background 0.3s ease, padding 0.3s ease;
+  }
+
+  .nav-container {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+  }
+
+  .brand-logo {
+    height: auto;
+    max-height: 60px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 12px color-mix(in oklch, var(--accent-purple) 30%, transparent));
+    transition: filter 0.3s ease, transform 0.3s ease;
+  }
+
+  .brand:hover .brand-logo {
+    filter: drop-shadow(0 0 20px var(--accent-purple));
+    transform: scale(1.02);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .nav-link {
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    transition: color 0.2s ease;
+    position: relative;
+  }
+
+  .nav-link:hover {
+    color: var(--text-main);
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--holographic-gradient);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .nav-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  .contact-link {
+    color: var(--text-main);
+    padding: 0.5rem 1.25rem;
+    border: 1px solid color-mix(in oklch, var(--text-main) 20%, transparent);
+    border-radius: 999px;
+  }
+  
+  .contact-link::after {
+    display: none;
+  }
+
+  .contact-link:hover {
+    background: color-mix(in oklch, var(--text-main) 10%, transparent);
+  }
+</style>

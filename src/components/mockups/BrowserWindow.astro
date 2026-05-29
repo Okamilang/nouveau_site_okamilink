@@ -1,0 +1,81 @@
+---
+interface Props {
+  title?: string;
+}
+const { title = "Okamilink Preview" } = Astro.props;
+---
+
+<div class="browser-mockup">
+  <div class="browser-header">
+    <div class="browser-dots">
+      <span class="dot close"></span>
+      <span class="dot minimize"></span>
+      <span class="dot expand"></span>
+    </div>
+    <div class="browser-title">{title}</div>
+  </div>
+  <div class="browser-content">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .browser-mockup {
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg-surface);
+    border: 1px solid color-mix(in oklch, var(--text-main) 10%, transparent);
+    box-shadow: 
+      0 20px 40px -10px color-mix(in oklch, var(--accent-purple) 15%, transparent),
+      0 0 0 1px color-mix(in oklch, var(--text-main) 5%, transparent);
+    margin: 2rem 0;
+  }
+
+  .browser-header {
+    height: 40px;
+    background: color-mix(in oklch, var(--bg-color) 80%, transparent);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    border-bottom: 1px solid color-mix(in oklch, var(--text-main) 10%, transparent);
+    position: relative;
+  }
+
+  .browser-dots {
+    display: flex;
+    gap: 8px;
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .close { background: #ff5f56; }
+  .minimize { background: #ffbd2e; }
+  .expand { background: #27c93f; }
+
+  .browser-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-family: monospace;
+  }
+
+  .browser-content {
+    background: var(--bg-color);
+    position: relative;
+    width: 100%;
+  }
+  
+  /* Permet aux images à l'intérieur de s'adapter parfaitement */
+  .browser-content :global(img) {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+</style>

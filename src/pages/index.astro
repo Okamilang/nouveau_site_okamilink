@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/sections/Hero.astro';
+import ExpertiseGrid from '../components/sections/ExpertiseGrid.astro';
+import Philosophy from '../components/sections/Philosophy.astro';
+---
+
+<BaseLayout title="Okamilink - Excellence Numérique Sur-mesure">
+  <Hero />
+  <ExpertiseGrid />
+  <Philosophy />
+  
+  <section class="cta-section scroll-reveal">
+    <div class="cta-content">
+      <h2>Concrétisons votre vision technologique.</h2>
+      <p>Que vous ayez un cahier des charges précis ou une idée à défricher, construisons ensemble la solution web qui vous démarquera.</p>
+      <a href="/contact" class="cta-button">Initialiser le contact</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cta-section {
+    padding: 6rem 2rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .cta-content {
+    background: color-mix(in oklch, var(--bg-surface) 60%, transparent);
+    border: 1px solid color-mix(in oklch, var(--accent-purple) 20%, transparent);
+    border-radius: 2rem;
+    padding: 4rem 2rem;
+    text-align: center;
+    max-width: 800px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--holographic-gradient);
+  }
+
+  .cta-content h2 {
+    font-size: clamp(2rem, 3vw, 2.5rem);
+    margin-bottom: 1rem;
+    color: var(--text-main);
+  }
+
+  .cta-content p {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+
+  .cta-button {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    background: var(--text-main);
+    color: var(--bg-color);
+    font-weight: 700;
+    border-radius: 999px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px color-mix(in oklch, var(--text-main) 20%, transparent);
+  }
+</style>

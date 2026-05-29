@@ -1,0 +1,175 @@
+---
+import PremiumButton from '../common/PremiumButton.astro';
+import GlowingLogo from '../common/GlowingLogo.astro';
+---
+
+<section class="hero">
+  <div class="hero-content scroll-reveal">
+    <div class="hero-logo-wrapper">
+      <GlowingLogo width="200" height="200" />
+    </div>
+    <div class="badge">Création Web & Branding</div>
+    <h1 class="title">
+      <div class="reveal-text"><span class="delay-1">L'ingénierie web,</span></div>
+      <div class="reveal-text"><span class="text-gradient delay-2">sans compromis.</span></div>
+    </h1>
+    <p class="subtitle reveal-text">
+      <span class="delay-3">Au-delà du design, je conçois des plateformes web sur-mesure où chaque ligne de code sert la performance, l'accessibilité et l'expérience utilisateur. L'exigence technologique au service de votre marque.</span>
+    </p>
+    <div class="actions reveal-text">
+      <span class="delay-4">
+        <PremiumButton text="Explorer mes réalisations" href="/realisations" />
+        <a href="/contact" class="secondary-btn">Discuter de votre projet</a>
+      </span>
+    </div>
+  </div>
+  
+  <div class="hero-visual" aria-hidden="true" id="hero-orbs">
+    <div class="glow-orb orb-1" data-speed="0.05"></div>
+    <div class="glow-orb orb-2" data-speed="0.08"></div>
+    <div class="glow-orb orb-3" data-speed="0.03"></div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const orbContainer = document.getElementById('hero-orbs');
+    if (!orbContainer) return;
+    
+    const orbs = orbContainer.querySelectorAll('.glow-orb') as NodeListOf<HTMLElement>;
+    let mouseX = 0;
+    let mouseY = 0;
+    
+    // Suivre la souris uniquement dans la zone Hero
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX - window.innerWidth / 2;
+      mouseY = e.clientY - window.innerHeight / 2;
+    });
+
+    const animateOrbs = () => {
+      orbs.forEach(orb => {
+        const speed = parseFloat(orb.getAttribute('data-speed') || '0');
+        // On récupère la transformation existante (venant du CSS) et on ajoute un décalage
+        const x = (mouseX * speed);
+        const y = (mouseY * speed);
+        orb.style.transform = `translate(${x}px, ${y}px)`;
+      });
+      requestAnimationFrame(animateOrbs);
+    };
+
+    animateOrbs();
+  });
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    overflow: hidden;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    max-width: 800px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .hero-logo-wrapper {
+    margin-bottom: -1rem;
+    animation: float-logo 6s ease-in-out infinite;
+  }
+
+  @keyframes float-logo {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border: 1px solid color-mix(in oklch, var(--accent-purple) 30%, transparent);
+    background: color-mix(in oklch, var(--bg-surface) 50%, transparent);
+    backdrop-filter: blur(8px);
+    color: var(--accent-pink);
+  }
+
+  .title {
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  .subtitle {
+    font-size: clamp(1.1rem, 2vw, 1.25rem);
+    color: var(--text-muted);
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  .actions {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    margin-top: 1rem;
+  }
+
+  .secondary-btn {
+    font-weight: 600;
+    color: var(--text-main);
+    transition: color 0.3s ease;
+  }
+
+  .secondary-btn:hover {
+    color: var(--accent-purple);
+  }
+
+  /* Decorative Orbs via OKLCH - Radial gradients (pas de filter blur pour éviter la coupure) */
+  .hero-visual {
+    position: absolute;
+    inset: -20%; /* Déborder volontairement pour éviter toute coupure sur les bords */
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .orb-1 {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, color-mix(in oklch, var(--accent-purple) 80%, transparent) 0%, transparent 70%);
+    top: 10%;
+    left: 10%;
+  }
+
+  .orb-2 {
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, color-mix(in oklch, var(--accent-blue) 80%, transparent) 0%, transparent 70%);
+    bottom: -10%;
+    right: -10%;
+    animation-delay: -5s;
+  }
+
+  .orb-3 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, color-mix(in oklch, var(--accent-pink) 70%, transparent) 0%, transparent 70%);
+    top: 40%;
+    left: 50%;
+    animation-delay: -10s;
+  }
+</style>
