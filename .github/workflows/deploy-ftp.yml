@@ -32,4 +32,4 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: 22
           local_path: './dist/*'
-          remote_path: './' # Modifiez ceci si vous voulez déployer dans un sous-dossier
+          remote_path: './okamilink/' # Dossier spécifié par l'utilisateur
