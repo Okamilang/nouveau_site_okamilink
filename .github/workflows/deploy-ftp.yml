@@ -1,4 +1,4 @@
-name: Deploy to IONOS via FTP
+name: Deploy to IONOS via SFTP
 
 on:
   push:
@@ -24,11 +24,12 @@ jobs:
       - name: 🏗️ Build Project
         run: npm run build
         
-      - name: 🚀 Sync files to FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: 🚀 Sync files via SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist/
-          server-dir: ./ # Modifiez ceci si vous voulez déployer dans un sous-dossier, ex: /nouveau_site_okamilink/
+          port: 22
+          local_path: './dist/*'
+          remote_path: './' # Modifiez ceci si vous voulez déployer dans un sous-dossier
