@@ -3,22 +3,26 @@ const expertises = [
   {
     title: "Ingénierie Front-End",
     description: "Développement de plateformes ultra-performantes et interactives, exploitant les derniers standards HTML5/CSS pour une fluidité absolue.",
-    icon: "⚡"
+    icon: "⚡",
+    rawData: "{ \"module\": \"FE_Core\", \"perf_score\": 99, \"threads\": 8, \"status\": \"OPTIMIZED\" }"
   },
   {
     title: "Écosystèmes Modernes",
     description: "Conception d'architectures robustes et évolutives, pensées pour des cas d'usage complexes sans jamais sacrifier la vitesse de chargement.",
-    icon: "🏗️"
+    icon: "🏗️",
+    rawData: "{ \"arch\": \"Microservices\", \"scale\": \"Auto\", \"latency\": \"<15ms\", \"uptime\": \"99.99%\" }"
   },
   {
     title: "Design Interactif & UI",
     description: "Intégration de micro-animations, de transitions natives et de designs adaptatifs (CSS Subgrid, Container Queries) pour une interface vivante.",
-    icon: "✨"
+    icon: "✨",
+    rawData: "{ \"engine\": \"WebGL/CSS3\", \"fps\": 60, \"motion\": \"Fluid\", \"glassmorphism\": true }"
   },
   {
     title: "Optimisation & Accessibilité",
     description: "Un code sémantique irréprochable, pensé pour le SEO technique et garanti 100% accessible.",
-    icon: "👁️"
+    icon: "👁️",
+    rawData: "{ \"a11y_score\": 100, \"seo\": \"Technical\", \"semantic\": \"HTML5_Strict\", \"contrast\": \"AAA\" }"
   }
 ];
 ---
@@ -36,14 +40,53 @@ const expertises = [
 
   <div class="expertise-grid">
     {expertises.map((item) => (
-      <article class="expertise-card">
+      <article class="expertise-card tilt-card magnetic">
+        <div class="glare"></div>
         <div class="card-icon">{item.icon}</div>
         <h3 class="card-title">{item.title}</h3>
         <p class="card-desc">{item.description}</p>
+        <div class="card-raw-data only-console">
+          <pre><code>{item.rawData}</code></pre>
+        </div>
       </article>
     ))}
   </div>
 </section>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const cards = document.querySelectorAll('.tilt-card');
+    
+    // Désactiver sur mobile car les events touch sont différents et la 3D moins performante
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+
+    cards.forEach(card => {
+      const htmlCard = card as HTMLElement;
+      
+      htmlCard.addEventListener('mousemove', (e) => {
+        const rect = htmlCard.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        // Position du Spotlight
+        htmlCard.style.setProperty('--x', `${x}px`);
+        htmlCard.style.setProperty('--y', `${y}px`);
+        
+        // Calcul du Tilt 3D
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -10; // Max 10 degrés
+        const rotateY = ((x - centerX) / centerX) * 10;
+        
+        htmlCard.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+      });
+      
+      htmlCard.addEventListener('mouseleave', () => {
+        htmlCard.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+      });
+    });
+  });
+</script>
 
 <style>
   .expertise {
@@ -117,12 +160,13 @@ const expertises = [
     border-radius: 1.5rem;
     padding: 2rem;
     display: grid;
-    /* Setup for subgrid if needed for alignment, here we just use flex-like grid for rows */
     grid-template-rows: auto auto 1fr;
     gap: 1rem;
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
     position: relative;
     overflow: hidden;
+    transform-style: preserve-3d;
+    will-change: transform;
   }
 
   /* Hover glow effect via border-image / pseudo element */
@@ -137,15 +181,28 @@ const expertises = [
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .glare {
+    position: absolute;
+    inset: 0;
+    border-radius: 1.5rem;
+    pointer-events: none;
+    background: radial-gradient(circle 300px at var(--x, 50%) var(--y, 50%), color-mix(in oklch, var(--accent-purple) 15%, transparent) 0%, transparent 80%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 5;
   }
 
   .expertise-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--glow-shadow);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.4), var(--glow-shadow);
+    /* Transform géré par le JS en mode desktop */
   }
 
-  .expertise-card:hover::before {
+  .expertise-card:hover::before, .expertise-card:hover .glare {
     opacity: 1;
   }
 
@@ -171,5 +228,32 @@ const expertises = [
     color: var(--text-muted);
     font-size: 0.95rem;
     line-height: 1.5;
+  }
+
+  .card-raw-data {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    color: var(--data-tech);
+    background: color-mix(in oklch, var(--bg-color) 80%, transparent);
+    padding: 0;
+    border-radius: 0.5rem;
+    border-left: 2px solid var(--data-action);
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease, padding 0.3s ease, margin-top 0.3s ease;
+    margin-top: 0;
+  }
+
+  .card-raw-data pre {
+    margin: 0;
+    white-space: pre-wrap;
+  }
+
+  :global(html[data-experience="console"]) .expertise-card:hover .card-raw-data {
+    max-height: 150px;
+    opacity: 1;
+    padding: 1rem;
+    margin-top: 0.5rem;
   }
 </style>

@@ -1,0 +1,269 @@
+---
+// ExperienceSelector.astro
+---
+
+<div id="experience-selector" class="experience-overlay" aria-hidden="false">
+  <div class="experience-container">
+    <div class="experience-header">
+      <h1 class="reveal-text"><span>Choisissez votre interface</span></h1>
+      <p class="reveal-text delay-1"><span>Sélectionnez le mode d'affichage qui vous correspond.</span></p>
+    </div>
+
+    <div class="cards-grid">
+      <!-- Mode Vitrine -->
+      <button class="experience-card vitrine-card scroll-reveal delay-2" data-choice="vitrine">
+        <div class="card-visual">
+          <div class="glow-orb" style="width: 200px; height: 200px; background: radial-gradient(circle, color-mix(in oklch, var(--accent-purple) 60%, transparent) 0%, transparent 70%);"></div>
+        </div>
+        <div class="card-content">
+          <h2>MODE VITRINE</h2>
+          <p>L'expérience élégante par défaut. Interface épurée, animations fluides et design premium.</p>
+          <span class="btn-indicator">Sélectionner</span>
+        </div>
+      </button>
+
+      <!-- Mode Console -->
+      <button class="experience-card console-card scroll-reveal delay-3" data-choice="console">
+        <div class="card-visual">
+          <div class="neon-line"></div>
+          <div class="terminal-mock">
+            <span class="prompt">></span> initialize_experience<br/>
+            <span class="prompt">></span> --mode=console<span class="cursor">_</span>
+          </div>
+        </div>
+        <div class="card-content">
+          <h2>MODE CONSOLE</h2>
+          <p>L'expérience brute et interactive. Navigation par commandes, données sous-jacentes et esthétique cyber.</p>
+          <span class="btn-indicator console-btn">[ EXECUTE ]</span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const selector = document.getElementById('experience-selector');
+    if (!selector) return;
+
+    // Si on a déjà fait un choix (ou si on vient de se connecter), on cache le sélecteur
+    const currentExperience = localStorage.getItem('okamilink_experience');
+    if (currentExperience) {
+      selector.style.display = 'none';
+      selector.setAttribute('aria-hidden', 'true');
+      return;
+    }
+
+    // Gestion du choix
+    const buttons = selector.querySelectorAll('.experience-card');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const choice = (e.currentTarget as HTMLElement).dataset.choice;
+        if (choice) {
+          localStorage.setItem('okamilink_experience', choice);
+          document.documentElement.setAttribute('data-experience', choice);
+          
+          // Animation de sortie
+          selector.classList.add('fade-out');
+          setTimeout(() => {
+            selector.style.display = 'none';
+            selector.setAttribute('aria-hidden', 'true');
+          }, 600);
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .experience-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999; /* Au-dessus de la navbar, juste en dessous du gatekeeper (10000) */
+    background: var(--bg-main, var(--bg-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+  }
+
+  .experience-overlay.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .experience-container {
+    max-width: 1000px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+  }
+
+  .experience-header {
+    text-align: center;
+  }
+
+  .experience-header h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin-bottom: 1rem;
+    background: var(--holographic-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .experience-header p {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .cards-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .experience-card {
+    background: var(--bg-surface-glass);
+    border: 1px solid color-mix(in oklch, var(--text-main) 10%, transparent);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    cursor: pointer;
+    text-align: left;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .experience-card:hover, .experience-card:focus-visible {
+    transform: translateY(-10px);
+    outline: none;
+  }
+
+  .vitrine-card:hover {
+    box-shadow: 0 15px 35px color-mix(in oklch, var(--accent-purple) 20%, transparent);
+    border-color: color-mix(in oklch, var(--accent-purple) 50%, transparent);
+  }
+
+  .console-card {
+    background: oklch(0.12 0.03 260 / 0.85); /* terminal-bg fallback */
+  }
+
+  .console-card:hover {
+    box-shadow: 0 15px 35px color-mix(in oklch, oklch(0.85 0.20 150) 20%, transparent);
+    border-color: oklch(0.85 0.20 150);
+  }
+
+  .card-visual {
+    height: 150px;
+    border-radius: 1rem;
+    background: color-mix(in oklch, var(--bg-color) 50%, transparent);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid color-mix(in oklch, var(--text-main) 5%, transparent);
+  }
+
+  .console-card .card-visual {
+    background: oklch(0.1 0.02 260);
+    border-color: color-mix(in oklch, oklch(0.85 0.20 150) 20%, transparent);
+  }
+
+  .neon-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background: oklch(0.85 0.20 150);
+    box-shadow: 0 0 10px oklch(0.85 0.20 150);
+  }
+
+  .terminal-mock {
+    font-family: 'Fira Code', monospace;
+    color: oklch(0.65 0.18 250);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    padding: 1rem;
+    width: 100%;
+  }
+
+  .terminal-mock .prompt {
+    color: oklch(0.85 0.20 150);
+    margin-right: 0.5rem;
+  }
+
+  .terminal-mock .cursor {
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex-grow: 1;
+  }
+
+  .card-content h2 {
+    font-size: 1.5rem;
+    color: var(--text-main);
+  }
+
+  .console-card .card-content h2 {
+    font-family: 'Fira Code', monospace;
+    letter-spacing: 2px;
+  }
+
+  .card-content p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    flex-grow: 1;
+  }
+
+  .btn-indicator {
+    align-self: flex-start;
+    padding: 0.75rem 1.5rem;
+    border-radius: 999px;
+    background: color-mix(in oklch, var(--text-main) 10%, transparent);
+    color: var(--text-main);
+    font-weight: 600;
+    transition: background 0.3s ease;
+  }
+
+  .console-btn {
+    border-radius: 4px;
+    font-family: 'Fira Code', monospace;
+    background: transparent;
+    border: 1px solid oklch(0.85 0.20 150);
+    color: oklch(0.85 0.20 150);
+  }
+
+  .vitrine-card:hover .btn-indicator {
+    background: var(--text-main);
+    color: var(--bg-color);
+  }
+
+  .console-card:hover .console-btn {
+    background: color-mix(in oklch, oklch(0.85 0.20 150) 15%, transparent);
+  }
+</style>

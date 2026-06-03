@@ -1,0 +1,122 @@
+---
+// TerminalToast.astro
+---
+
+<div id="terminal-toast-container" class="toast-container only-console" aria-live="polite"></div>
+
+<script>
+  // Définir pushToast globalement
+  document.addEventListener('astro:page-load', () => {
+    const container = document.getElementById('terminal-toast-container');
+    
+    (window as any).pushToast = (message: string, status: 'ok' | 'error' | 'neutral' = 'neutral') => {
+      if (!container) return;
+      
+      const toast = document.createElement('div');
+      toast.className = `terminal-toast toast-${status}`;
+      
+      // Nettoyage rapide pour sécurité XSS basique
+      const safeMessage = message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      
+      // Construction du contenu
+      let statusBrackets = '';
+      if (status === 'ok') statusBrackets = '<span class="status-ok">[OK]</span>';
+      else if (status === 'error') statusBrackets = '<span class="status-error">[ERR]</span>';
+      else if (status === 'neutral') statusBrackets = '<span class="status-neutral">[...]</span>';
+
+      toast.innerHTML = `<span class="toast-msg">${safeMessage}</span> ${statusBrackets}`;
+      
+      container.appendChild(toast);
+      
+      // Animation d'entrée
+      requestAnimationFrame(() => {
+        toast.classList.add('show');
+      });
+
+      // Suppression après délai
+      setTimeout(() => {
+        toast.classList.remove('show');
+        toast.addEventListener('transitionend', () => {
+          toast.remove();
+        });
+      }, 5000);
+    };
+
+    // Message de bienvenue au chargement si on est en mode console
+    if (document.documentElement.getAttribute('data-experience') === 'console') {
+      setTimeout(() => {
+        (window as any).pushToast('[SYS]: System initialized. Awaiting commands...', 'ok');
+      }, 1000);
+    }
+  });
+</script>
+
+<style>
+  .toast-container {
+    position: fixed;
+    bottom: 4rem; /* Au dessus de la command bar */
+    right: 1.5rem;
+    z-index: 950;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    pointer-events: none;
+    max-width: 400px;
+    width: 100%;
+  }
+
+  /* Cache par défaut, controlé via .only-console global */
+
+  :global(.terminal-toast) {
+    background: var(--terminal-bg, rgba(15, 15, 20, 0.9));
+    border-left: 3px solid var(--data-tech);
+    padding: 0.75rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-main);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  :global(.terminal-toast.show) {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  :global(.toast-ok) {
+    border-color: var(--data-action);
+  }
+
+  :global(.toast-error) {
+    border-color: oklch(0.6 0.2 20); /* Rouge */
+  }
+
+  :global(.toast-msg) {
+    word-break: break-all;
+  }
+
+  :global(.status-ok) {
+    color: var(--data-action);
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  :global(.status-error) {
+    color: oklch(0.6 0.2 20);
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  :global(.status-neutral) {
+    color: var(--data-tech);
+    flex-shrink: 0;
+  }
+</style>

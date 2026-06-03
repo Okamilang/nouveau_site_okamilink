@@ -29,6 +29,7 @@ const year = new Date().getFullYear();
   
   <div class="footer-bottom">
     <p>&copy; {year} Okamilink. Tous droits réservés.</p>
+    <button id="footer-shell-btn" class="shell-btn only-console" onclick="document.documentElement.classList.add('shell-mode-active'); window.pushToast && window.pushToast('[SYS]: Entering full shell mode...', 'ok');">[ SWITCH_TO_SHELL_MODE ]</button>
   </div>
 </footer>
 
@@ -125,5 +126,28 @@ const year = new Date().getFullYear();
       gap: 2rem;
       flex-wrap: wrap;
     }
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .shell-btn {
+    background: transparent;
+    border: 1px solid var(--data-action);
+    color: var(--data-action);
+    font-family: var(--font-mono);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+  }
+
+  .shell-btn:hover {
+    background: color-mix(in oklch, var(--data-action) 15%, transparent);
+    box-shadow: 0 0 10px color-mix(in oklch, var(--data-action) 50%, transparent);
   }
 </style>

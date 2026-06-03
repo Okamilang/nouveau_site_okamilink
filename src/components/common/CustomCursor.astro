@@ -7,13 +7,11 @@
 </div>
 
 <script>
-  // Script exécuté uniquement côté client
   document.addEventListener('astro:page-load', () => {
     const cursor = document.getElementById('custom-cursor');
-    const dot = cursor?.querySelector('.cursor-dot');
-    const glow = cursor?.querySelector('.cursor-glow');
+    const dot = cursor?.querySelector('.cursor-dot') as HTMLElement;
+    const glow = cursor?.querySelector('.cursor-glow') as HTMLElement;
     
-    // Si l'utilisateur n'a pas de souris (ex: mobile pur), on ignore
     const hasMouse = window.matchMedia('(pointer: fine)').matches;
     
     if (!cursor || !dot || !glow || !hasMouse) {
@@ -23,25 +21,77 @@
 
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
-    let dotX = mouseX;
-    let dotY = mouseY;
     let glowX = mouseX;
     let glowY = mouseY;
+    
+    // État magnétique
+    let isHovering = false;
+    let magneticTarget: HTMLElement | null = null;
+    let targetRect: DOMRect | null = null;
 
-    // Mise à jour de la position cible au mouvement
     window.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      if (cursor.style.opacity !== '1') cursor.style.opacity = '1';
       
-      // Activer le curseur lors du premier mouvement
-      if (cursor.style.opacity !== '1') {
-        cursor.style.opacity = '1';
+      // Magnétisme sur l'élément survolé
+      if (isHovering && magneticTarget && targetRect) {
+        // Calcul de la distance entre la souris et le centre du bouton
+        const centerX = targetRect.left + targetRect.width / 2;
+        const centerY = targetRect.top + targetRect.height / 2;
+        const distX = mouseX - centerX;
+        const distY = mouseY - centerY;
+        
+        // Appliquer une force magnétique à l'élément (max 15px)
+        magneticTarget.style.transform = `translate(${distX * 0.2}px, ${distY * 0.2}px)`;
       }
-
-      // Suivi instantané sans latence
-      dot.setAttribute('style', `transform: translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`);
-      glow.setAttribute('style', `transform: translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`);
     });
+
+    // Lerp function (Linear Interpolation)
+    const lerp = (start: number, end: number, factor: number) => {
+      return start + (end - start) * factor;
+    };
+
+    const animate = () => {
+      // Le dot suit la souris instantanément
+      dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+      
+      // Le glow suit la souris avec du Lerp (on ne le bloque plus au centre du bouton)
+      glowX = lerp(glowX, mouseX, 0.15);
+      glowY = lerp(glowY, mouseY, 0.15);
+      
+      glow.style.transform = `translate3d(${glowX}px, ${glowY}px, 0) translate(-50%, -50%)`;
+      requestAnimationFrame(animate);
+    };
+    
+    animate();
+
+    // Gestion du survol pour tous les éléments cliquables
+    const attachMagneticHover = () => {
+      const clickables = document.querySelectorAll('a, button, .magnetic');
+      clickables.forEach(el => {
+        el.addEventListener('mouseenter', (e) => {
+          isHovering = true;
+          magneticTarget = el as HTMLElement;
+          targetRect = magneticTarget.getBoundingClientRect();
+          cursor.classList.add('hovering');
+          magneticTarget.style.transition = 'transform 0.1s linear';
+        });
+        
+        el.addEventListener('mouseleave', () => {
+          isHovering = false;
+          cursor.classList.remove('hovering');
+          if (magneticTarget) {
+            magneticTarget.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            magneticTarget.style.transform = 'translate(0px, 0px)';
+          }
+          magneticTarget = null;
+          targetRect = null;
+        });
+      });
+    };
+
+    attachMagneticHover();
   });
 </script>
 
@@ -67,7 +117,7 @@
     background-color: var(--accent-pink);
     border-radius: 50%;
     transform-origin: center;
-    transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease;
+    transition: width 0.3s ease, height 0.3s ease;
     box-shadow: 0 0 10px var(--accent-pink);
   }
 
@@ -75,11 +125,29 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border: 1px solid color-mix(in oklch, var(--accent-purple) 50%, transparent);
     background-color: color-mix(in oklch, var(--accent-purple) 10%, transparent);
     border-radius: 50%;
     transform-origin: center;
+    transition: width 0.3s ease, height 0.3s ease, background-color 0.3s ease;
+    backdrop-filter: invert(1);
+    -webkit-backdrop-filter: invert(1);
   }
+
+  /* État Hover Magnétique */
+  .custom-cursor.hovering .cursor-dot {
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+
+  .custom-cursor.hovering .cursor-glow {
+    width: 80px;
+    height: 80px;
+    background-color: color-mix(in oklch, var(--accent-purple) 30%, transparent);
+  }
+
+  /* Pour éviter de casser le blending mode, il ne faut pas de background blanc pur en dessous */
 </style>

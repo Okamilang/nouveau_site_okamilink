@@ -1,0 +1,556 @@
+---
+import BootSequence from './BootSequence.astro';
+import Taskbar from './Taskbar.astro';
+import WindowTemplate from './WindowTemplate.astro';
+
+import Hero from '../sections/Hero.astro';
+import ExpertiseGrid from '../sections/ExpertiseGrid.astro';
+import Philosophy from '../sections/Philosophy.astro';
+import ContactTerminal from '../common/ContactTerminal.astro';
+
+import { getCollection } from 'astro:content';
+const projects = await getCollection('projects');
+---
+
+<div id="os-environment" class="os-environment" aria-hidden="true">
+  <BootSequence />
+  
+  <div class="desktop-area" id="desktop-area">
+    <!-- Desktop Icons -->
+    <div class="desktop-icons" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+      <div class="desktop-icon" data-target="win-about" style="position: absolute; top: 20px; left: 20px; pointer-events: auto;">
+        <span class="icon-emoji">👤</span>
+        <span class="icon-label">About_Me.exe</span>
+      </div>
+      <div class="desktop-icon" data-target="win-skills" style="position: absolute; top: 120px; left: 20px; pointer-events: auto;">
+        <span class="icon-emoji">⚙️</span>
+        <span class="icon-label">Skills.exe</span>
+      </div>
+      <div class="desktop-icon" data-target="win-philo" style="position: absolute; top: 220px; left: 20px; pointer-events: auto;">
+        <span class="icon-emoji">🧠</span>
+        <span class="icon-label">Philosophy.txt</span>
+      </div>
+      <div class="desktop-icon" data-target="win-projects" style="position: absolute; top: 320px; left: 20px; pointer-events: auto;">
+        <span class="icon-emoji">📁</span>
+        <span class="icon-label">Projets/</span>
+      </div>
+      <div class="desktop-icon" data-target="win-terminal" style="position: absolute; top: 420px; left: 20px; pointer-events: auto;">
+        <span class="icon-emoji">>_</span>
+        <span class="icon-label">Contact.sh</span>
+      </div>
+      <div class="desktop-icon" data-target="win-wallpaper" style="position: absolute; top: 20px; left: 120px; pointer-events: auto;">
+        <span class="icon-emoji">🖼️</span>
+        <span class="icon-label">Display.exe</span>
+      </div>
+      <div class="desktop-icon" id="btn-exit-os" style="position: absolute; top: 120px; left: 120px; pointer-events: auto;">
+        <span class="icon-emoji">🚪</span>
+        <span class="icon-label">Exit_OS.exe</span>
+      </div>
+    </div>
+
+    <!-- Windows Container -->
+    <div id="windows-container">
+      <WindowTemplate id="win-projects" title="Projets/" icon="📁" x="10%" y="20%" width="600px" height="400px">
+        <div class="folder-content" style="position: relative; width: 100%; height: 100%;">
+          {projects.map((p, index) => {
+            // Calcul basique pour placer les icônes sur une grille absolue (ex: 100px par icône)
+            const col = index % 5;
+            const row = Math.floor(index / 5);
+            const left = 20 + col * 100;
+            const top = 20 + row * 100;
+            
+            return (
+              <div class="desktop-icon" data-target={`win-proj-${p.slug}`} style={`position: absolute; left: ${left}px; top: ${top}px; pointer-events: auto;`}>
+                {p.data.osIcon ? (
+                  <img src={p.data.osIcon} alt="" draggable="false" style="width: 2.5rem; height: 2.5rem; object-fit: contain; user-drag: none; -webkit-user-drag: none;" />
+                ) : (
+                  <span class="icon-emoji">📄</span>
+                )}
+                <span class="icon-label">{p.data.title}.exe</span>
+              </div>
+            );
+          })}
+        </div>
+      </WindowTemplate>
+
+      {projects.map(async (p, i) => {
+        const { Content } = await p.render();
+        return (
+          <>
+            <WindowTemplate id={`win-proj-${p.slug}`} title={`${p.data.title}.exe`} icon={p.data.osIcon ? `<img src="${p.data.osIcon}" style="width:1.2em; height:1.2em; vertical-align:middle; object-fit:contain;"/>` : '📄'} x={`${15 + i*5}%`} y={`${25 + i*5}%`} width="800px" height="600px">
+              <div class="os-content-wrapper" style="padding: 30px;">
+                <h1 style="margin-bottom: 1rem; color: var(--text-main); font-size: 2rem;">{p.data.title}</h1>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;">{p.data.description}</p>
+                <div class="project-markdown">
+                  <Content />
+                </div>
+              </div>
+            </WindowTemplate>
+
+            {p.data.url && (
+              <WindowTemplate 
+                id={`win-mobile-${p.slug}`} 
+                title={`Mobile - ${p.data.title}`} 
+                icon="📱" 
+                x={`${40 + i*5}%`} 
+                y={`${10 + i*5}%`} 
+                width="395px" 
+                height="800px"
+              >
+                <div style="width: calc(100% + 40px); height: calc(100% + 40px); margin: -20px; background: black; position: relative; overflow: hidden;">
+                  <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 25px; background: black; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 10;"></div>
+                  <iframe src={p.data.url} title={`Mobile ${p.data.title}`} style="width: 100%; height: 100%; border: none;"></iframe>
+                </div>
+              </WindowTemplate>
+            )}
+          </>
+        );
+      })}
+
+      <WindowTemplate id="win-about" title="About_Me.exe" icon="👤" x="5%" y="5%" width="800px" height="500px">
+        <div class="os-content-wrapper">
+          <Hero />
+        </div>
+      </WindowTemplate>
+
+      <WindowTemplate id="win-skills" title="Skills_Monitor.exe" icon="⚙️" x="15%" y="15%" width="900px" height="600px">
+        <div class="os-content-wrapper">
+          <ExpertiseGrid />
+        </div>
+      </WindowTemplate>
+
+      <WindowTemplate id="win-philo" title="Philosophy.txt" icon="🧠" x="25%" y="10%" width="700px" height="600px">
+        <div class="os-content-wrapper" style="padding: 20px;">
+          <Philosophy />
+        </div>
+      </WindowTemplate>
+
+      <WindowTemplate id="win-terminal" title="Contact.sh" icon=">_" x="30%" y="30%" width="650px" height="450px">
+        <div class="terminal-content">
+          <ContactTerminal />
+        </div>
+      </WindowTemplate>
+
+      <WindowTemplate id="win-wallpaper" title="Display_Settings.exe" icon="🖼️" x="20%" y="20%" width="650px" height="450px">
+        <div class="os-content-wrapper" style="padding: 25px;">
+          <h2 style="color: var(--text-main); font-family: var(--font-mono); margin-bottom: 20px; font-size: 1.2rem;">> Select_Background.sh</h2>
+          <div class="wallpaper-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;">
+            {[
+              { id: 'wp1', name: 'Cyber Core', url: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=90&w=3840&h=2160&auto=format&fit=crop' },
+              { id: 'wp2', name: 'Neon Fluid', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=90&w=3840&h=2160&auto=format&fit=crop' },
+              { id: 'wp3', name: 'Deep Space', url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=90&w=3840&h=2160&auto=format&fit=crop' },
+              { id: 'wp4', name: 'Dark Grid', url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=90&w=3840&h=2160&auto=format&fit=crop' },
+              { id: 'wp5', name: 'Synthwave', url: 'https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?q=90&w=3840&h=2160&auto=format&fit=crop' }
+            ].map(wp => (
+              <div 
+                class="wallpaper-btn" 
+                data-bg={wp.url}
+                style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid transparent; transition: all 0.2s; aspect-ratio: 16/9; position: relative;"
+                onmouseover="this.style.borderColor='var(--data-action)'; this.style.transform='scale(1.05)';"
+                onmouseout="this.style.borderColor='transparent'; this.style.transform='scale(1)';"
+              >
+                <img src={wp.url} alt={wp.name} style="width: 100%; height: 100%; object-fit: cover; display: block;" loading="lazy" />
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: white; padding: 4px; font-size: 0.75rem; text-align: center; font-family: var(--font-mono);">
+                  {wp.name}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </WindowTemplate>
+    </div>
+  </div>
+
+  <Taskbar />
+</div>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    if (document.documentElement.getAttribute('data-experience') !== 'console') return;
+
+    const desktopArea = document.getElementById('desktop-area');
+    const taskbarWindows = document.getElementById('taskbar-windows');
+    let highestZIndex = 100;
+
+    // Window Management Logic
+    const windows = document.querySelectorAll('.os-window') as NodeListOf<HTMLElement>;
+    const icons = document.querySelectorAll('.desktop-icon') as NodeListOf<HTMLElement>;
+    const taskbarItems = new Map<string, HTMLElement>();
+
+    const bringToFront = (win: HTMLElement) => {
+      highestZIndex++;
+      win.style.zIndex = highestZIndex.toString();
+      
+      // Update taskbar active state
+      document.querySelectorAll('.taskbar-item').forEach(item => item.classList.remove('active'));
+      const tbItem = taskbarItems.get(win.id);
+      if (tbItem) tbItem.classList.add('active');
+    };
+
+    const toggleWindow = (winId: string) => {
+      const win = document.getElementById(winId);
+      if (!win) return;
+
+      if (!win.classList.contains('open')) {
+        // Open it
+        win.classList.add('open');
+        win.style.display = 'flex';
+        bringToFront(win);
+        
+        // Add to taskbar if not exists
+        if (!taskbarItems.has(winId)) {
+          const tbItem = document.createElement('div');
+          tbItem.className = 'taskbar-item active';
+          const title = win.querySelector('.window-title')?.textContent || 'Window';
+          tbItem.textContent = title;
+          tbItem.onclick = () => {
+            if (win.style.display === 'none') {
+              win.style.display = 'flex';
+              bringToFront(win);
+            } else if (win.style.zIndex === highestZIndex.toString()) {
+              win.style.display = 'none';
+              tbItem.classList.remove('active');
+            } else {
+              bringToFront(win);
+            }
+          };
+          taskbarWindows?.appendChild(tbItem);
+          taskbarItems.set(winId, tbItem);
+        }
+      } else if (win.style.display === 'none') {
+        // Restore from minimized
+        win.style.display = 'flex';
+        bringToFront(win);
+      } else {
+        // Already open and visible, just focus
+        bringToFront(win);
+      }
+    };
+
+    // Desktop & Folder icons drag & double-click logic
+    icons.forEach(icon => {
+      let isDraggingIcon = false;
+      let hasMoved = false;
+      let startX = 0, startY = 0;
+      let currentX = 0, currentY = 0;
+      let initialX = 0, initialY = 0;
+
+      // Make sure the icon has a relative positioning context if it isn't absolute
+      if (window.getComputedStyle(icon).position === 'static') {
+        icon.style.position = 'relative';
+      }
+
+      icon.addEventListener('mousedown', (e: MouseEvent) => {
+        isDraggingIcon = true;
+        hasMoved = false;
+        startX = e.clientX;
+        startY = e.clientY;
+        initialX = currentX;
+        initialY = currentY;
+        icon.style.zIndex = '50';
+      });
+
+      window.addEventListener('mousemove', (e: MouseEvent) => {
+        if (!isDraggingIcon) return;
+        e.preventDefault();
+        
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+          hasMoved = true;
+        }
+
+        currentX = initialX + dx;
+        currentY = initialY + dy;
+        icon.style.transform = `translate(${currentX}px, ${currentY}px)`;
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isDraggingIcon) {
+          isDraggingIcon = false;
+          icon.style.zIndex = '';
+        }
+      });
+
+      icon.addEventListener('click', (e) => {
+        if (hasMoved) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      });
+
+      icon.addEventListener('dblclick', (e) => {
+        if (hasMoved) return;
+        const target = icon.getAttribute('data-target');
+        if (target) toggleWindow(target);
+      });
+      
+      // Fallback for touch devices
+      icon.addEventListener('touchstart', (e: TouchEvent) => {
+        if (hasMoved) return;
+        const target = icon.getAttribute('data-target');
+        if (target) toggleWindow(target);
+      });
+    });
+
+    // Exit OS Logic
+    const exitBtn = document.getElementById('btn-exit-os');
+    if (exitBtn) {
+      const exitOS = (e: Event) => {
+        e.preventDefault();
+        document.documentElement.setAttribute('data-experience', 'vitrine');
+        localStorage.setItem('okamilink_experience', 'vitrine');
+      };
+      
+      // Changed to dblclick to match other icons
+      exitBtn.addEventListener('dblclick', exitOS);
+      
+      // Use touchstart with a small delay logic to simulate double tap, or just keep touchstart for mobile simplicity.
+      // But to be consistent, we'll listen for a double-tap pattern.
+      let lastTap = 0;
+      exitBtn.addEventListener('touchstart', (e: TouchEvent) => {
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTap;
+        if (tapLength < 500 && tapLength > 0) {
+          exitOS(e);
+        }
+        lastTap = currentTime;
+      });
+    }
+
+    // Mobile launchers from within projects
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const launcher = target.closest('.os-mobile-launcher');
+      if (launcher) {
+        const winId = launcher.getAttribute('data-target');
+        if (winId) toggleWindow(winId);
+      }
+    });
+
+    // Wallpaper Logic
+    const osEnv = document.getElementById('os-environment');
+    if (osEnv) {
+      const savedWallpaper = localStorage.getItem('os-wallpaper');
+      if (savedWallpaper) {
+        osEnv.style.backgroundImage = `url('${savedWallpaper}')`;
+      }
+    }
+
+    const wallpaperBtns = document.querySelectorAll('.wallpaper-btn');
+    wallpaperBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const bgUrl = btn.getAttribute('data-bg');
+        if (bgUrl && osEnv) {
+          osEnv.style.backgroundImage = `url('${bgUrl}')`;
+          localStorage.setItem('os-wallpaper', bgUrl);
+        }
+      });
+    });
+
+    // Window Controls
+    windows.forEach(win => {
+      win.addEventListener('mousedown', () => bringToFront(win));
+
+      const minimizeBtn = win.querySelector('.win-btn.minimize') as HTMLElement | null;
+      const maximizeBtn = win.querySelector('.win-btn.maximize') as HTMLElement | null;
+      const closeBtn = win.querySelector('.win-btn.close') as HTMLElement | null;
+
+      minimizeBtn?.addEventListener('click', (e: MouseEvent) => {
+        e.stopPropagation();
+        win.style.display = 'none';
+        const tbItem = taskbarItems.get(win.id);
+        if (tbItem) tbItem.classList.remove('active');
+      });
+
+      maximizeBtn?.addEventListener('click', (e: MouseEvent) => {
+        e.stopPropagation();
+        win.classList.toggle('maximized');
+        bringToFront(win);
+      });
+
+      closeBtn?.addEventListener('click', (e: MouseEvent) => {
+        e.stopPropagation();
+        win.classList.remove('open');
+        win.style.display = 'none';
+        win.classList.remove('maximized');
+        const tbItem = taskbarItems.get(win.id);
+        if (tbItem) {
+          tbItem.remove();
+          taskbarItems.delete(win.id);
+        }
+      });
+
+      // Draggable logic
+      const header = win.querySelector('.window-header') as HTMLElement | null;
+      let isDragging = false;
+      let startX = 0, startY = 0, initialX = 0, initialY = 0;
+
+      header?.addEventListener('mousedown', (e: MouseEvent) => {
+        if (win.classList.contains('maximized')) return;
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        initialX = win.offsetLeft;
+        initialY = win.offsetTop;
+        bringToFront(win);
+        document.body.classList.add('window-is-dragging');
+      });
+
+      window.addEventListener('mousemove', (e: MouseEvent) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        win.style.left = `${initialX + dx}px`;
+        win.style.top = `${initialY + dy}px`;
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isDragging) {
+          isDragging = false;
+          document.body.classList.remove('window-is-dragging');
+        }
+      });
+    });
+  });
+</script>
+
+<style is:global>
+  body.window-is-dragging iframe {
+    pointer-events: none !important;
+  }
+</style>
+
+<style>
+  .os-environment {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=90&w=3840&h=2160&auto=format&fit=crop') center/cover no-repeat;
+    z-index: 8000;
+  }
+
+  /* Rendre l'OS visible uniquement quand l'expérience est console */
+  html[data-experience="console"] .os-environment {
+    display: block;
+  }
+
+  /* Le filtre sombre a été retiré à la demande de l'utilisateur */
+  /* .os-environment::before { ... } */
+
+  .desktop-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 48px); /* Account for taskbar */
+    padding: 20px;
+    overflow: hidden;
+  }
+
+  .desktop-icons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100px;
+  }
+
+  .desktop-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    user-select: none;
+  }
+
+  .desktop-icon:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  .icon-emoji {
+    font-size: 2.5rem;
+  }
+
+  .icon-label {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    text-align: center;
+    word-break: break-word;
+  }
+
+  /* Override standard component styles when inside OS windows */
+  .os-content-wrapper {
+    /* Reset padding or heights that rely on main viewport */
+    zoom: 0.8; /* Scale down standard components slightly to fit in windows */
+  }
+
+  .terminal-content {
+    font-family: var(--font-mono);
+    color: var(--data-action);
+    font-size: 0.9rem;
+  }
+
+  .sys-msg {
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+  }
+
+  .cmd-line {
+    display: flex;
+    gap: 10px;
+  }
+
+  .cursor-blink {
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  .folder-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .project-markdown {
+    color: var(--text-main);
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  /* Rendre les images et médias 100% responsives dans les fenêtres de l'OS */
+  .project-markdown img,
+  .project-markdown video,
+  .project-markdown iframe,
+  .project-markdown picture {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+  }
+
+  .project-markdown h2, .project-markdown h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--data-tech);
+  }
+
+  .project-markdown p {
+    margin-bottom: 1rem;
+  }
+</style>

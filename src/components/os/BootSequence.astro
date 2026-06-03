@@ -1,0 +1,141 @@
+---
+// BootSequence.astro
+---
+
+<div id="os-boot-sequence" class="boot-overlay" aria-hidden="true">
+  <div class="boot-content">
+    <div class="bios-info">
+      <p>Okamilink OS BIOS v4.2.1</p>
+      <p>Copyright (C) {new Date().getFullYear()}, Okamilink Corp.</p>
+    </div>
+    <div id="boot-logs" class="boot-logs"></div>
+    <div class="boot-progress">
+      <div id="boot-progress-bar" class="boot-progress-bar"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const bootSequence = document.getElementById('os-boot-sequence');
+    const bootLogs = document.getElementById('boot-logs');
+    const progressBar = document.getElementById('boot-progress-bar');
+    
+    // Si on n'est pas en mode console, on désactive complètement
+    if (document.documentElement.getAttribute('data-experience') !== 'console') {
+      if (bootSequence) bootSequence.style.display = 'none';
+      return;
+    }
+
+    // Vérifier si le boot a déjà été fait dans cette session
+    if (sessionStorage.getItem('okamilink_os_booted') === 'true') {
+      if (bootSequence) bootSequence.style.display = 'none';
+      return;
+    }
+
+    const logs = [
+      "Initializing hardware...",
+      "Loading Okamilink kernel modules...",
+      "Mounting virtual file systems...",
+      "Starting network interfaces...",
+      "Establishing secure connection to creative neural net...",
+      "Decrypting portfolio archives [OK]",
+      "Loading graphical user interface...",
+      "Welcome to Okamilink OS."
+    ];
+
+    let logIndex = 0;
+    
+    const playBoot = () => {
+      if (logIndex < logs.length) {
+        const p = document.createElement('p');
+        p.textContent = `> ${logs[logIndex]}`;
+        bootLogs?.appendChild(p);
+        
+        // Auto scroll
+        if (bootLogs) bootLogs.scrollTop = bootLogs.scrollHeight;
+        
+        logIndex++;
+        // Random delay between lines to simulate loading
+        setTimeout(playBoot, Math.random() * 300 + 100);
+      } else {
+        // Fin des logs, on charge la barre
+        setTimeout(() => {
+          if (progressBar) progressBar.style.width = '100%';
+          setTimeout(() => {
+            if (bootSequence) {
+              bootSequence.style.opacity = '0';
+              setTimeout(() => {
+                bootSequence.style.display = 'none';
+                sessionStorage.setItem('okamilink_os_booted', 'true');
+              }, 500);
+            }
+          }, 600);
+        }, 500);
+      }
+    };
+
+    // Démarrer après un petit délai
+    setTimeout(playBoot, 500);
+  });
+</script>
+
+<style>
+  .boot-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #050505;
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--data-action);
+    font-family: var(--font-mono);
+    transition: opacity 0.5s ease;
+  }
+
+  .boot-content {
+    width: 80%;
+    max-width: 800px;
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .bios-info {
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    opacity: 0.8;
+  }
+
+  .boot-logs {
+    flex-grow: 1;
+    overflow: hidden;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+
+  .boot-logs p {
+    margin: 0;
+  }
+
+  .boot-progress {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .boot-progress-bar {
+    height: 100%;
+    width: 0%;
+    background-color: var(--data-action);
+    transition: width 0.5s ease-in-out;
+  }
+</style>

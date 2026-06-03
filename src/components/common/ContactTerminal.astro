@@ -1,0 +1,158 @@
+---
+// ContactTerminal.astro
+---
+
+<div class="contact-terminal only-console">
+  <div class="terminal-header">
+    <span class="dot red"></span>
+    <span class="dot yellow"></span>
+    <span class="dot green"></span>
+    <span class="title">~/contact/sendMessage.sh</span>
+  </div>
+  <form id="console-contact-form" class="terminal-body" onsubmit="event.preventDefault(); window.pushToast && window.pushToast('[SYS]: Transmission sequence initiated...', 'ok'); setTimeout(() => window.pushToast('[SYS]: Message delivered successfully.', 'ok'), 2000);">
+    <div class="cmd-line">
+      <span class="cmd-function">sendMessage</span><span class="syntax">(</span>
+    </div>
+    
+    <div class="cmd-args">
+      <div class="cmd-arg">
+        <label for="term-name" class="arg-key">name:</label>
+        <input type="text" id="term-name" class="term-input string-val" placeholder='"Entrez votre nom"' required />
+        <span class="syntax">,</span>
+      </div>
+      
+      <div class="cmd-arg">
+        <label for="term-email" class="arg-key">email:</label>
+        <input type="email" id="term-email" class="term-input string-val" placeholder='"votre@email.com"' required />
+        <span class="syntax">,</span>
+      </div>
+      
+      <div class="cmd-arg">
+        <label for="term-message" class="arg-key">payload:</label>
+        <textarea id="term-message" class="term-input string-val" placeholder='"Votre message détaillé ici..."' rows="4" required></textarea>
+      </div>
+    </div>
+    
+    <div class="cmd-line">
+      <span class="syntax">)</span> <button type="submit" class="term-submit">[ EXECUTE ]</button>
+    </div>
+  </form>
+</div>
+
+<style>
+  .contact-terminal {
+    background: oklch(0.1 0.02 260);
+    border: 1px solid color-mix(in oklch, var(--data-action) 30%, transparent);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    font-family: var(--font-mono);
+    max-width: 600px;
+    width: 100%;
+    margin: 2rem auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+
+  .terminal-header {
+    background: color-mix(in oklch, var(--bg-surface) 50%, transparent);
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid color-mix(in oklch, var(--data-action) 20%, transparent);
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .dot.red { background: oklch(0.6 0.2 20); }
+  .dot.yellow { background: oklch(0.8 0.2 80); }
+  .dot.green { background: oklch(0.7 0.2 150); }
+
+  .title {
+    margin-left: 1rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .terminal-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cmd-line {
+    font-size: 1.1rem;
+  }
+
+  .cmd-function {
+    color: var(--data-design); /* Violet */
+  }
+
+  .syntax {
+    color: var(--text-muted);
+  }
+
+  .cmd-args {
+    display: flex;
+    flex-direction: column;
+    padding-left: 2rem;
+    margin: 0.5rem 0;
+    gap: 0.5rem;
+    border-left: 1px dashed color-mix(in oklch, var(--text-muted) 30%, transparent);
+    margin-left: 0.5rem;
+  }
+
+  .cmd-arg {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .arg-key {
+    color: var(--data-tech); /* Bleu */
+    min-width: 80px;
+  }
+
+  .term-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    flex-grow: 1;
+    resize: none;
+  }
+
+  .string-val {
+    color: oklch(0.8 0.15 80); /* Orange/Jaune pour les strings */
+  }
+
+  .term-input::placeholder {
+    color: color-mix(in oklch, var(--text-muted) 50%, transparent);
+  }
+
+  .term-input:focus {
+    background: rgba(255,255,255,0.02);
+  }
+
+  .term-submit {
+    background: transparent;
+    border: none;
+    color: var(--data-action);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 1rem;
+    transition: all 0.2s;
+  }
+
+  .term-submit:hover {
+    text-shadow: 0 0 8px var(--data-action);
+    transform: scale(1.05);
+  }
+</style>

@@ -1,0 +1,140 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  icon?: string;
+  width?: string;
+  height?: string;
+  x?: string;
+  y?: string;
+  isOpen?: boolean;
+}
+
+const { 
+  id, 
+  title, 
+  icon = "📄", 
+  width = "600px", 
+  height = "400px",
+  x = "10%",
+  y = "10%",
+  isOpen = false
+} = Astro.props;
+---
+
+<div 
+  id={id} 
+  class={`os-window ${isOpen ? 'open' : ''}`} 
+  style={`width: ${width}; height: ${height}; top: ${y}; left: ${x};`}
+  data-window-id={id}
+>
+  <div class="window-header">
+    <div class="window-title">
+      <span class="window-icon" set:html={icon}></span>
+      {title}
+    </div>
+    <div class="window-controls">
+      <button class="win-btn minimize" aria-label="Minimize" data-action="minimize">_</button>
+      <button class="win-btn maximize" aria-label="Maximize" data-action="maximize">□</button>
+      <button class="win-btn close" aria-label="Close" data-action="close">×</button>
+    </div>
+  </div>
+  <div class="window-content">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .os-window {
+    position: absolute;
+    background: rgba(15, 15, 20, 0.98); /* Fond presque opaque pour remplacer le blur */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    resize: both; /* Permet le redimensionnement manuel natif */
+    min-width: 300px;
+    min-height: 200px;
+    
+    /* Optimisations matérielles cruciales pour le lag des fenêtres multiples */
+    will-change: transform, top, left;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  .os-window.open {
+    display: flex;
+  }
+
+  .os-window.maximized {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: calc(100% - 50px) !important; /* Moins la taskbar */
+    border-radius: 0;
+  }
+
+  .window-header {
+    height: 35px;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    user-select: none;
+    cursor: grab;
+  }
+
+  .window-header:active {
+    cursor: grabbing;
+  }
+
+  .window-title {
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+  }
+
+  .window-controls {
+    display: flex;
+    gap: 5px;
+  }
+
+  .win-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+  }
+
+  .win-btn:hover {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .win-btn.close:hover {
+    background: #e81123;
+    color: white;
+  }
+
+  .window-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+    position: relative;
+    scrollbar-width: thin;
+    scrollbar-color: var(--data-action) transparent;
+  }
+</style>
