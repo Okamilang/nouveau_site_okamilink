@@ -177,11 +177,11 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
           <h2 style="color: var(--text-main); font-family: var(--font-mono); margin-bottom: 20px; font-size: 1.2rem;">> Choisir_Fond_Ecran.sh</h2>
           <div class="wallpaper-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;">
             {[
-              { id: 'wp1', name: 'Neon City', url: 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=90&w=3840&h=2160&auto=format&fit=crop' },
-              { id: 'wp2', name: 'Cyber Circuit', url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=90&w=3840&h=2160&auto=format&fit=crop' },
-              { id: 'wp3', name: 'Data Matrix', url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=90&w=3840&h=2160&auto=format&fit=crop' },
-              { id: 'wp4', name: 'Abstract HUD', url: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=90&w=3840&h=2160&auto=format&fit=crop' },
-              { id: 'wp5', name: 'Neon Grid', url: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=90&w=3840&h=2160&auto=format&fit=crop' }
+              { id: 'wp1', name: 'Fond 1', url: '/os-backgrounds/fond1.png' },
+              { id: 'wp2', name: 'Fond 2', url: '/os-backgrounds/fond2.png' },
+              { id: 'wp3', name: 'Fond 3', url: '/os-backgrounds/fond3.png' },
+              { id: 'wp4', name: 'Fond 4', url: '/os-backgrounds/fond4.png' },
+              { id: 'wp5', name: 'Fond 5', url: '/os-backgrounds/fond5.png' }
             ].map(wp => (
               <div 
                 class="wallpaper-btn" 
@@ -397,7 +397,7 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
       if (savedWallpaper) {
         osEnv.style.backgroundImage = `linear-gradient(rgba(5, 5, 10, 0.7), rgba(5, 5, 10, 0.85)), url('${savedWallpaper}')`;
       } else {
-        osEnv.style.backgroundImage = `linear-gradient(rgba(5, 5, 10, 0.7), rgba(5, 5, 10, 0.85)), url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=90&w=3840&h=2160&auto=format&fit=crop')`;
+        osEnv.style.backgroundImage = `linear-gradient(rgba(5, 5, 10, 0.7), rgba(5, 5, 10, 0.85)), url('/os-backgrounds/fond1.png')`;
       }
     }
 
@@ -586,7 +586,7 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(rgba(5, 5, 10, 0.7), rgba(5, 5, 10, 0.85)), url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=90&w=3840&h=2160&auto=format&fit=crop') center/cover no-repeat;
+    background: linear-gradient(rgba(5, 5, 10, 0.7), rgba(5, 5, 10, 0.85)), url('/os-backgrounds/fond1.png') center/cover no-repeat;
     z-index: 8000;
   }
 
