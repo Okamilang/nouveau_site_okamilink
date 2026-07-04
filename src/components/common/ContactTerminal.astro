@@ -9,7 +9,7 @@
     <span class="dot green"></span>
     <span class="title">~/contact/sendMessage.sh</span>
   </div>
-  <form id="console-contact-form" class="terminal-body" onsubmit="event.preventDefault(); window.pushToast && window.pushToast('[SYS]: Transmission sequence initiated...', 'ok'); setTimeout(() => window.pushToast('[SYS]: Message delivered successfully.', 'ok'), 2000);">
+  <form id="console-contact-form" class="terminal-body">
     <div class="cmd-line">
       <span class="cmd-function">sendMessage</span><span class="syntax">(</span>
     </div>
@@ -38,6 +38,59 @@
     </div>
   </form>
 </div>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const form = document.getElementById('console-contact-form') as HTMLFormElement;
+    
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const nameInput = document.getElementById('term-name') as HTMLInputElement;
+        const emailInput = document.getElementById('term-email') as HTMLInputElement;
+        const messageInput = document.getElementById('term-message') as HTMLTextAreaElement;
+        
+        const data = {
+          name: nameInput.value,
+          email: emailInput.value,
+          message: messageInput.value
+        };
+
+        if (window.pushToast) {
+          window.pushToast('[SYS]: Transmission sequence initiated...', 'ok');
+        }
+
+        try {
+          const response = await fetch('/sendmail.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            form.reset();
+            if (window.pushToast) {
+              window.pushToast('[SYS]: Message delivered successfully.', 'ok');
+            }
+          } else {
+            if (window.pushToast) {
+              window.pushToast(`[ERR]: ${result.message || 'Delivery failed.'}`, 'err');
+            }
+          }
+        } catch (error) {
+          if (window.pushToast) {
+            window.pushToast('[ERR]: Network error. Cannot reach mail server.', 'err');
+          }
+        }
+      });
+    }
+  });
+</script>
 
 <style>
   .contact-terminal {
