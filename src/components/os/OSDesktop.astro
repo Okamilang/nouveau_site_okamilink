@@ -395,9 +395,9 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
     if (osEnv) {
       const savedWallpaper = localStorage.getItem('os-wallpaper');
       if (savedWallpaper) {
-        osEnv.style.backgroundImage = `linear-gradient(rgba(5, 5, 10, 0.7), rgba(5, 5, 10, 0.85)), url('${savedWallpaper}')`;
+        osEnv.style.backgroundImage = `linear-gradient(rgba(5, 5, 10, 0.2), rgba(5, 5, 10, 0.4)), url('${savedWallpaper}')`;
       } else {
-        osEnv.style.backgroundImage = `linear-gradient(rgba(5, 5, 10, 0.7), rgba(5, 5, 10, 0.85)), url('/os-backgrounds/fond1.png')`;
+        osEnv.style.backgroundImage = `linear-gradient(rgba(5, 5, 10, 0.2), rgba(5, 5, 10, 0.4)), url('/os-backgrounds/fond1.png')`;
       }
     }
 
@@ -406,7 +406,7 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
       btn.addEventListener('click', () => {
         const bgUrl = btn.getAttribute('data-bg');
         if (bgUrl && osEnv) {
-          osEnv.style.backgroundImage = `linear-gradient(rgba(5, 5, 10, 0.7), rgba(5, 5, 10, 0.85)), url('${bgUrl}')`;
+          osEnv.style.backgroundImage = `linear-gradient(rgba(5, 5, 10, 0.2), rgba(5, 5, 10, 0.4)), url('${bgUrl}')`;
           localStorage.setItem('os-wallpaper', bgUrl);
         }
       });
@@ -586,7 +586,7 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(rgba(5, 5, 10, 0.7), rgba(5, 5, 10, 0.85)), url('/os-backgrounds/fond1.png') center/cover no-repeat;
+    background: linear-gradient(rgba(5, 5, 10, 0.2), rgba(5, 5, 10, 0.4)), url('/os-backgrounds/fond1.png') center/cover no-repeat;
     z-index: 8000;
   }
 
