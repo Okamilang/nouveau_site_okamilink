@@ -57,8 +57,8 @@
           message: messageInput.value
         };
 
-        if (window.pushToast) {
-          window.pushToast('[SYS]: Transmission sequence initiated...', 'ok');
+        if ((window as any).pushToast) {
+          (window as any).pushToast('[SYS]: Transmission sequence initiated...', 'ok');
         }
 
         try {
@@ -74,17 +74,17 @@
 
           if (response.ok) {
             form.reset();
-            if (window.pushToast) {
-              window.pushToast('[SYS]: Message delivered successfully.', 'ok');
+            if ((window as any).pushToast) {
+              (window as any).pushToast('[SYS]: Message delivered successfully.', 'ok');
             }
           } else {
-            if (window.pushToast) {
-              window.pushToast(`[ERR]: ${result.message || 'Delivery failed.'}`, 'err');
+            if ((window as any).pushToast) {
+              (window as any).pushToast(`[ERR]: ${result.message || 'Delivery failed.'}`, 'err');
             }
           }
         } catch (error) {
-          if (window.pushToast) {
-            window.pushToast('[ERR]: Network error. Cannot reach mail server.', 'err');
+          if ((window as any).pushToast) {
+            (window as any).pushToast('[ERR]: Network error. Cannot reach mail server.', 'err');
           }
         }
       });
