@@ -29,19 +29,22 @@ html[data-experience="console"] {
   /* Typographie */
   --font-mono: 'Fira Code', 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   
-  /* Couleurs Cyber/Data */
-  --data-tech: oklch(0.65 0.18 250); /* Bleu néon / Cyan sombre */
-  --data-design: oklch(0.70 0.18 300); /* Violet saturé */
-  --data-action: oklch(0.85 0.20 150); /* Vert terminal brillant */
+  /* Couleurs Cyber/Data HUD */
+  --cyber-cyan: #00f3ff;
+  --cyber-magenta: #ff00ea;
   
-  --terminal-bg: oklch(0.12 0.03 260 / 0.85);
-  --terminal-text: var(--data-action);
-  --neon-line: 0 0 10px color-mix(in oklch, var(--data-action) 50%, transparent);
+  --data-tech: var(--cyber-cyan);
+  --data-design: var(--cyber-magenta);
+  --data-action: #00ff66; /* Vert terminal brillant */
   
-  /* Surcharges du thème vitrine pour un look plus brut */
-  --holographic-gradient: linear-gradient(135deg, var(--data-tech), var(--data-design));
-  --bg-surface: oklch(0.15 0.03 260);
-  --bg-surface-glass: oklch(0.15 0.03 260 / 0.75);
+  --terminal-bg: rgba(5, 8, 12, 0.95);
+  --terminal-text: var(--cyber-cyan);
+  --neon-line: 0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px rgba(0, 243, 255, 0.3);
+  
+  /* Surcharges du thème vitrine pour un look cyberpunk brut */
+  --holographic-gradient: linear-gradient(135deg, var(--cyber-cyan), var(--cyber-magenta));
+  --bg-surface: rgba(10, 12, 16, 0.95);
+  --bg-surface-glass: rgba(10, 12, 16, 0.85);
 }
 
 /* Utilitaires de visibilité dual-mode */
@@ -162,7 +165,7 @@ ul {
 .glow-orb {
   position: absolute;
   border-radius: 50%;
-  animation: smoke-drift 7s ease-in-out infinite alternate, shape-morph 5s ease-in-out infinite alternate;
+  animation: smoke-drift 10s ease-in-out infinite alternate;
   opacity: 0.5;
   z-index: -1;
   pointer-events: none;
@@ -170,16 +173,9 @@ ul {
 
 @keyframes smoke-drift {
   0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  33% { transform: translate(15%, -15%) scale(1.2) rotate(15deg); }
-  66% { transform: translate(-10%, 20%) scale(0.8) rotate(-15deg); }
-  100% { transform: translate(-15%, -10%) scale(1.1) rotate(5deg); }
-}
-
-@keyframes shape-morph {
-  0% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
-  33% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; }
-  66% { border-radius: 40% 60% 30% 70% / 60% 40% 50% 40%; }
-  100% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+  33% { transform: translate(15%, -15%) scale(1.1) rotate(15deg); }
+  66% { transform: translate(-10%, 20%) scale(0.9) rotate(-15deg); }
+  100% { transform: translate(-15%, -10%) scale(1.05) rotate(5deg); }
 }
 
 @keyframes holographic-shift {

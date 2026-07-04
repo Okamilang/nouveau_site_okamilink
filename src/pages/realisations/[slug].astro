@@ -5,7 +5,8 @@ import { Image } from 'astro:assets';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
-  return projects.map(project => ({
+  const websiteProjects = projects.filter(p => p.data.category === 'website');
+  return websiteProjects.map(project => ({
     params: { slug: project.slug },
     props: { project },
   }));

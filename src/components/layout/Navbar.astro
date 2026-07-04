@@ -16,6 +16,7 @@
         <span class="mode-icon vitrine-icon">✨</span>
         <span class="mode-icon console-icon">>_</span>
       </button>
+      <button id="debug-reset-btn" class="nav-link logout-btn" title="Réinitialisation complète (Debug)" aria-label="Debug Reset">🗑️</button>
       <button id="logout-btn" class="nav-link logout-btn" title="Verrouiller le site" aria-label="Déconnexion">🔒</button>
     </nav>
   </div>
@@ -30,6 +31,21 @@
       logoutBtn.addEventListener('click', () => {
         localStorage.removeItem('okamilink_auth');
         window.location.href = '/';
+      });
+    }
+
+    // Bouton de Debug / Réinitialisation
+    const debugBtn = document.getElementById('debug-reset-btn');
+    if (debugBtn) {
+      debugBtn.addEventListener('click', () => {
+        if(confirm('Voulez-vous vraiment réinitialiser totalement le site (vider le cache, localStorage, etc.) ?')) {
+          localStorage.clear();
+          sessionStorage.clear();
+          document.cookie.split(";").forEach((c) => {
+            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+          });
+          window.location.href = '/';
+        }
       });
     }
 

@@ -4,8 +4,9 @@ import BentoProjectCard from '../../components/ui/BentoProjectCard.astro';
 import { getCollection } from 'astro:content';
 
 const allProjects = await getCollection('projects');
-// Tri optionnel par date, etc.
-const sortedProjects = allProjects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+// On ne garde que les sites web pour le portfolio vitrine (les programmes restent exclusifs à l'OS)
+const websiteProjects = allProjects.filter(p => p.data.category === 'website');
+const sortedProjects = websiteProjects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
 <BaseLayout title="Réalisations - Okamilink">

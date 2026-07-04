@@ -4,7 +4,7 @@
 <div class="taskbar">
   <button id="start-button" class="start-button">
     <span class="start-icon">🐺</span>
-    Start
+    OKAMILINK
   </button>
   
   <div class="taskbar-windows" id="taskbar-windows">
@@ -34,13 +34,14 @@
 <style>
   .taskbar {
     position: absolute;
-    bottom: 0;
+    top: 0;
     left: 0;
     width: 100%;
-    height: 48px;
-    background: rgba(10, 12, 16, 0.85);
+    height: 38px;
+    background: rgba(5, 8, 12, 0.95);
     backdrop-filter: blur(15px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--cyber-cyan);
+    box-shadow: 0 2px 15px rgba(0, 243, 255, 0.2);
     display: flex;
     align-items: center;
     padding: 0 10px;
@@ -49,31 +50,33 @@
   }
 
   .start-button {
-    height: 36px;
-    padding: 0 15px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 6px;
-    color: white;
-    font-family: var(--font-sans);
-    font-weight: 600;
+    height: 100%;
+    padding: 0 20px;
+    background: transparent;
+    border: none;
+    border-right: 1px solid rgba(0, 243, 255, 0.3);
+    color: var(--cyber-cyan);
+    font-family: var(--font-mono);
+    font-weight: 700;
     display: flex;
     align-items: center;
     gap: 8px;
     cursor: pointer;
     transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 2px;
   }
 
   .start-button:hover {
-    background: rgba(255,255,255,0.2);
-    box-shadow: 0 0 15px var(--data-action);
-    border-color: var(--data-action);
+    background: rgba(0, 243, 255, 0.15);
+    color: white;
+    text-shadow: 0 0 8px var(--cyber-cyan);
   }
 
   .taskbar-windows {
     flex-grow: 1;
     display: flex;
-    gap: 5px;
+    gap: 8px;
     margin-left: 15px;
     overflow-x: auto;
     scrollbar-width: none;
@@ -85,43 +88,49 @@
 
   /* Styles pour les items injectés en JS */
   :global(.taskbar-item) {
-    height: 36px;
+    height: 28px;
     padding: 0 15px;
     background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 6px;
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    border-radius: 4px;
     color: white;
     display: flex;
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
     max-width: 150px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    transition: all 0.2s;
   }
 
   :global(.taskbar-item:hover) {
-    background: rgba(255,255,255,0.1);
+    background: rgba(0, 243, 255, 0.15);
+    border-color: var(--cyber-cyan);
   }
 
   :global(.taskbar-item.active) {
-    background: rgba(255,255,255,0.15);
-    border-bottom: 2px solid var(--data-action);
+    background: rgba(0, 243, 255, 0.2);
+    border-color: var(--cyber-cyan);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
   }
 
   .taskbar-system {
     display: flex;
     align-items: center;
     padding-left: 15px;
-    border-left: 1px solid rgba(255,255,255,0.1);
+    border-left: 1px solid rgba(0, 243, 255, 0.3);
     height: 60%;
   }
 
   .os-clock {
     font-family: var(--font-mono);
-    font-size: 0.9rem;
-    color: var(--text-main);
+    font-size: 1rem;
+    color: var(--cyber-cyan);
+    text-shadow: 0 0 8px var(--cyber-cyan);
+    font-weight: bold;
   }
 </style>

@@ -32,62 +32,7 @@ import GlowingLogo from '../common/GlowingLogo.astro';
 </section>
 
 <script>
-  document.addEventListener('astro:page-load', () => {
-    const orbContainer = document.getElementById('hero-orbs');
-    if (!orbContainer) return;
-    
-    // Si mobile, on ne lance pas la physique complexe
-    if (window.matchMedia('(pointer: coarse)').matches) return;
-    
-    const orbs = Array.from(orbContainer.querySelectorAll('.glow-orb')) as HTMLElement[];
-    
-    let targetX = 0;
-    let targetY = 0;
-    
-    window.addEventListener('mousemove', (e) => {
-      targetX = e.clientX - window.innerWidth / 2;
-      targetY = e.clientY - window.innerHeight / 2;
-    });
-
-    // Stocker l'état physique de chaque orbe
-    const orbsData = orbs.map(orb => ({
-      el: orb,
-      x: 0, y: 0, // Position actuelle
-      vx: 0, vy: 0, // Vélocité
-      speed: parseFloat(orb.getAttribute('data-speed') || '0.05')
-    }));
-
-    const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor;
-
-    const animateOrbs = () => {
-      orbsData.forEach(data => {
-        // Cible pour cette orbe spécifique
-        const tx = targetX * data.speed;
-        const ty = targetY * data.speed;
-
-        // Calcul de la vélocité pour l'effet de déformation
-        data.vx = tx - data.x;
-        data.vy = ty - data.y;
-
-        // Lerp position
-        data.x = lerp(data.x, tx, 0.05);
-        data.y = lerp(data.y, ty, 0.05);
-
-        // Déformation basée sur la vélocité (effet fluide)
-        const velocity = Math.sqrt(data.vx * data.vx + data.vy * data.vy);
-        const scaleX = 1 + Math.min(velocity * 0.002, 0.2); // S'étire dans le sens du mouvement
-        const scaleY = 1 - Math.min(velocity * 0.001, 0.1); // Se compresse perpendiculairement
-        
-        // Calcul de l'angle de rotation pour aligner l'étirement
-        const angle = Math.atan2(data.vy, data.vx);
-
-        data.el.style.transform = `translate3d(${data.x}px, ${data.y}px, 0) rotate(${angle}rad) scale(${scaleX}, ${scaleY})`;
-      });
-      requestAnimationFrame(animateOrbs);
-    };
-
-    animateOrbs();
-  });
+  // Script allégé : les orbes sont maintenant gérées 100% en CSS pour des performances optimales
 </script>
 
 <style>

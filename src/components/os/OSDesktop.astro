@@ -10,61 +10,77 @@ import ContactTerminal from '../common/ContactTerminal.astro';
 
 import { getCollection } from 'astro:content';
 const projects = await getCollection('projects');
+const renderedProjects = await Promise.all(projects.map(async (p, i) => {
+  const { Content } = await p.render();
+  return { p, Content, i };
+}));
 ---
 
 <div id="os-environment" class="os-environment" aria-hidden="true">
   <BootSequence />
   
   <div class="desktop-area" id="desktop-area">
-    <!-- Desktop Icons -->
-    <div class="desktop-icons" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
-      <div class="desktop-icon" data-target="win-about" style="position: absolute; top: 20px; left: 20px; pointer-events: auto;">
-        <span class="icon-emoji">👤</span>
-        <span class="icon-label">About_Me.exe</span>
+    <!-- Dock (Bottom) -->
+    <div class="os-dock">
+      <div class="desktop-icon dock-item" data-target="win-about">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="icon-label">A_Propos</span>
       </div>
-      <div class="desktop-icon" data-target="win-skills" style="position: absolute; top: 120px; left: 20px; pointer-events: auto;">
-        <span class="icon-emoji">⚙️</span>
-        <span class="icon-label">Skills.exe</span>
+      <div class="desktop-icon dock-item" data-target="win-skills">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></svg>
+        <span class="icon-label">Competences</span>
       </div>
-      <div class="desktop-icon" data-target="win-philo" style="position: absolute; top: 220px; left: 20px; pointer-events: auto;">
-        <span class="icon-emoji">🧠</span>
-        <span class="icon-label">Philosophy.txt</span>
+      <div class="desktop-icon dock-item" data-target="win-philo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>
+        <span class="icon-label">Philosophie</span>
       </div>
-      <div class="desktop-icon" data-target="win-projects" style="position: absolute; top: 320px; left: 20px; pointer-events: auto;">
-        <span class="icon-emoji">📁</span>
-        <span class="icon-label">Projets/</span>
+      <div class="desktop-icon dock-item" data-target="win-projects">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+        <span class="icon-label">Projets</span>
       </div>
-      <div class="desktop-icon" data-target="win-terminal" style="position: absolute; top: 420px; left: 20px; pointer-events: auto;">
-        <span class="icon-emoji">>_</span>
-        <span class="icon-label">Contact.sh</span>
+      <div class="desktop-icon dock-item" data-target="win-terminal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></svg>
+        <span class="icon-label">Terminal</span>
       </div>
-      <div class="desktop-icon" data-target="win-wallpaper" style="position: absolute; top: 20px; left: 120px; pointer-events: auto;">
-        <span class="icon-emoji">🖼️</span>
-        <span class="icon-label">Display.exe</span>
+      <div class="desktop-icon dock-item" data-target="win-wallpaper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
+        <span class="icon-label">Affichage</span>
       </div>
-      <div class="desktop-icon" id="btn-exit-os" style="position: absolute; top: 120px; left: 120px; pointer-events: auto;">
-        <span class="icon-emoji">🚪</span>
-        <span class="icon-label">Exit_OS.exe</span>
+      <div class="desktop-icon dock-item" id="btn-exit-os">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud" style="color: var(--cyber-magenta);"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77.04"/></svg>
+        <span class="icon-label">Quitter</span>
       </div>
     </div>
 
     <!-- Windows Container -->
     <div id="windows-container">
-      <WindowTemplate id="win-projects" title="Projets/" icon="📁" x="10%" y="20%" width="600px" height="400px">
+      <WindowTemplate id="win-projects" title="Projets/" icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/></svg>" x="10%" y="20%" width="600px" height="400px">
         <div class="folder-content" style="position: relative; width: 100%; height: 100%;">
-          {projects.map((p, index) => {
-            // Calcul basique pour placer les icônes sur une grille absolue (ex: 100px par icône)
+          <div class="desktop-icon" data-target="win-projects-websites" style="position: absolute; left: 20px; top: 20px; pointer-events: auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+            <span class="icon-label">Sites_Web/</span>
+          </div>
+          <div class="desktop-icon" data-target="win-projects-programs" style="position: absolute; left: 160px; top: 20px; pointer-events: auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            <span class="icon-label">Programmes/</span>
+          </div>
+        </div>
+      </WindowTemplate>
+
+      <WindowTemplate id="win-projects-websites" title="Sites_Web/" icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/></svg>" x="15%" y="25%" width="600px" height="400px">
+        <div class="folder-content" style="position: relative; width: 100%; height: 100%;">
+          {projects.filter(p => p.data.category === 'website').map((p, index) => {
             const col = index % 5;
             const row = Math.floor(index / 5);
-            const left = 20 + col * 100;
-            const top = 20 + row * 100;
+            const left = 20 + col * 140;
+            const top = 20 + row * 120;
             
             return (
               <div class="desktop-icon" data-target={`win-proj-${p.slug}`} style={`position: absolute; left: ${left}px; top: ${top}px; pointer-events: auto;`}>
                 {p.data.osIcon ? (
                   <img src={p.data.osIcon} alt="" draggable="false" style="width: 2.5rem; height: 2.5rem; object-fit: contain; user-drag: none; -webkit-user-drag: none;" />
                 ) : (
-                  <span class="icon-emoji">📄</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                 )}
                 <span class="icon-label">{p.data.title}.exe</span>
               </div>
@@ -73,74 +89,99 @@ const projects = await getCollection('projects');
         </div>
       </WindowTemplate>
 
-      {projects.map(async (p, i) => {
-        const { Content } = await p.render();
-        return (
-          <>
-            <WindowTemplate id={`win-proj-${p.slug}`} title={`${p.data.title}.exe`} icon={p.data.osIcon ? `<img src="${p.data.osIcon}" style="width:1.2em; height:1.2em; vertical-align:middle; object-fit:contain;"/>` : '📄'} x={`${15 + i*5}%`} y={`${25 + i*5}%`} width="800px" height="600px">
-              <div class="os-content-wrapper" style="padding: 30px;">
-                <h1 style="margin-bottom: 1rem; color: var(--text-main); font-size: 2rem;">{p.data.title}</h1>
-                <p style="color: var(--text-muted); margin-bottom: 2rem;">{p.data.description}</p>
-                <div class="project-markdown">
-                  <Content />
+      <WindowTemplate id="win-projects-programs" title="Programmes/" icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/><path d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/></svg>" x="20%" y="30%" width="600px" height="400px">
+        <div class="folder-content" style="position: relative; width: 100%; height: 100%;">
+          {projects.filter(p => p.data.category === 'program').length === 0 ? (
+            <div style="position: absolute; top: 20px; left: 20px; color: var(--cyber-cyan); font-family: var(--font-mono);">
+              > Aucun programme trouvé dans ce répertoire.
+            </div>
+          ) : (
+            projects.filter(p => p.data.category === 'program').map((p, index) => {
+              const col = index % 5;
+              const row = Math.floor(index / 5);
+              const left = 20 + col * 140;
+              const top = 20 + row * 120;
+              
+              return (
+                <div class="desktop-icon" data-target={`win-proj-${p.slug}`} style={`position: absolute; left: ${left}px; top: ${top}px; pointer-events: auto;`}>
+                  {p.data.osIcon ? (
+                    <img src={p.data.osIcon} alt="" draggable="false" style="width: 2.5rem; height: 2.5rem; object-fit: contain; user-drag: none; -webkit-user-drag: none;" />
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  )}
+                  <span class="icon-label">{p.data.title}.exe</span>
                 </div>
+              );
+            })
+          )}
+        </div>
+      </WindowTemplate>
+
+      {renderedProjects.map(({ p, Content, i }) => (
+        <>
+          <WindowTemplate id={`win-proj-${p.slug}`} title={`${p.data.title}.exe`} icon={p.data.osIcon ? `<img src="${p.data.osIcon}" style="width:1.2em; height:1.2em; vertical-align:middle; object-fit:contain;"/>` : "<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z'/><polyline points='14 2 14 8 20 8'/></svg>"} x={`${15 + i*5}%`} y={`${25 + i*5}%`} width="800px" height="600px">
+            <div class="os-content-wrapper" style="padding: 30px;">
+              <h1 style="margin-bottom: 1rem; color: var(--text-main); font-size: 2rem;">{p.data.title}</h1>
+              <p style="color: var(--text-muted); margin-bottom: 2rem;">{p.data.description}</p>
+              <div class="project-markdown">
+                <Content />
+              </div>
+            </div>
+          </WindowTemplate>
+
+          {p.data.url && p.data.category === 'website' && (
+            <WindowTemplate 
+              id={`win-mobile-${p.slug}`} 
+              title={`Mobile - ${p.data.title}`} 
+              icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><rect width='14' height='20' x='5' y='2' rx='2' ry='2'/><path d='M12 18h.01'/></svg>" 
+              x={`${40 + i*5}%`} 
+              y={`${10 + i*5}%`} 
+              width="395px" 
+              height="800px"
+            >
+              <div style="width: calc(100% + 40px); height: calc(100% + 40px); margin: -20px; background: black; position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 25px; background: black; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 10;"></div>
+                <iframe src={p.data.url} title={`Mobile ${p.data.title}`} style="width: 100%; height: 100%; border: none;"></iframe>
               </div>
             </WindowTemplate>
+          )}
+        </>
+      ))}
 
-            {p.data.url && (
-              <WindowTemplate 
-                id={`win-mobile-${p.slug}`} 
-                title={`Mobile - ${p.data.title}`} 
-                icon="📱" 
-                x={`${40 + i*5}%`} 
-                y={`${10 + i*5}%`} 
-                width="395px" 
-                height="800px"
-              >
-                <div style="width: calc(100% + 40px); height: calc(100% + 40px); margin: -20px; background: black; position: relative; overflow: hidden;">
-                  <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 25px; background: black; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 10;"></div>
-                  <iframe src={p.data.url} title={`Mobile ${p.data.title}`} style="width: 100%; height: 100%; border: none;"></iframe>
-                </div>
-              </WindowTemplate>
-            )}
-          </>
-        );
-      })}
-
-      <WindowTemplate id="win-about" title="About_Me.exe" icon="👤" x="5%" y="5%" width="800px" height="500px">
+      <WindowTemplate id="win-about" title="A_Propos.exe" icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>" x="5%" y="5%" width="800px" height="500px">
         <div class="os-content-wrapper">
           <Hero />
         </div>
       </WindowTemplate>
 
-      <WindowTemplate id="win-skills" title="Skills_Monitor.exe" icon="⚙️" x="15%" y="15%" width="900px" height="600px">
+      <WindowTemplate id="win-skills" title="Competences.exe" icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><rect width='16' height='16' x='4' y='4' rx='2'/><rect width='6' height='6' x='9' y='9' rx='1'/><path d='M15 2v2'/><path d='M15 20v2'/><path d='M2 15h2'/><path d='M2 9h2'/><path d='M20 15h2'/><path d='M20 9h2'/><path d='M9 2v2'/><path d='M9 20v2'/></svg>" x="15%" y="15%" width="900px" height="600px">
         <div class="os-content-wrapper">
           <ExpertiseGrid />
         </div>
       </WindowTemplate>
 
-      <WindowTemplate id="win-philo" title="Philosophy.txt" icon="🧠" x="25%" y="10%" width="700px" height="600px">
+      <WindowTemplate id="win-philo" title="Philosophie.txt" icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z'/><path d='M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z'/></svg>" x="25%" y="10%" width="700px" height="600px">
         <div class="os-content-wrapper" style="padding: 20px;">
           <Philosophy />
         </div>
       </WindowTemplate>
 
-      <WindowTemplate id="win-terminal" title="Contact.sh" icon=">_" x="30%" y="30%" width="650px" height="450px">
+      <WindowTemplate id="win-terminal" title="Contact.sh" icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='4 17 10 11 4 5'/><line x1='12' x2='20' y1='19' y2='19'/></svg>" x="30%" y="30%" width="650px" height="450px">
         <div class="terminal-content">
           <ContactTerminal />
         </div>
       </WindowTemplate>
 
-      <WindowTemplate id="win-wallpaper" title="Display_Settings.exe" icon="🖼️" x="20%" y="20%" width="650px" height="450px">
+      <WindowTemplate id="win-wallpaper" title="Affichage.exe" icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><rect width='20' height='14' x='2' y='3' rx='2'/><line x1='8' x2='16' y1='21' y2='21'/><line x1='12' x2='12' y1='17' y2='21'/></svg>" x="20%" y="20%" width="650px" height="450px">
         <div class="os-content-wrapper" style="padding: 25px;">
-          <h2 style="color: var(--text-main); font-family: var(--font-mono); margin-bottom: 20px; font-size: 1.2rem;">> Select_Background.sh</h2>
+          <h2 style="color: var(--text-main); font-family: var(--font-mono); margin-bottom: 20px; font-size: 1.2rem;">> Choisir_Fond_Ecran.sh</h2>
           <div class="wallpaper-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;">
             {[
-              { id: 'wp1', name: 'Cyber Core', url: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=90&w=3840&h=2160&auto=format&fit=crop' },
-              { id: 'wp2', name: 'Neon Fluid', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=90&w=3840&h=2160&auto=format&fit=crop' },
-              { id: 'wp3', name: 'Deep Space', url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=90&w=3840&h=2160&auto=format&fit=crop' },
-              { id: 'wp4', name: 'Dark Grid', url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=90&w=3840&h=2160&auto=format&fit=crop' },
-              { id: 'wp5', name: 'Synthwave', url: 'https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?q=90&w=3840&h=2160&auto=format&fit=crop' }
+              { id: 'wp1', name: 'Neon City', url: 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=90&w=3840&h=2160&auto=format&fit=crop' },
+              { id: 'wp2', name: 'Cyber Circuit', url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=90&w=3840&h=2160&auto=format&fit=crop' },
+              { id: 'wp3', name: 'Data Matrix', url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=90&w=3840&h=2160&auto=format&fit=crop' },
+              { id: 'wp4', name: 'Abstract HUD', url: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=90&w=3840&h=2160&auto=format&fit=crop' },
+              { id: 'wp5', name: 'Neon Grid', url: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=90&w=3840&h=2160&auto=format&fit=crop' }
             ].map(wp => (
               <div 
                 class="wallpaper-btn" 
@@ -162,6 +203,11 @@ const projects = await getCollection('projects');
   </div>
 
   <Taskbar />
+
+  <!-- Context Menu -->
+  <div id="os-context-menu" class="context-menu" style="display: none;">
+    <ul id="context-menu-list"></ul>
+  </div>
 </div>
 
 <script>
@@ -240,17 +286,7 @@ const projects = await getCollection('projects');
         icon.style.position = 'relative';
       }
 
-      icon.addEventListener('mousedown', (e: MouseEvent) => {
-        isDraggingIcon = true;
-        hasMoved = false;
-        startX = e.clientX;
-        startY = e.clientY;
-        initialX = currentX;
-        initialY = currentY;
-        icon.style.zIndex = '50';
-      });
-
-      window.addEventListener('mousemove', (e: MouseEvent) => {
+      const onMouseMove = (e: MouseEvent) => {
         if (!isDraggingIcon) return;
         e.preventDefault();
         
@@ -264,26 +300,51 @@ const projects = await getCollection('projects');
         currentX = initialX + dx;
         currentY = initialY + dy;
         icon.style.transform = `translate(${currentX}px, ${currentY}px)`;
-      });
+      };
 
-      window.addEventListener('mouseup', () => {
+      const onMouseUp = () => {
         if (isDraggingIcon) {
           isDraggingIcon = false;
           icon.style.zIndex = '';
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
         }
+      };
+
+      icon.addEventListener('mousedown', (e: MouseEvent) => {
+        // Ne pas drag si l'icône est dans le dock (on vérifie s'il a la classe dock-item)
+        if (icon.classList.contains('dock-item')) return;
+
+        isDraggingIcon = true;
+        hasMoved = false;
+        startX = e.clientX;
+        startY = e.clientY;
+        initialX = currentX;
+        initialY = currentY;
+        icon.style.zIndex = '50';
+        
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
       });
 
       icon.addEventListener('click', (e) => {
         if (hasMoved) {
           e.preventDefault();
           e.stopPropagation();
+        } else if (icon.classList.contains('dock-item')) {
+          // Les éléments du dock s'ouvrent en un seul clic
+          const target = icon.getAttribute('data-target');
+          if (target) toggleWindow(target);
         }
       });
 
       icon.addEventListener('dblclick', (e) => {
         if (hasMoved) return;
-        const target = icon.getAttribute('data-target');
-        if (target) toggleWindow(target);
+        // Le double clic reste pour les éventuelles icônes de bureau, mais le dock l'ignore
+        if (!icon.classList.contains('dock-item')) {
+          const target = icon.getAttribute('data-target');
+          if (target) toggleWindow(target);
+        }
       });
       
       // Fallback for touch devices
@@ -303,8 +364,8 @@ const projects = await getCollection('projects');
         localStorage.setItem('okamilink_experience', 'vitrine');
       };
       
-      // Changed to dblclick to match other icons
-      exitBtn.addEventListener('dblclick', exitOS);
+      // Le bouton quitter s'active au clic simple dans le dock
+      exitBtn.addEventListener('click', exitOS);
       
       // Use touchstart with a small delay logic to simulate double tap, or just keep touchstart for mobile simplicity.
       // But to be consistent, we'll listen for a double-tap pattern.
@@ -334,7 +395,9 @@ const projects = await getCollection('projects');
     if (osEnv) {
       const savedWallpaper = localStorage.getItem('os-wallpaper');
       if (savedWallpaper) {
-        osEnv.style.backgroundImage = `url('${savedWallpaper}')`;
+        osEnv.style.backgroundImage = `linear-gradient(rgba(5, 5, 10, 0.7), rgba(5, 5, 10, 0.85)), url('${savedWallpaper}')`;
+      } else {
+        osEnv.style.backgroundImage = `linear-gradient(rgba(5, 5, 10, 0.7), rgba(5, 5, 10, 0.85)), url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=90&w=3840&h=2160&auto=format&fit=crop')`;
       }
     }
 
@@ -343,7 +406,7 @@ const projects = await getCollection('projects');
       btn.addEventListener('click', () => {
         const bgUrl = btn.getAttribute('data-bg');
         if (bgUrl && osEnv) {
-          osEnv.style.backgroundImage = `url('${bgUrl}')`;
+          osEnv.style.backgroundImage = `linear-gradient(rgba(5, 5, 10, 0.7), rgba(5, 5, 10, 0.85)), url('${bgUrl}')`;
           localStorage.setItem('os-wallpaper', bgUrl);
         }
       });
@@ -387,6 +450,23 @@ const projects = await getCollection('projects');
       let isDragging = false;
       let startX = 0, startY = 0, initialX = 0, initialY = 0;
 
+      const onWinMouseMove = (e: MouseEvent) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        win.style.left = `${initialX + dx}px`;
+        win.style.top = `${initialY + dy}px`;
+      };
+
+      const onWinMouseUp = () => {
+        if (isDragging) {
+          isDragging = false;
+          document.body.classList.remove('window-is-dragging');
+          window.removeEventListener('mousemove', onWinMouseMove);
+          window.removeEventListener('mouseup', onWinMouseUp);
+        }
+      };
+
       header?.addEventListener('mousedown', (e: MouseEvent) => {
         if (win.classList.contains('maximized')) return;
         isDragging = true;
@@ -396,22 +476,98 @@ const projects = await getCollection('projects');
         initialY = win.offsetTop;
         bringToFront(win);
         document.body.classList.add('window-is-dragging');
+        
+        window.addEventListener('mousemove', onWinMouseMove);
+        window.addEventListener('mouseup', onWinMouseUp);
       });
+    });
 
-      window.addEventListener('mousemove', (e: MouseEvent) => {
-        if (!isDragging) return;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        win.style.left = `${initialX + dx}px`;
-        win.style.top = `${initialY + dy}px`;
-      });
+    // Context Menu Logic
+    const contextMenu = document.getElementById('os-context-menu');
+    const contextMenuList = document.getElementById('context-menu-list');
 
-      window.addEventListener('mouseup', () => {
-        if (isDragging) {
-          isDragging = false;
-          document.body.classList.remove('window-is-dragging');
-        }
-      });
+    const hideContextMenu = () => {
+      if (contextMenu) contextMenu.style.display = 'none';
+    };
+
+    document.addEventListener('click', hideContextMenu);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') hideContextMenu();
+    });
+
+    desktopArea?.addEventListener('contextmenu', (e: MouseEvent) => {
+      e.preventDefault();
+      if (!contextMenu || !contextMenuList) return;
+
+      const target = e.target as HTMLElement;
+      const icon = target.closest('.desktop-icon');
+      const windowHeader = target.closest('.window-header');
+      
+      contextMenuList.innerHTML = '';
+
+      if (icon) {
+        const title = icon.querySelector('.icon-label')?.textContent || 'App';
+        contextMenuList.innerHTML = `
+          <li id="cm-open">Ouvrir</li>
+          <div class="separator"></div>
+          <li style="opacity: 0.5; cursor: default;">Propriétés de ${title}</li>
+        `;
+        document.getElementById('cm-open')?.addEventListener('click', () => {
+          const targetId = icon.getAttribute('data-target');
+          if (targetId) {
+            toggleWindow(targetId);
+          } else if (icon.id === 'btn-exit-os') {
+            const exitBtn = document.getElementById('btn-exit-os');
+            if (exitBtn) exitBtn.dispatchEvent(new MouseEvent('dblclick'));
+          }
+        });
+      } else if (windowHeader) {
+        const win = windowHeader.closest('.os-window') as HTMLElement;
+        contextMenuList.innerHTML = `
+          <li id="cm-close">Fermer la fenêtre</li>
+          <li id="cm-minimize">Réduire</li>
+        `;
+        document.getElementById('cm-close')?.addEventListener('click', () => {
+          win.querySelector('.win-btn.close')?.dispatchEvent(new MouseEvent('click'));
+        });
+        document.getElementById('cm-minimize')?.addEventListener('click', () => {
+          win.querySelector('.win-btn.minimize')?.dispatchEvent(new MouseEvent('click'));
+        });
+      } else {
+        // Empty desktop
+        contextMenuList.innerHTML = `
+          <li id="cm-refresh">Actualiser</li>
+          <div class="separator"></div>
+          <li id="cm-wallpaper">Fonds d'écran</li>
+          <div class="separator"></div>
+          <li id="cm-quit">Quitter OS</li>
+        `;
+        document.getElementById('cm-refresh')?.addEventListener('click', () => {
+          desktopArea.style.opacity = '0';
+          setTimeout(() => { desktopArea.style.opacity = '1'; }, 200);
+        });
+        document.getElementById('cm-wallpaper')?.addEventListener('click', () => {
+          toggleWindow('win-wallpaper');
+        });
+        document.getElementById('cm-quit')?.addEventListener('click', () => {
+          const exitBtn = document.getElementById('btn-exit-os');
+          if (exitBtn) exitBtn.dispatchEvent(new MouseEvent('dblclick'));
+        });
+      }
+
+      contextMenu.style.display = 'block';
+      
+      // Position calculation to prevent overflow
+      let x = e.clientX;
+      let y = e.clientY;
+      const menuWidth = contextMenu.offsetWidth || 180;
+      const menuHeight = contextMenu.offsetHeight || 150;
+
+      if (x + menuWidth > window.innerWidth) x = window.innerWidth - menuWidth;
+      if (y + menuHeight > window.innerHeight) y = window.innerHeight - menuHeight;
+
+      contextMenu.style.left = `${x}px`;
+      contextMenu.style.top = `${y}px`;
     });
   });
 </script>
@@ -430,33 +586,52 @@ const projects = await getCollection('projects');
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=90&w=3840&h=2160&auto=format&fit=crop') center/cover no-repeat;
+    background: linear-gradient(rgba(5, 5, 10, 0.7), rgba(5, 5, 10, 0.85)), url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=90&w=3840&h=2160&auto=format&fit=crop') center/cover no-repeat;
     z-index: 8000;
   }
 
   /* Rendre l'OS visible uniquement quand l'expérience est console */
-  html[data-experience="console"] .os-environment {
+  :global(html[data-experience="console"]) .os-environment {
     display: block;
   }
 
-  /* Le filtre sombre a été retiré à la demande de l'utilisateur */
-  /* .os-environment::before { ... } */
+  /* Overlay CRT (Scanlines + Vignette) */
+  .os-environment::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 10000;
+    pointer-events: none;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+    background-size: 100% 4px; /* Scanlines */
+    box-shadow: inset 0 0 150px rgba(0,0,0,0.95); /* Vignette sombres aux bords */
+    opacity: 0.6;
+  }
 
   .desktop-area {
     position: absolute;
-    top: 0;
+    top: 38px; /* Taskbar (Menu Bar) en haut */
     left: 0;
     width: 100%;
-    height: calc(100vh - 48px); /* Account for taskbar */
+    height: calc(100vh - 38px);
     padding: 20px;
     overflow: hidden;
   }
 
-  .desktop-icons {
+  .os-dock {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 100px;
+    gap: 10px;
+    padding: 10px 15px;
+    background: rgba(5, 8, 12, 0.7);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 10px rgba(0, 243, 255, 0.1);
+    z-index: 8500;
   }
 
   .desktop-icon {
@@ -469,17 +644,53 @@ const projects = await getCollection('projects');
     padding: 10px;
     border-radius: 8px;
     border: 1px solid transparent;
-    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     user-select: none;
+    position: relative;
+  }
+
+  .dock-item:hover {
+    transform: scale(1.15) translateY(-5px);
+    background: rgba(0, 243, 255, 0.1);
+    border-color: rgba(0, 243, 255, 0.3);
+    box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.2);
+    z-index: 10;
+  }
+
+  .dock-item .icon-label {
+    position: absolute;
+    bottom: -20px;
+    opacity: 0;
+    white-space: nowrap;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    transition: opacity 0.2s;
+    border: 1px solid var(--cyber-cyan);
+    pointer-events: none;
+  }
+
+  .dock-item:hover .icon-label {
+    opacity: 1;
   }
 
   .desktop-icon:hover {
-    background: rgba(255,255,255,0.1);
-    border-color: rgba(255,255,255,0.2);
+    background: rgba(0, 243, 255, 0.1);
+    border-color: var(--cyber-cyan);
+    box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.2);
+    color: var(--cyber-cyan);
   }
 
-  .icon-emoji {
-    font-size: 2.5rem;
+  .desktop-icon:hover .icon-label {
+    text-shadow: 0 0 8px var(--cyber-cyan);
+  }
+
+  .icon-hud {
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--cyber-cyan);
+    filter: drop-shadow(0 0 5px rgba(0, 243, 255, 0.6));
   }
 
   .icon-label {
@@ -552,5 +763,43 @@ const projects = await getCollection('projects');
 
   .project-markdown p {
     margin-bottom: 1rem;
+  }
+
+  /* Context Menu Styles */
+  .context-menu {
+    position: absolute;
+    z-index: 9999;
+    background: rgba(5, 8, 12, 0.95);
+    border: 1px solid var(--cyber-cyan);
+    border-radius: 0;
+    min-width: 180px;
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+    padding: 4px 0;
+    color: var(--cyber-cyan);
+    font-size: 0.9rem;
+    font-family: var(--font-mono);
+  }
+  .context-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .context-menu li {
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .context-menu li:hover {
+    background: rgba(0, 243, 255, 0.2);
+    color: white;
+    padding-left: 20px;
+    box-shadow: inset 2px 0 0 var(--cyber-cyan);
+  }
+  .context-menu .separator {
+    height: 1px;
+    background: rgba(0, 243, 255, 0.3);
+    margin: 4px 0;
+    padding: 0;
+    cursor: default;
   }
 </style>

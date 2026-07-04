@@ -12,6 +12,7 @@ const projectsCollection = defineCollection({
     featured: z.boolean().default(false),
     url: z.string().optional(),
     osIcon: z.string().optional(),
+    category: z.enum(['website', 'program']).default('website'),
   }),
 });
 
