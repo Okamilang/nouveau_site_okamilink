@@ -16,8 +16,27 @@
     
     <div class="cmd-args">
       <div class="cmd-arg">
+        <label for="term-type" class="arg-key">type:</label>
+        <select id="term-type" class="term-input string-val" required>
+          <option value="" disabled selected>"Sélectionnez..."</option>
+          <option value="Entreprise">"Entreprise"</option>
+          <option value="Particulier">"Particulier"</option>
+          <option value="Auto-entrepreneur">"Auto-entrepreneur"</option>
+          <option value="Association">"Association"</option>
+          <option value="Autre">"Autre"</option>
+        </select>
+        <span class="syntax">,</span>
+      </div>
+
+      <div class="cmd-arg">
         <label for="term-name" class="arg-key">name:</label>
         <input type="text" id="term-name" class="term-input string-val" placeholder='"Entrez votre nom"' required />
+        <span class="syntax">,</span>
+      </div>
+      
+      <div class="cmd-arg">
+        <label for="term-phone" class="arg-key">phone:</label>
+        <input type="tel" id="term-phone" class="term-input string-val" placeholder='"Optionnel"' />
         <span class="syntax">,</span>
       </div>
       
@@ -47,14 +66,19 @@
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
+        const typeInput = document.getElementById('term-type') as HTMLSelectElement;
         const nameInput = document.getElementById('term-name') as HTMLInputElement;
+        const phoneInput = document.getElementById('term-phone') as HTMLInputElement;
         const emailInput = document.getElementById('term-email') as HTMLInputElement;
         const messageInput = document.getElementById('term-message') as HTMLTextAreaElement;
         
         const data = {
+          type: typeInput.value,
           name: nameInput.value,
+          phone: phoneInput.value,
           email: emailInput.value,
-          message: messageInput.value
+          message: messageInput.value,
+          source: 'os'
         };
 
         if ((window as any).pushToast) {
@@ -178,6 +202,18 @@
     font-size: 1rem;
     flex-grow: 1;
     resize: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  select.term-input {
+    appearance: none;
+    cursor: pointer;
+  }
+
+  select.term-input option {
+    background: rgba(10, 10, 15, 0.95);
+    color: var(--accent-cyan);
+    font-family: 'Fira Code', monospace;
   }
 
   .string-val {

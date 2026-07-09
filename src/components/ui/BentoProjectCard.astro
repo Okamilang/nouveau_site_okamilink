@@ -10,7 +10,7 @@ const { project } = Astro.props;
 const { title, description, tags, coverImage, featured } = project.data;
 ---
 
-<a href={`/realisations/${project.slug}`} class={`bento-card ${featured ? 'featured' : ''}`}>
+<a href={`/${project.data.category === 'program' ? 'programmes' : 'realisations'}/${project.slug}`} class={`bento-card ${featured ? 'featured' : ''}`}>
   <div class="card-inner">
     {coverImage && (
       <div class="image-wrapper">
@@ -26,7 +26,7 @@ const { title, description, tags, coverImage, featured } = project.data;
       </div>
     )}
     
-    <div class="content">
+    <div class={`content ${coverImage ? 'has-image' : ''}`}>
       <h3 class="title" transition:name={`title-${project.slug}`}>{title}</h3>
       <p class="description">{description}</p>
       
@@ -98,7 +98,10 @@ const { title, description, tags, coverImage, featured } = project.data;
     flex-direction: column;
     flex-grow: 1;
     z-index: 2;
-    margin-top: -3rem; /* Overlap effect */
+  }
+
+  .content.has-image {
+    margin-top: -3rem; /* Overlap effect only when there's an image */
   }
 
   .title {
