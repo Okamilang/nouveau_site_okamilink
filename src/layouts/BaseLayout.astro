@@ -60,6 +60,32 @@ const { title, description = "Okamilink - Agence de développement web premium."
     <TerminalToast />
     <OSDesktop />
     <CustomCursor />
+    
+    <!-- Contact Links Interceptor -->
+    <script>
+      document.addEventListener('astro:page-load', () => {
+        const contactLinks = document.querySelectorAll('a[href="/contact"]');
+        contactLinks.forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Bascule en mode OS si ce n'est pas déjà le cas
+            const currentExp = document.documentElement.getAttribute('data-experience');
+            if (currentExp !== 'console') {
+              document.documentElement.setAttribute('data-experience', 'console');
+              localStorage.setItem('okamilink_experience', 'console');
+              // Déclenche l'animation d'entrée si elle existe dans Navbar.astro
+              window.dispatchEvent(new CustomEvent('experience-changed', { detail: 'console' }));
+            }
+            // Ouvre la fenêtre de contact (Contact.sh)
+            if ((window as any).openOSWindow) {
+              setTimeout(() => {
+                (window as any).openOSWindow('win-terminal');
+              }, 100); // Petit délai pour laisser l'OS s'afficher si on vient de basculer
+            }
+          });
+        });
+      });
+    </script>
   </body>
 </html>
 

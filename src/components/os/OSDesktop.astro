@@ -273,6 +273,8 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
       }
     };
 
+    (window as any).openOSWindow = toggleWindow;
+
     // Desktop & Folder icons drag & double-click logic
     icons.forEach(icon => {
       let isDraggingIcon = false;
