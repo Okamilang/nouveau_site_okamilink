@@ -7,7 +7,6 @@ import NoiseOverlay from '../components/common/NoiseOverlay.astro';
 import ExperienceSelector from '../components/common/ExperienceSelector.astro';
 import OSDesktop from '../components/os/OSDesktop.astro';
 import TerminalToast from '../components/common/TerminalToast.astro';
-import ConstructionGatekeeper from '../components/common/ConstructionGatekeeper.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -46,7 +45,6 @@ const { title, description = "Okamilink - Agence de développement web premium."
     </script>
   </head>
   <body>
-    <ConstructionGatekeeper />
     <ExperienceSelector />
     <NoiseOverlay />
     <div class="only-vitrine">
