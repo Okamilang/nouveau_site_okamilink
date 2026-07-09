@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BentoProjectCard from '../../components/ui/BentoProjectCard.astro';
+import { getCollection } from 'astro:content';
+
+const allProjects = await getCollection('projects');
+// On ne garde que les programmes pour la page Applications
+const programProjects = allProjects.filter(p => p.data.category === 'program');
+const sortedProjects = programProjects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title="Programmes - Okamilink">
+  <div class="page-container">
+    <header class="page-header reveal-text">
+      <h1 class="title"><span class="delay-1">Mes</span> <span class="text-gradient delay-2">Programmes.</span></h1>
+      <p class="subtitle delay-3">Découvrez mes applications, outils et logiciels sur mesure développés pour des besoins précis.</p>
+    </header>
+
+    <div class="bento-grid">
+      {sortedProjects.map((project) => (
+        <BentoProjectCard project={project} />
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 4rem 2rem 8rem;
+  }
+
+  .page-header {
+    margin-bottom: 4rem;
+    max-width: 800px;
+  }
+
+  .title {
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .subtitle {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+  }
+
+  /* Bento Grid with CSS Subgrid potential */
+  .bento-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .bento-grid {
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: minmax(350px, auto);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .bento-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    
+    /* Les projets 'featured' prennent la moitié de la largeur */
+    .bento-grid :global(.bento-card.featured) {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+  }
+</style>

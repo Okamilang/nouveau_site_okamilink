@@ -1,0 +1,243 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Contact - Okamilink">
+  <div class="page-container">
+    <header class="page-header reveal-text">
+      <h1 class="title"><span class="delay-1">Initialiser le</span> <span class="text-gradient delay-2">Contact.</span></h1>
+      <p class="subtitle delay-3">Parlez-moi de votre projet. Je reviendrai vers vous dans les plus brefs délais.</p>
+    </header>
+
+    <div class="contact-content reveal-fade delay-4">
+      <div class="contact-card bento-card">
+        <form id="vitrine-contact-form" class="contact-form">
+          <div class="form-group">
+            <label for="type">Vous êtes :</label>
+            <select id="type" name="type" required>
+              <option value="" disabled selected>Sélectionnez une option</option>
+              <option value="Entreprise">Entreprise</option>
+              <option value="Particulier">Particulier</option>
+              <option value="Auto-entrepreneur">Auto-entrepreneur</option>
+              <option value="Association">Association</option>
+              <option value="Autre">Autre</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Nom complet :</label>
+              <input type="text" id="name" name="name" required placeholder="Votre nom" />
+            </div>
+            
+            <div class="form-group">
+              <label for="phone">Téléphone :</label>
+              <input type="tel" id="phone" name="phone" placeholder="Optionnel" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Adresse email :</label>
+            <input type="email" id="email" name="email" required placeholder="vous@exemple.com" />
+          </div>
+
+          <div class="form-group">
+            <label for="message">Votre message :</label>
+            <textarea id="message" name="message" required rows="5" placeholder="Décrivez votre besoin..."></textarea>
+          </div>
+
+          <button type="submit" class="primary-btn submit-btn">
+            <span class="btn-text">Envoyer le message</span>
+            <div class="btn-glow"></div>
+          </button>
+          
+          <div id="form-status" class="form-status"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const form = document.getElementById('vitrine-contact-form') as HTMLFormElement;
+    const statusDiv = document.getElementById('form-status');
+    
+    if (form && statusDiv) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const submitBtn = form.querySelector('.submit-btn') as HTMLButtonElement;
+        const btnText = submitBtn.querySelector('.btn-text');
+        
+        if (submitBtn && btnText) {
+          submitBtn.disabled = true;
+          btnText.textContent = 'Envoi en cours...';
+        }
+        
+        statusDiv.className = 'form-status';
+        statusDiv.textContent = '';
+
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        data.source = 'vitrine'; // Important for PHP script
+
+        try {
+          const response = await fetch('/sendmail.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            form.reset();
+            statusDiv.className = 'form-status success';
+            statusDiv.textContent = 'Message envoyé avec succès. Je vous répondrai très vite !';
+          } else {
+            statusDiv.className = 'form-status error';
+            statusDiv.textContent = result.message || 'Une erreur est survenue lors de l\'envoi.';
+          }
+        } catch (error) {
+          statusDiv.className = 'form-status error';
+          statusDiv.textContent = 'Erreur de connexion. Veuillez réessayer plus tard.';
+        } finally {
+          if (submitBtn && btnText) {
+            submitBtn.disabled = false;
+            btnText.textContent = 'Envoyer le message';
+          }
+        }
+      });
+    }
+  });
+</script>
+
+<style>
+  .page-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 2rem 8rem;
+  }
+
+  .page-header {
+    margin-bottom: 3rem;
+  }
+
+  .title {
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .subtitle {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+  }
+
+  .contact-card {
+    padding: 2.5rem;
+    background: rgba(10, 10, 15, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 600px) {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  label {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  input, select, textarea {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  }
+
+  select option {
+    background: #0f111a;
+    color: white;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .submit-btn {
+    margin-top: 1rem;
+    width: 100%;
+    justify-content: center;
+    padding: 1rem;
+    border: none;
+    cursor: pointer;
+  }
+
+  .submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .form-status {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    text-align: center;
+    display: none;
+  }
+
+  .form-status.success {
+    display: block;
+    background: rgba(34, 197, 94, 0.1);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+  }
+
+  .form-status.error {
+    display: block;
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+</style>

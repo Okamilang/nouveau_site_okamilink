@@ -24,10 +24,13 @@ if (!$data) {
 $name = htmlspecialchars(strip_tags(trim($data["name"] ?? '')));
 $email = filter_var(trim($data["email"] ?? ''), FILTER_SANITIZE_EMAIL);
 $message = htmlspecialchars(strip_tags(trim($data["message"] ?? '')));
+$phone = htmlspecialchars(strip_tags(trim($data["phone"] ?? '')));
+$type = htmlspecialchars(strip_tags(trim($data["type"] ?? '')));
+$source = htmlspecialchars(strip_tags(trim($data["source"] ?? 'OS')));
 
 if (empty($name) || empty($email) || empty($message)) {
     http_response_code(400);
-    echo json_encode(["status" => "error", "message" => "Veuillez remplir tous les champs."]);
+    echo json_encode(["status" => "error", "message" => "Veuillez remplir tous les champs obligatoires."]);
     exit;
 }
 
@@ -39,12 +42,19 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
 // Configuration de l'email
 $to = "contact@okamilink.com";
-$subject = "Nouveau message de contact - Okamilink OS : $name";
+$subject_prefix = $source === 'vitrine' ? "Site Vitrine" : "OS Terminal";
+$subject = "Nouveau message de contact - Okamilink [$subject_prefix] : $name";
 
-$email_content = "Vous avez reçu un nouveau message depuis le terminal Okamilink.\n\n";
+$email_content = "Vous avez reçu un nouveau message depuis $subject_prefix.\n\n";
 $email_content .= "Nom: $name\n";
-$email_content .= "Email: $email\n\n";
-$email_content .= "Message:\n$message\n";
+$email_content .= "Email: $email\n";
+if (!empty($phone)) {
+    $email_content .= "Téléphone: $phone\n";
+}
+if (!empty($type)) {
+    $email_content .= "Type: $type\n";
+}
+$email_content .= "\nMessage:\n$message\n";
 
 $headers = "From: terminal@okamilink.com\r\n";
 $headers .= "Reply-To: $email\r\n";
