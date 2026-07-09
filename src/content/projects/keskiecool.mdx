@@ -1,0 +1,123 @@
+---
+title: "Keskiécool"
+description: "Et si vous laissiez le hasard décider de votre prochaine sortie ? L'appli qui trouve les meilleurs lieux autour de vous en un clic."
+client: "Boni Diffusion"
+date: 2026-07-09
+tags: ["Application Android", "Géolocalisation", "Loisirs", "En test"]
+category: "program"
+osIcon: "/os-icons/keskiecool.png"
+coverImage: "../../assets/projects/screenshots/keskiécool-banner.png"
+---
+import { Image } from 'astro:assets';
+import k1 from '../../assets/projects/screenshots/keskiecoolm (1).png';
+import k2 from '../../assets/projects/screenshots/keskiecoolm (2).png';
+import k3 from '../../assets/projects/screenshots/keskiecoolm (3).png';
+import k4 from '../../assets/projects/screenshots/keskiecoolm (4).png';
+import k5 from '../../assets/projects/screenshots/keskiecoolm (5).png';
+
+<div style={{
+  background: 'linear-gradient(145deg, rgba(30, 20, 60, 0.4) 0%, rgba(10, 10, 25, 0.6) 100%)',
+  borderRadius: '24px',
+  padding: '3rem',
+  boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+  border: '1px solid rgba(255,255,255,0.05)',
+  marginBottom: '4rem'
+}}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+    <span style={{ padding: '6px 14px', background: 'rgba(255, 117, 140, 0.15)', color: '#ff758c', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 'bold', border: '1px solid rgba(255, 117, 140, 0.3)', textTransform: 'uppercase', letterSpacing: '1px' }}>En test</span>
+    <span style={{ padding: '6px 14px', background: 'rgba(0, 243, 255, 0.15)', color: '#00f3ff', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 'bold', border: '1px solid rgba(0, 243, 255, 0.3)', textTransform: 'uppercase', letterSpacing: '1px' }}>Android</span>
+    <span style={{ padding: '6px 14px', background: 'rgba(255, 255, 255, 0.1)', color: '#fff', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 'bold', border: '1px solid rgba(255, 255, 255, 0.2)', textTransform: 'uppercase', letterSpacing: '1px' }}>Loisirs</span>
+  </div>
+
+  <h1 style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', margin: '0 0 1rem 0', background: 'linear-gradient(90deg, #ff7eb3, #ff758c)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: '1.1' }}>
+    Keskiécool
+  </h1>
+  <p style={{ fontSize: '1.3rem', color: '#b0b0c0', maxWidth: '750px', lineHeight: '1.6', margin: '0' }}>
+    L'application qui répond à la question que l'on se pose tous : <strong style={{ color: '#fff' }}>« On va où ? »</strong><br/>
+    En un seul geste, dénichez les meilleurs lieux à proximité (notés 4★ et plus). Fini les longues recherches interminables, place à la découverte instantanée.
+  </p>
+</div>
+
+<h2 style={{ fontSize: '2rem', color: '#fff', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '15px' }}>
+  <span style={{ display: 'inline-block', width: '40px', height: '4px', background: 'linear-gradient(90deg, #ff7eb3, #ff758c)', borderRadius: '2px' }}></span>
+  Aperçu de l'interface
+</h2>
+
+<div style={{ display: 'flex', gap: '20px', overflowX: 'auto', padding: '10px 20px 40px 20px', margin: '0 -20px', alignItems: 'center', snapType: 'x mandatory', scrollBehavior: 'smooth' }}>
+  <Image src={k1} alt="Screenshot 1" style={{ width: '260px', height: 'auto', borderRadius: '24px', scrollSnapAlign: 'center', boxShadow: '0 15px 35px rgba(0,0,0,0.5)', border: '4px solid rgba(255,255,255,0.05)' }} />
+  <Image src={k2} alt="Screenshot 2" style={{ width: '260px', height: 'auto', borderRadius: '24px', scrollSnapAlign: 'center', boxShadow: '0 15px 35px rgba(0,0,0,0.5)', border: '4px solid rgba(255,255,255,0.05)' }} />
+  <Image src={k3} alt="Screenshot 3" style={{ width: '260px', height: 'auto', borderRadius: '24px', scrollSnapAlign: 'center', boxShadow: '0 15px 35px rgba(0,0,0,0.5)', border: '4px solid rgba(255,255,255,0.05)' }} />
+  <Image src={k4} alt="Screenshot 4" style={{ width: '260px', height: 'auto', borderRadius: '24px', scrollSnapAlign: 'center', boxShadow: '0 15px 35px rgba(0,0,0,0.5)', border: '4px solid rgba(255,255,255,0.05)' }} />
+  <Image src={k5} alt="Screenshot 5" style={{ width: '260px', height: 'auto', borderRadius: '24px', scrollSnapAlign: 'center', boxShadow: '0 15px 35px rgba(0,0,0,0.5)', border: '4px solid rgba(255,255,255,0.05)' }} />
+</div>
+
+<h2 style={{ fontSize: '2rem', color: '#fff', margin: '4rem 0 2rem 0', display: 'flex', alignItems: 'center', gap: '15px' }}>
+  <span style={{ display: 'inline-block', width: '40px', height: '4px', background: 'linear-gradient(90deg, #ff7eb3, #ff758c)', borderRadius: '2px' }}></span>
+  Fonctionnalités Clés
+</h2>
+
+<style>{`
+  .glass-card {
+    background: rgba(255,255,255,0.03);
+    padding: 2.5rem 2rem;
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: transform 0.2s, background 0.2s;
+    cursor: default;
+  }
+  .glass-card:hover {
+    background: rgba(255,117,140,0.05);
+    transform: translateY(-5px);
+  }
+  .contact-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 36px;
+    background: linear-gradient(90deg, #ff7eb3, #ff758c);
+    color: #fff;
+    font-weight: 800;
+    text-decoration: none;
+    border-radius: 99px;
+    font-size: 1.1rem;
+    box-shadow: 0 10px 30px rgba(255,117,140,0.4);
+    transition: transform 0.2s, filter 0.2s;
+  }
+  .contact-btn:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+  }
+`}</style>
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '4rem' }}>
+  <div class="glass-card">
+    <h3 style={{ color: '#ff7eb3', margin: '0 0 1rem 0', fontSize: '1.4rem', display: 'flex', alignItems: 'center', gap: '10px' }}>🎯 Hasard Contrôlé</h3>
+    <p style={{ color: '#a0a0b0', margin: 0, lineHeight: '1.7', fontSize: '1.05rem' }}>Laissez l'application choisir pour vous, tout en gardant le contrôle grâce à des filtres précis : restaurants, nature, culture, parcs, etc.</p>
+  </div>
+  
+  <div class="glass-card">
+    <h3 style={{ color: '#ff7eb3', margin: '0 0 1rem 0', fontSize: '1.4rem', display: 'flex', alignItems: 'center', gap: '10px' }}>📍 Précision Locale</h3>
+    <p style={{ color: '#a0a0b0', margin: 0, lineHeight: '1.7', fontSize: '1.05rem' }}>Ajustez le rayon de recherche instantanément de 500 mètres à 20 kilomètres. Parfait pour rester dans le quartier ou partir à l'aventure loin de la ville.</p>
+  </div>
+  
+  <div class="glass-card">
+    <h3 style={{ color: '#ff7eb3', margin: '0 0 1rem 0', fontSize: '1.4rem', display: 'flex', alignItems: 'center', gap: '10px' }}>⭐ Sélection Premium</h3>
+    <p style={{ color: '#a0a0b0', margin: 0, lineHeight: '1.7', fontSize: '1.05rem' }}>Pas de mauvaises surprises. Keskiécool ne vous propose que les lieux qui valent vraiment le détour, avec une exigence stricte de <strong>4 étoiles minimum</strong>.</p>
+  </div>
+  
+  <div class="glass-card">
+    <h3 style={{ color: '#ff7eb3', margin: '0 0 1rem 0', fontSize: '1.4rem', display: 'flex', alignItems: 'center', gap: '10px' }}>🗺️ Navigation Intuitive</h3>
+    <p style={{ color: '#a0a0b0', margin: 0, lineHeight: '1.7', fontSize: '1.05rem' }}>D'un seul tap, découvrez les avis, les horaires complets et lancez l'itinéraire directement via <strong>Waze</strong> ou <strong>Google Maps</strong>.</p>
+  </div>
+</div>
+
+<div style={{ marginTop: '5rem', padding: '4rem 2rem', border: '1px solid rgba(255, 117, 140, 0.3)', background: 'radial-gradient(circle at top right, rgba(255,117,140,0.1), transparent 50%), rgba(20, 15, 30, 0.5)', textAlign: 'center', borderRadius: '32px', backdropFilter: 'blur(10px)', boxShadow: '0 20px 50px rgba(0,0,0,0.4)' }}>
+  <h3 style={{ marginTop: 0, color: '#fff', fontSize: '2.2rem', marginBottom: '1rem' }}>Envie de tester l'application ?</h3>
+  <p style={{ color: '#a0a0b0', marginBottom: '2.5rem', fontSize: '1.15rem', maxWidth: '600px', margin: '0 auto 2.5rem auto', lineHeight: '1.6' }}>
+    Keskiécool est éditée par <strong>Okamilink</strong> et se trouve actuellement en phase de test fermé. Contactez-nous pour obtenir un accès anticipé et participer à l'aventure !
+  </p>
+  <a href="/contact" class="contact-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+    Nous contacter
+  </a>
+</div>

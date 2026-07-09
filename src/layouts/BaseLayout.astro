@@ -58,33 +58,129 @@ const { title, description = "Okamilink - Agence de développement web premium."
     <TerminalToast />
     <OSDesktop />
     <CustomCursor />
+
+    <!-- Lightbox Globale -->
+    <div id="global-lightbox" class="lightbox-overlay" aria-hidden="true">
+      <img id="global-lightbox-img" src="" alt="Zoomed view" />
+      <button id="global-lightbox-close" class="lightbox-close" aria-label="Fermer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
     
-    <!-- Contact Links Interceptor -->
+    <!-- Scripts Globaux -->
     <script>
       document.addEventListener('astro:page-load', () => {
+        // Contact Links Interceptor
         const contactLinks = document.querySelectorAll('a[href="/contact"]');
         contactLinks.forEach(link => {
           link.addEventListener('click', (e) => {
             const currentExp = document.documentElement.getAttribute('data-experience');
             if (currentExp === 'console') {
               e.preventDefault();
-              // Ouvre la fenêtre de contact (Contact.sh) dans l'OS
               if ((window as any).openOSWindow) {
                 (window as any).openOSWindow('win-terminal');
               }
             }
-            // Si on est en vitrine, on ne fait pas de e.preventDefault(),
-            // le navigateur ira naturellement vers la page /contact
           });
         });
+
+        // Lightbox Logic
+        const images = document.querySelectorAll('.project-markdown img, .project-content img');
+        const lightbox = document.getElementById('global-lightbox');
+        const lightboxImg = document.getElementById('global-lightbox-img') as HTMLImageElement;
+        const lightboxClose = document.getElementById('global-lightbox-close');
+
+        if (lightbox && lightboxImg) {
+          images.forEach(img => {
+            (img as HTMLElement).style.cursor = 'zoom-in';
+            img.addEventListener('click', (e) => {
+              lightboxImg.src = (e.target as HTMLImageElement).src;
+              lightbox.classList.add('active');
+            });
+          });
+
+          const closeLightbox = () => {
+            lightbox.classList.remove('active');
+            setTimeout(() => {
+              lightboxImg.src = '';
+            }, 300);
+          };
+
+          lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox || e.target === lightboxClose || (e.target as HTMLElement).closest('.lightbox-close')) {
+              closeLightbox();
+            }
+          });
+
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+              closeLightbox();
+            }
+          });
+        }
       });
     </script>
   </body>
 </html>
 
-<style>
+<style is:global>
   main {
     padding-top: 80px; /* Compense la navbar fixe */
     min-height: calc(100vh - 80px);
+  }
+
+  /* Global Lightbox Styles */
+  .lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .lightbox-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .lightbox-overlay img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .lightbox-overlay.active img {
+    transform: scale(1);
+  }
+  .lightbox-close {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
   }
 </style>

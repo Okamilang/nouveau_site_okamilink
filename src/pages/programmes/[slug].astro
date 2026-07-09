@@ -17,44 +17,46 @@ const { Content } = await project.render();
 ---
 
 <BaseLayout title={`${project.data.title} - Okamilink`}>
-  <article class="project-article">
-    <header class="project-header">
-      <div class="header-content">
-        <h1 class="title" transition:name={`title-${project.slug}`}>{project.data.title}</h1>
-        <div class="meta">
-          <span class="client">Client: {project.data.client}</span>
-          <span class="separator">•</span>
-          <span class="date">{project.data.date.getFullYear()}</span>
-        </div>
-        <div class="tags">
-          {project.data.tags.map(tag => (
-            <span class="tag">{tag}</span>
-          ))}
+  <article class={`project-article ${project.data.category === 'program' ? 'is-program' : ''}`}>
+    {project.data.category !== 'program' && (
+      <header class="project-header">
+        <div class="header-content">
+          <h1 class="title" transition:name={`title-${project.slug}`}>{project.data.title}</h1>
+          <div class="meta">
+            <span class="client">Client: {project.data.client}</span>
+            <span class="separator">•</span>
+            <span class="date">{project.data.date.getFullYear()}</span>
+          </div>
+          <div class="tags">
+            {project.data.tags.map(tag => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+          
+          {project.data.url && (
+            <div class="action-buttons">
+              <a href={project.data.url} target="_blank" rel="noopener noreferrer" class="primary-btn access-btn">
+                <span class="btn-text">Accéder au programme</span>
+                <div class="btn-glow"></div>
+              </a>
+            </div>
+          )}
         </div>
         
-        {project.data.url && (
-          <div class="action-buttons">
-            <a href={project.data.url} target="_blank" rel="noopener noreferrer" class="primary-btn access-btn">
-              <span class="btn-text">Accéder au programme</span>
-              <div class="btn-glow"></div>
-            </a>
+        {project.data.coverImage && (
+          <div class="cover-wrapper">
+            <Image 
+              src={project.data.coverImage} 
+              alt={project.data.title}
+              width={1600}
+              height={900}
+              class="cover-image"
+              transition:name={`cover-${project.slug}`}
+            />
           </div>
         )}
-      </div>
-      
-      {project.data.coverImage && (
-        <div class="cover-wrapper">
-          <Image 
-            src={project.data.coverImage} 
-            alt={project.data.title}
-            width={1600}
-            height={900}
-            class="cover-image"
-            transition:name={`cover-${project.slug}`}
-          />
-        </div>
-      )}
-    </header>
+      </header>
+    )}
 
     <div class="project-content">
       <Content />
@@ -134,6 +136,9 @@ const { Content } = await project.render();
   .cover-image {
     width: 100%;
     height: auto;
+    max-height: 600px;
+    object-fit: contain;
+    object-position: center;
     border-radius: 16px;
     display: block;
     box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.5);
@@ -146,6 +151,11 @@ const { Content } = await project.render();
     font-size: 1.15rem;
     line-height: 1.8;
     color: var(--text-muted);
+  }
+
+  .is-program .project-content {
+    max-width: 1200px;
+    margin-top: 2rem;
   }
 
   .project-content :global(h2) {
@@ -170,5 +180,10 @@ const { Content } = await project.render();
     display: block;
     margin: 2rem auto;
     border-radius: 12px;
+    transition: transform 0.2s;
+  }
+  
+  .project-content :global(img:hover) {
+    transform: scale(1.02);
   }
 </style>

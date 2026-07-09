@@ -212,8 +212,6 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
 
 <script>
   document.addEventListener('astro:page-load', () => {
-    if (document.documentElement.getAttribute('data-experience') !== 'console') return;
-
     const desktopArea = document.getElementById('desktop-area');
     const taskbarWindows = document.getElementById('taskbar-windows');
     let highestZIndex = 100;
@@ -701,6 +699,13 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
     text-shadow: 0 2px 4px rgba(0,0,0,0.8);
     text-align: center;
     word-break: break-word;
+  }
+
+  .desktop-icon:not(.dock-item) .icon-label {
+    white-space: normal;
+    max-width: 100px;
+    line-height: 1.2;
+    margin-top: 5px;
   }
 
   /* Override standard component styles when inside OS windows */
