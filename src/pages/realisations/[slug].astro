@@ -14,9 +14,32 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await project.render();
+
+const pageURL = new URL(Astro.url.pathname, Astro.site).href;
+const coverSrc = project.data.coverImage?.src;
+
+// Données structurées : étude de cas / réalisation
+const projectSchema = {
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  "name": project.data.title,
+  "headline": project.data.title,
+  "description": project.data.description,
+  "url": pageURL,
+  "keywords": project.data.tags.join(", "),
+  "datePublished": project.data.date.toISOString(),
+  "author": { "@type": "Organization", "name": "Okamilink" },
+  "creator": { "@type": "Person", "name": "Daniel Cohen" }
+};
 ---
 
-<BaseLayout title={`${project.data.title} - Okamilink`}>
+<BaseLayout
+  title={`${project.data.title} — Étude de cas web | Okamilink`}
+  description={project.data.description}
+  image={coverSrc}
+  ogType="article"
+  jsonLd={projectSchema}
+>
   <article class="project-article">
     <header class="project-header">
       <div class="header-content">

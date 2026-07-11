@@ -9,7 +9,10 @@ const programProjects = allProjects.filter(p => p.data.category === 'program');
 const sortedProjects = programProjects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<BaseLayout title="Programmes - Okamilink">
+<BaseLayout
+  title="Applications & outils sur-mesure | Okamilink"
+  description="Découvrez les applications et outils développés par Okamilink : Keskiécool, Swipe&Clean et le Lockpick Solver pour Gothic 1 Remake. Des logiciels conçus pour des besoins précis."
+>
   <div class="page-container">
     <header class="page-header reveal-text">
       <h1 class="title"><span class="delay-1">Mes</span> <span class="text-gradient delay-2">Programmes.</span></h1>

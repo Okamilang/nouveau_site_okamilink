@@ -14,9 +14,32 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await project.render();
+
+const pageURL = new URL(Astro.url.pathname, Astro.site).href;
+const coverSrc = project.data.coverImage?.src;
+
+// Données structurées : application / logiciel
+const appSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": project.data.title,
+  "description": project.data.description,
+  "url": pageURL,
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Android, Web",
+  "keywords": project.data.tags.join(", "),
+  "author": { "@type": "Organization", "name": "Okamilink" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
+};
 ---
 
-<BaseLayout title={`${project.data.title} - Okamilink`}>
+<BaseLayout
+  title={`${project.data.title} | Okamilink`}
+  description={project.data.description}
+  image={coverSrc}
+  ogType="article"
+  jsonLd={appSchema}
+>
   <article class={`project-article ${project.data.category === 'program' ? 'is-program' : ''}`}>
     {project.data.category !== 'program' && (
       <header class="project-header">

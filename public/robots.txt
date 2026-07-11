@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap généré automatiquement par @astrojs/sitemap
+Sitemap: https://okamilink.com/sitemap-index.xml

@@ -9,7 +9,10 @@ const websiteProjects = allProjects.filter(p => p.data.category === 'website');
 const sortedProjects = websiteProjects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<BaseLayout title="Réalisations - Okamilink">
+<BaseLayout
+  title="Réalisations & études de cas web | Okamilink"
+  description="Études de cas de sites web sur-mesure réalisés par Okamilink : e-commerce B2B sur Odoo (Boni Diffusion), expérience WordPress immersive (Mysteria Ingenium) et plus."
+>
   <div class="page-container">
     <header class="page-header reveal-text">
       <h1 class="title"><span class="delay-1">Mes</span> <span class="text-gradient delay-2">Réalisations.</span></h1>

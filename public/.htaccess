@@ -1,0 +1,45 @@
+# ============================================================
+#  Okamilink — Règles serveur Apache (IONOS)
+# ============================================================
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 1) Forcer HTTPS
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # 2) Forcer le domaine canonique sans www (www -> non-www)
+  RewriteCond %{HTTP_HOST} ^www\.okamilink\.com [NC]
+  RewriteRule ^ https://okamilink.com%{REQUEST_URI} [L,R=301]
+
+  # 3) Redirections 301 des anciennes URL WordPress (nettoyage post-migration)
+  RewriteRule ^hello-world/?$            https://okamilink.com/ [L,R=301]
+  RewriteRule ^category/.*$              https://okamilink.com/ [L,R=301]
+  RewriteRule ^author/.*$               https://okamilink.com/ [L,R=301]
+  RewriteRule ^tag/.*$                  https://okamilink.com/ [L,R=301]
+  RewriteRule ^wp-content/.*$           https://okamilink.com/ [L,R=301]
+  RewriteRule ^wp-admin/?.*$            https://okamilink.com/ [L,R=301]
+  RewriteRule ^wp-login\.php$           https://okamilink.com/ [L,R=301]
+  RewriteRule ^feed/?$                  https://okamilink.com/ [L,R=301]
+  RewriteRule ^comments/feed/?$         https://okamilink.com/ [L,R=301]
+</IfModule>
+
+# ============================================================
+#  Performance : compression + cache navigateur
+# ============================================================
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/webp                "access plus 1 year"
+  ExpiresByType image/png                 "access plus 1 year"
+  ExpiresByType image/jpeg                "access plus 1 year"
+  ExpiresByType image/svg+xml             "access plus 1 year"
+  ExpiresByType text/css                  "access plus 1 month"
+  ExpiresByType application/javascript    "access plus 1 month"
+  ExpiresByType font/woff2                "access plus 1 year"
+</IfModule>

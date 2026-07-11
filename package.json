@@ -12,6 +12,7 @@
   "dependencies": {
     "@astrojs/check": "^0.5.10",
     "@astrojs/mdx": "^2.1.1",
+    "@astrojs/sitemap": "^3.2.1",
     "astro": "^4.5.0",
     "puppeteer": "^24.43.1",
     "typescript": "^5.4.0"

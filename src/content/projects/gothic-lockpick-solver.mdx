@@ -7,6 +7,7 @@ tags: ["Outil", "Gaming", "Jeux vidéo", "Algorithme", "Gothic 1 Remake"]
 url: "https://okamilang.github.io/gothic1-lockpick-solver/"
 category: "program"
 osIcon: "/os-icons/lockpick.png"
+coverImage: "../../assets/projects/screenshots/gothic-banner.png"
 ---
 
 # Lisez-moi : G1-Lockpick_Solver.exe
@@ -34,10 +35,14 @@ osIcon: "/os-icons/lockpick.png"
 
 ## Mode d'emploi
 
-1. Face à un coffre verrouillé, cliquez sur le bouton de lancement ci-dessous pour ouvrir le *Solver* dans un nouvel onglet.
-2. Tentez un mouvement (Gauche ou Droite) dans le jeu.
-3. Si le mouvement est valide, entrez-le dans le *Solver*. S'il échoue, l'outil met à jour son arbre de probabilités.
-4. Laissez l'outil vous guider jusqu'à l'ouverture du coffre !
+1. **Saisis la serrure**
+   Choisis le nombre de plaques. Puis, pour chaque plaque, clique le trou où se trouve son pion (laiton), de 1 (gauche) à 7 (droite). Le centre (trou 4) est la cible : tous les pions doivent finir là.
+2. **Renseigne les liaisons**
+   En jeu, pousse le pion de chaque plaque d'un cran vers un espace libre et regarde quels autres pions bougent. Reporte-le dans la grille : · aucune, = même sens, ≠ sens inverse. (Une case = « quand je bouge la plaque de la ligne, la plaque de la colonne réagit comme ceci ».)
+3. **Lance la résolution**
+   Clique Résoudre. L'outil calcule la séquence de coups la plus courte qui n'écrase jamais un pion contre un mur.
+4. **Reproduis coup par coup**
+   Avance avec Suivant et refais chaque mouvement en jeu. Choisis le mode qui te parle — Plaque (la touche à presser) ou Pion (ce que tu vois bouger) — le plateau animé confirme à chaque fois. Si un coup demandé est impossible en jeu (pion déjà au mur), c'est qu'une position ou une liaison saisie est fausse : corrige-la et relance.
 
 <div style="margin-top: 30px; padding: 15px; border: 1px solid var(--cyber-cyan); background: rgba(0, 243, 255, 0.05); text-align: center; border-radius: 8px;">
   <p style="margin-bottom: 15px; color: var(--text-main);">Lancer l'application externe :</p>

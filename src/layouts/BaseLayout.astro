@@ -12,21 +12,108 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  image?: string;          // Image de partage (Open Graph), chemin absolu ou relatif
+  ogType?: string;         // "website" | "article" ...
+  noindex?: boolean;       // Empêcher l'indexation d'une page si besoin
+  jsonLd?: object | object[]; // Données structurées supplémentaires (par page)
 }
 
-const { title, description = "Okamilink - Agence de développement web premium." } = Astro.props;
+const {
+  title,
+  description = "Okamilink — Création de sites web sur-mesure et développement d'applications par Daniel Cohen, développeur web freelance en Val-d'Oise (95).",
+  image = "/logo.png",
+  ogType = "website",
+  noindex = false,
+  jsonLd,
+} = Astro.props;
+
+// URL canonique de la page courante (basée sur `site` dans astro.config.mjs)
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const socialImageURL = new URL(image, Astro.site).href;
+
+// Données structurées globales : Organisation + Entreprise locale
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": ["Organization", "LocalBusiness", "ProfessionalService"],
+  "name": "Okamilink",
+  "alternateName": "Okamilink - Daniel Cohen",
+  "url": "https://okamilink.com",
+  "logo": "https://okamilink.com/logo.png",
+  "image": "https://okamilink.com/logo.png",
+  "description": "Création de sites web sur-mesure, développement d'applications et d'outils par Daniel Cohen, développeur web freelance en Val-d'Oise.",
+  "founder": {
+    "@type": "Person",
+    "name": "Daniel Cohen"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "14 rue des Pinsons",
+    "addressLocality": "Éragny",
+    "postalCode": "95610",
+    "addressRegion": "Île-de-France",
+    "addressCountry": "FR"
+  },
+  "areaServed": [
+    { "@type": "AdministrativeArea", "name": "Val-d'Oise" },
+    { "@type": "AdministrativeArea", "name": "Île-de-France" },
+    { "@type": "Country", "name": "France" }
+  ],
+  "knowsAbout": [
+    "Développement web",
+    "Création de site internet sur-mesure",
+    "Développement d'applications",
+    "Astro",
+    "WordPress",
+    "Odoo e-commerce"
+  ],
+  "vatID": "FR72879152924",
+  "email": "contact@okamilink.com"
+};
+
+// Concatène le schema global + les schemas éventuels de la page
+const schemas = [organizationSchema, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])];
 ---
 
 <!doctype html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO primaire -->
     <title>{title}</title>
-    
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    {noindex
+      ? <meta name="robots" content="noindex, nofollow" />
+      : <meta name="robots" content="index, follow, max-image-preview:large" />}
+    <meta name="author" content="Daniel Cohen — Okamilink" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+
+    <!-- Open Graph (Facebook, LinkedIn, WhatsApp…) -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="Okamilink" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={socialImageURL} />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImageURL} />
+
+    <!-- Données structurées JSON-LD -->
+    {schemas.map((schema) => (
+      <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
+    ))}
+
     <!-- View Transitions API support in Astro -->
     <ViewTransitions />
 
