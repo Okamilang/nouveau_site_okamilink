@@ -20,7 +20,7 @@ Tu es un assistant IA expert en développement web moderne, spécialisé dans **
   - `mockups/`, `ui/` : mockups navigateur/mobile, cartes projets.
 - `src/content/projects/*.mdx` : collection des projets (schéma dans `src/content/config.ts`). `category: 'website' | 'program'`, `osIcon` (icône dans l'OS), `coverImage`.
 - `src/assets/projects/screenshots/` : images des projets (optimisées par Astro au build). `capture-screenshots.mjs` = script Puppeteer local pour générer les captures (puppeteer est en devDependency).
-- `public/` : `.htaccess` (HTTPS, non-www, redirections ex-WordPress), `robots.txt`, `sendmail.php`, `logo.png`, `os-backgrounds/fond1..7.webp`, `os-icons/*.webp`.
+- `public/` : `.htaccess` (HTTPS, non-www, redirections ex-WordPress), `robots.txt`, `sendmail.php`, `logo.png`, `os-icons/*.webp` (les fonds d'écran de l'OS sont 100 % CSS/JS : `src/components/os/Wallpaper.astro` + `wallpapers.ts`).
 
 ## 3. Fonctionnalités clés
 - **Deux expériences** au choix du visiteur (`ExperienceSelector`) : la **vitrine** classique et l'**OS** (bureau interactif avec fenêtres, terminal de contact, fonds d'écran, icônes de projets).

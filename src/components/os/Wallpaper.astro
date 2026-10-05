@@ -1,0 +1,433 @@
+---
+/**
+ * Fond d'écran procédural de l'OS Okamilink.
+ * Aucune image de fond : dégradés, circuits, aurores et reflets sont en CSS,
+ * le loup est le logo du site (public/logo.png) utilisé comme masque et teinté.
+ *
+ * - theme : identifiant du thème (voir wallpapers.ts)
+ * - thumb : version miniature (sélecteur), animations coupées
+ */
+interface Props {
+  theme: string;
+  thumb?: boolean;
+}
+
+const { theme, thumb = false } = Astro.props;
+---
+
+<div class:list={['os-wallpaper', { 'is-thumb': thumb }]} data-theme={theme} aria-hidden="true">
+  <div class="wp-base"></div>
+  <div class="wp-fx wp-fx-a"></div>
+  <div class="wp-fx wp-fx-b"></div>
+  {theme === 'matrix' && !thumb && <canvas class="wp-canvas"></canvas>}
+  <div class="wp-logo-wrap">
+    <div class="wp-ring"></div>
+    <div class="wp-logo-reflection"></div>
+    <div class="wp-logo"></div>
+    <div class="wp-plate">Premium</div>
+  </div>
+</div>
+
+<style>
+  /* ───────── Structure ───────── */
+  .os-wallpaper {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    isolation: isolate;
+    container-type: inline-size;
+    /* Variables par défaut (surchargées par thème) */
+    --wp-ink: #e8ebee;
+    --wp-glow: rgba(255, 255, 255, 0.25);
+    --wp-logo-w: clamp(220px, 30cqw, 560px);
+  }
+
+  .wp-base,
+  .wp-fx,
+  .wp-canvas {
+    position: absolute;
+    inset: 0;
+  }
+
+  .wp-fx { pointer-events: none; }
+  .wp-fx-a { z-index: 1; }
+  .wp-fx-b { z-index: 2; }
+  .wp-canvas { z-index: 1; width: 100%; height: 100%; display: block; }
+
+  .wp-logo-wrap {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: var(--wp-logo-w);
+    aspect-ratio: 1256 / 1024;
+    transform: translate(-50%, -54%);
+    z-index: 3;
+  }
+
+  /* Le loup : logo.png en masque, teinté par --wp-ink */
+  .wp-logo {
+    position: absolute;
+    inset: 0;
+    background: var(--wp-ink);
+    -webkit-mask: url('/logo.png') center / contain no-repeat;
+    mask: url('/logo.png') center / contain no-repeat;
+    filter: drop-shadow(0 0 18px var(--wp-glow));
+  }
+
+  .wp-ring,
+  .wp-logo-reflection,
+  .wp-plate { display: none; }
+
+  /* Vignette commune (remplace l'ancien assombrissement de l'image) */
+  .os-wallpaper::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    background:
+      linear-gradient(rgba(5, 5, 10, 0.10), rgba(5, 5, 10, 0.35)),
+      radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.45) 100%);
+  }
+
+  /* ───────── 01 · Laiton (steampunk doré) ───────── */
+  .os-wallpaper[data-theme="brass"] {
+    --wp-ink: #cfa65a;
+    --wp-glow: rgba(207, 166, 90, 0.35);
+  }
+  .os-wallpaper[data-theme="brass"] .wp-base {
+    background:
+      radial-gradient(ellipse 70% 60% at 30% 25%, #4a2b1a 0%, transparent 70%),
+      radial-gradient(ellipse 60% 70% at 75% 80%, #2a1a10 0%, transparent 70%),
+      linear-gradient(160deg, #22150e, #110b07 60%, #0a0605);
+  }
+  /* Grain métal : fines rayures diagonales */
+  .os-wallpaper[data-theme="brass"] .wp-fx-a {
+    background: repeating-linear-gradient(115deg, rgba(255, 220, 160, 0.035) 0 1px, transparent 1px 3px);
+    mix-blend-mode: overlay;
+  }
+  /* Anneau d'engrenage lent derrière le loup */
+  .os-wallpaper[data-theme="brass"] .wp-ring {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    width: 78%;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: repeating-conic-gradient(from 0deg, var(--wp-ink) 0deg 4deg, transparent 4deg 10deg);
+    -webkit-mask: radial-gradient(circle, transparent 60%, #000 61%, #000 66%, transparent 67%, transparent 70%, #000 71%, #000 72%, transparent 73%);
+    mask: radial-gradient(circle, transparent 60%, #000 61%, #000 66%, transparent 67%, transparent 70%, #000 71%, #000 72%, transparent 73%);
+    opacity: 0.28;
+    animation: wp-spin 140s linear infinite;
+  }
+  .os-wallpaper[data-theme="brass"] .wp-plate {
+    display: block;
+    position: absolute;
+    left: 50%;
+    bottom: -14%;
+    transform: translateX(-50%);
+    padding: 0.25em 1.6em;
+    font-family: var(--font-display, serif);
+    font-size: clamp(10px, 2.2cqw, 26px);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--wp-ink);
+    border: 1px solid color-mix(in oklab, var(--wp-ink) 70%, transparent);
+    border-radius: 999px;
+    opacity: 0.85;
+  }
+
+  /* ───────── 02 · Circuit (logo holographique sur carte électronique) ───────── */
+  .os-wallpaper[data-theme="circuit"] {
+    --wp-ink: #d7c7ff;
+    --wp-glow: rgba(190, 120, 255, 0.45);
+  }
+  .os-wallpaper[data-theme="circuit"] .wp-base {
+    background:
+      radial-gradient(ellipse 50% 50% at 50% 50%, #1a1426 0%, transparent 70%),
+      linear-gradient(180deg, #0b0b10, #06060a);
+  }
+  /* Pistes de circuit : grille + pastilles aux intersections */
+  .os-wallpaper[data-theme="circuit"] .wp-fx-a {
+    --c: rgba(0, 243, 255, 0.10);
+    background:
+      radial-gradient(circle at 0 0, rgba(0, 243, 255, 0.35) 0 1.5px, transparent 2.5px),
+      linear-gradient(90deg, var(--c) 1px, transparent 1px),
+      linear-gradient(0deg, var(--c) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 243, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(0, 243, 255, 0.04) 1px, transparent 1px);
+    background-size: 140px 140px, 140px 140px, 140px 140px, 35px 35px, 35px 35px;
+    -webkit-mask: radial-gradient(ellipse at center, transparent 30%, #000 75%);
+    mask: radial-gradient(ellipse at center, transparent 30%, #000 75%);
+  }
+  /* Impulsion lumineuse qui balaie les pistes */
+  .os-wallpaper[data-theme="circuit"] .wp-fx-b {
+    background: linear-gradient(115deg, transparent 40%, rgba(255, 0, 170, 0.08) 48%, rgba(0, 243, 255, 0.12) 52%, transparent 60%);
+    background-size: 300% 300%;
+    animation: wp-sweep 9s ease-in-out infinite;
+  }
+  /* Ici on garde le vrai logo holographique */
+  .os-wallpaper[data-theme="circuit"] .wp-logo {
+    background: url('/logo.png') center / contain no-repeat;
+    -webkit-mask: none;
+    mask: none;
+    filter: drop-shadow(0 0 22px var(--wp-glow)) drop-shadow(0 0 60px rgba(0, 243, 255, 0.15));
+  }
+
+  /* ───────── 03 · Cuivre ───────── */
+  .os-wallpaper[data-theme="copper"] {
+    --wp-ink: #e0a28a;
+    --wp-glow: rgba(224, 162, 138, 0.3);
+  }
+  .os-wallpaper[data-theme="copper"] .wp-base {
+    background:
+      radial-gradient(ellipse 60% 70% at 70% 30%, #3a2a24 0%, transparent 70%),
+      radial-gradient(ellipse 60% 60% at 20% 80%, #1c2026 0%, transparent 70%),
+      linear-gradient(150deg, #262a30, #15171b);
+  }
+  .os-wallpaper[data-theme="copper"] .wp-fx-a {
+    background: radial-gradient(ellipse 45% 35% at 50% 50%, rgba(224, 162, 138, 0.08), transparent 70%);
+  }
+
+  /* ───────── 04 · Premium (or sur brun) ───────── */
+  .os-wallpaper[data-theme="premium"] {
+    --wp-ink: #dcbb76;
+    --wp-glow: rgba(220, 187, 118, 0.3);
+  }
+  .os-wallpaper[data-theme="premium"] .wp-base {
+    background:
+      radial-gradient(ellipse 70% 80% at 60% 40%, #5a4626 0%, transparent 70%),
+      linear-gradient(160deg, #3e301c, #241a10 70%, #15100a);
+  }
+  .os-wallpaper[data-theme="premium"] .wp-fx-a {
+    background: repeating-linear-gradient(0deg, rgba(255, 230, 170, 0.025) 0 1px, transparent 1px 4px);
+    mix-blend-mode: overlay;
+  }
+  .os-wallpaper[data-theme="premium"] .wp-plate {
+    display: block;
+    position: absolute;
+    left: 50%;
+    bottom: -14%;
+    transform: translateX(-50%);
+    padding: 0.25em 1.6em;
+    font-family: var(--font-display, serif);
+    font-size: clamp(10px, 2.2cqw, 26px);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--wp-ink);
+    border: 1px solid color-mix(in oklab, var(--wp-ink) 70%, transparent);
+    opacity: 0.85;
+  }
+
+  /* ───────── 05 · Holo (blanc + sol holographique cyan) ───────── */
+  .os-wallpaper[data-theme="holo"] {
+    --wp-ink: #f4f7f9;
+    --wp-glow: rgba(0, 243, 255, 0.35);
+  }
+  .os-wallpaper[data-theme="holo"] .wp-base {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 30%, #34414c 0%, transparent 70%),
+      linear-gradient(180deg, #2a3540, #141a20 70%, #0d1115);
+  }
+  /* Aurores flottantes */
+  .os-wallpaper[data-theme="holo"] .wp-fx-a {
+    background:
+      radial-gradient(ellipse 30% 40% at 15% 85%, rgba(0, 243, 255, 0.28), transparent 70%),
+      radial-gradient(ellipse 25% 35% at 10% 70%, rgba(255, 0, 170, 0.18), transparent 70%),
+      radial-gradient(ellipse 30% 30% at 88% 80%, rgba(0, 243, 255, 0.14), transparent 70%);
+    filter: blur(24px);
+    animation: wp-drift 14s ease-in-out infinite alternate;
+  }
+  /* Sol : grille en perspective + scanlines */
+  .os-wallpaper[data-theme="holo"] .wp-fx-b {
+    background:
+      linear-gradient(90deg, rgba(0, 243, 255, 0.12) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(0, 243, 255, 0.12) 1px, transparent 1px);
+    background-size: 60px 60px;
+    top: 58%;
+    transform-origin: 50% 0;
+    transform: perspective(600px) rotateX(62deg) scale(1.6);
+    -webkit-mask: linear-gradient(180deg, #000, transparent 85%);
+    mask: linear-gradient(180deg, #000, transparent 85%);
+    opacity: 0.7;
+  }
+  .os-wallpaper[data-theme="holo"] .wp-logo-reflection {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    aspect-ratio: 1256 / 1024;
+    background: linear-gradient(180deg, #7ff6ff, #00f3ff);
+    -webkit-mask: url('/logo.png') center / contain no-repeat;
+    mask: url('/logo.png') center / contain no-repeat;
+    transform: scaleY(-0.55) skewX(-6deg);
+    transform-origin: 50% 0;
+    opacity: 0.22;
+    filter: blur(1.5px);
+  }
+  .os-wallpaper[data-theme="holo"] .wp-logo-reflection::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 0, 0, 0.55) 2px 4px);
+  }
+
+  /* ───────── 06 · Cyan ───────── */
+  .os-wallpaper[data-theme="teal"] {
+    --wp-ink: #67c9c2;
+    --wp-glow: rgba(103, 201, 194, 0.35);
+  }
+  .os-wallpaper[data-theme="teal"] .wp-base {
+    background:
+      radial-gradient(ellipse 70% 70% at 30% 30%, #26343a 0%, transparent 70%),
+      linear-gradient(160deg, #1e2a30, #0e1418);
+  }
+  .os-wallpaper[data-theme="teal"] .wp-fx-a {
+    background: radial-gradient(circle at 50% 50%, rgba(103, 201, 194, 0.10), transparent 45%);
+  }
+
+  /* ───────── 07 · Mono ───────── */
+  .os-wallpaper[data-theme="mono"] {
+    --wp-ink: #eceff2;
+    --wp-glow: rgba(255, 255, 255, 0.2);
+  }
+  .os-wallpaper[data-theme="mono"] .wp-base {
+    background:
+      radial-gradient(ellipse 70% 70% at 35% 35%, #353b43 0%, transparent 70%),
+      linear-gradient(160deg, #2a3036, #15181c);
+  }
+  .os-wallpaper[data-theme="mono"] .wp-fx-a {
+    background:
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 48px 48px;
+    -webkit-mask: radial-gradient(ellipse at center, #000 20%, transparent 80%);
+    mask: radial-gradient(ellipse at center, #000 20%, transparent 80%);
+  }
+
+  /* ───────── 08 · Matrix (canvas JS) ───────── */
+  .os-wallpaper[data-theme="matrix"] {
+    --wp-ink: #b9ffc6;
+    --wp-glow: rgba(0, 255, 102, 0.55);
+  }
+  .os-wallpaper[data-theme="matrix"] .wp-base {
+    background: radial-gradient(ellipse 60% 60% at 50% 50%, #04140b, #020604 80%);
+  }
+  /* Aperçu statique pour la miniature (pas de canvas) */
+  .os-wallpaper[data-theme="matrix"].is-thumb .wp-fx-a {
+    background:
+      repeating-linear-gradient(90deg, transparent 0 9px, rgba(0, 255, 102, 0.25) 9px 10px),
+      repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0 3px, transparent 3px 7px);
+    -webkit-mask: linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent);
+    mask: linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent);
+    opacity: 0.6;
+  }
+  .os-wallpaper[data-theme="matrix"] .wp-logo {
+    filter: drop-shadow(0 0 14px var(--wp-glow)) drop-shadow(0 0 40px rgba(0, 255, 102, 0.25));
+  }
+
+  /* ───────── Animations ───────── */
+  @keyframes wp-spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+  @keyframes wp-sweep {
+    0%   { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
+  }
+  @keyframes wp-drift {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(4%, -3%) scale(1.08); }
+  }
+
+  /* Miniatures : logo plus gros, aucune animation */
+  .os-wallpaper.is-thumb { --wp-logo-w: 44cqw; }
+  .os-wallpaper.is-thumb .wp-logo { filter: none; }
+  .os-wallpaper.is-thumb .wp-fx,
+  .os-wallpaper.is-thumb .wp-ring { animation: none !important; }
+  .os-wallpaper.is-thumb .wp-plate { font-size: 6px; letter-spacing: 0.25em; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .os-wallpaper .wp-fx,
+    .os-wallpaper .wp-ring { animation: none !important; }
+  }
+</style>
+
+<script>
+  /**
+   * Pluie « matrix » sur canvas — ne tourne que lorsque le thème est actif,
+   * l'OS affiché et l'onglet visible. Respecte prefers-reduced-motion.
+   */
+  const GLYPHS = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ0123456789<>/{}[]=+*#$%&';
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let raf = 0;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let drops: number[] = [];
+  let lastW = 0;
+  let lastH = 0;
+  let lastT = 0;
+
+  const canvas = document.querySelector<HTMLCanvasElement>('.os-wallpaper[data-theme="matrix"] .wp-canvas');
+  const ctx = canvas?.getContext('2d', { alpha: true });
+
+  const resize = () => {
+    if (!canvas || !ctx) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    if (w === lastW && h === lastH) return;
+    lastW = w; lastH = h;
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    const cols = Math.ceil(w / 18);
+    drops = Array.from({ length: cols }, () => Math.random() * -h / 18);
+  };
+
+  const frame = (t: number) => {
+    if (!canvas || !ctx) return;
+    const visible = !document.hidden && canvas.clientWidth > 0 && canvas.isConnected;
+    if (!visible) { timer = setTimeout(() => { raf = requestAnimationFrame(frame); }, 600); return; }
+
+    // ~24 fps suffisent et ménagent le CPU
+    if (t - lastT < 40) { raf = requestAnimationFrame(frame); return; }
+    lastT = t;
+
+    resize();
+    const w = lastW, h = lastH, size = 16, colW = 18;
+    ctx.fillStyle = 'rgba(2, 6, 4, 0.14)';
+    ctx.fillRect(0, 0, w, h);
+    ctx.font = `${size}px ui-monospace, "Fira Code", monospace`;
+    ctx.textBaseline = 'top';
+
+    for (let i = 0; i < drops.length; i++) {
+      const x = i * colW, y = drops[i] * size;
+      const g = GLYPHS[(Math.random() * GLYPHS.length) | 0];
+      ctx.fillStyle = Math.random() > 0.96 ? '#dfffe6' : 'rgba(0, 255, 102, 0.75)';
+      ctx.fillText(g, x, y);
+      if (y > h && Math.random() > 0.975) drops[i] = 0;
+      drops[i] += 0.6 + Math.random() * 0.5;
+    }
+    raf = requestAnimationFrame(frame);
+  };
+
+  const start = () => {
+    if (!canvas || !ctx || reduced || raf) return;
+    lastW = 0; // force resize
+    raf = requestAnimationFrame(frame);
+  };
+  const stop = () => {
+    if (raf) cancelAnimationFrame(raf);
+    if (timer) clearTimeout(timer);
+    raf = 0; timer = undefined;
+    if (canvas && ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+  };
+
+  // Piloté par l'OS : il émet l'identifiant du fond actif
+  window.addEventListener('os:wallpaper', (e) => {
+    const id = (e as CustomEvent<string>).detail;
+    id === 'matrix' ? start() : stop();
+  });
+  window.addEventListener('resize', () => { lastW = 0; });
+</script>
