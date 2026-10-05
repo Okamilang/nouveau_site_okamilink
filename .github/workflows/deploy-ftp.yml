@@ -12,18 +12,22 @@ jobs:
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
-      
+
       - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          
+          cache: npm
+
       - name: 📦 Install Dependencies
         run: npm ci
-        
+        env:
+          # puppeteer ne sert qu'au script de capture local : pas besoin de Chromium en CI
+          PUPPETEER_SKIP_DOWNLOAD: '1'
+
       - name: 🏗️ Build Project
         run: npm run build
-        
+
       - name: 🚀 Sync files via SFTP
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
@@ -32,4 +36,14 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: 22
           local_path: './dist/*'
-          remote_path: './okamilink/' # Dossier spécifié par l'utilisateur
+          remote_path: './okamilink/'
+
+      - name: 🔒 Upload .htaccess (ignoré par le glob ./dist/*)
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 22
+          local_path: './dist/.htaccess'
+          remote_path: './okamilink/.htaccess'

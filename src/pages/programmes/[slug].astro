@@ -41,6 +41,19 @@ const appSchema = {
   jsonLd={appSchema}
 >
   <article class={`project-article ${project.data.category === 'program' ? 'is-program' : ''}`}>
+    <div class="program-topbar">
+      <a href="/programmes" class="back-link">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"/></svg>
+        Tous les programmes
+      </a>
+      {project.data.url && (
+        <a href={project.data.url} target="_blank" rel="noopener noreferrer" class="access-btn">
+          <span>Accéder au programme</span>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13 13 3M6 3h7v7"/></svg>
+        </a>
+      )}
+    </div>
+
     {project.data.category !== 'program' && (
       <header class="project-header">
         <div class="header-content">
@@ -55,21 +68,12 @@ const appSchema = {
               <span class="tag">{tag}</span>
             ))}
           </div>
-          
-          {project.data.url && (
-            <div class="action-buttons">
-              <a href={project.data.url} target="_blank" rel="noopener noreferrer" class="primary-btn access-btn">
-                <span class="btn-text">Accéder au programme</span>
-                <div class="btn-glow"></div>
-              </a>
-            </div>
-          )}
         </div>
-        
+
         {project.data.coverImage && (
           <div class="cover-wrapper">
-            <Image 
-              src={project.data.coverImage} 
+            <Image
+              src={project.data.coverImage}
               alt={project.data.title}
               width={1600}
               height={900}
@@ -91,6 +95,57 @@ const appSchema = {
   .project-article {
     padding-bottom: 8rem;
   }
+
+  .program-topbar {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 2rem 2rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    opacity: 0;
+    animation: reveal 0.9s var(--ease-out-expo) 0.1s forwards;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    transition: color 0.3s ease;
+  }
+
+  .back-link svg { transition: transform 0.4s var(--ease-out-expo); }
+  .back-link:hover { color: var(--text-main); }
+  .back-link:hover svg { transform: translateX(-3px); }
+
+  .access-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1.25rem;
+    border-radius: 999px;
+    background: var(--text-main);
+    color: var(--bg-color);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s ease;
+  }
+
+  .access-btn svg { transition: transform 0.4s var(--ease-out-expo); }
+
+  .access-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px -12px color-mix(in oklch, var(--accent-purple) 60%, transparent);
+  }
+
+  .access-btn:hover svg { transform: translate(2px, -2px); }
 
   .project-header {
     padding-top: 4rem;
@@ -127,18 +182,6 @@ const appSchema = {
     margin-bottom: 2rem;
   }
 
-  .action-buttons {
-    display: flex;
-    justify-content: center;
-    margin-top: 1rem;
-  }
-
-  .access-btn {
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-    text-decoration: none;
-  }
-
   .tag {
     font-size: 0.85rem;
     padding: 0.4rem 1rem;
@@ -171,30 +214,86 @@ const appSchema = {
     max-width: 900px;
     margin: 4rem auto 0;
     padding: 0 2rem;
-    font-size: 1.15rem;
-    line-height: 1.8;
+    font-size: 1.12rem;
+    font-weight: 300;
+    line-height: 1.85;
     color: var(--text-muted);
+    opacity: 0;
+    animation: reveal 1s var(--ease-out-expo) 0.25s forwards;
   }
 
   .is-program .project-content {
-    max-width: 1200px;
+    max-width: var(--container-width);
     margin-top: 2rem;
+  }
+
+  .project-content :global(h1) {
+    color: var(--text-main);
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    letter-spacing: -0.03em;
+    margin: 0 0 2rem;
   }
 
   .project-content :global(h2) {
     color: var(--text-main);
-    font-size: 2rem;
-    margin: 3rem 0 1.5rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    margin: 3.5rem 0 1.25rem;
   }
 
   .project-content :global(h3) {
     color: var(--text-main);
-    font-size: 1.5rem;
-    margin: 2rem 0 1rem;
+    font-size: 1.3rem;
+    margin: 2.5rem 0 1rem;
   }
 
   .project-content :global(p) {
     margin-bottom: 1.5rem;
+  }
+
+  .project-content :global(strong) {
+    color: var(--text-main);
+    font-weight: 500;
+  }
+
+  .project-content :global(a) {
+    color: var(--accent-blue);
+    border-bottom: 1px solid color-mix(in oklch, var(--accent-blue) 40%, transparent);
+    transition: color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .project-content :global(a:hover) {
+    color: var(--accent-pink);
+    border-color: var(--accent-pink);
+  }
+
+  .project-content :global(ul), .project-content :global(ol) {
+    margin: 0 0 1.5rem 1.25rem;
+    list-style: disc;
+  }
+
+  .project-content :global(li) { margin-bottom: 0.5rem; }
+  .project-content :global(li::marker) { color: var(--accent-pink); }
+
+  .project-content :global(blockquote) {
+    margin: 0 0 2rem;
+    padding: 1rem 1.5rem;
+    border-left: 2px solid var(--accent-pink);
+    background: color-mix(in oklch, var(--bg-surface) 60%, transparent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    color: var(--text-main);
+    font-weight: 300;
+  }
+
+  .project-content :global(blockquote p:last-child) { margin-bottom: 0; }
+
+  .project-content :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    padding: 0.15em 0.45em;
+    border-radius: 4px;
+    background: color-mix(in oklch, var(--bg-color) 80%, transparent);
+    border: 1px solid var(--line);
+    color: var(--accent-blue);
   }
 
   .project-content :global(img) {
@@ -202,11 +301,11 @@ const appSchema = {
     height: auto;
     display: block;
     margin: 2rem auto;
-    border-radius: 12px;
-    transition: transform 0.2s;
+    border-radius: var(--radius-md);
+    transition: transform 0.4s var(--ease-out-expo);
   }
-  
+
   .project-content :global(img:hover) {
-    transform: scale(1.02);
+    transform: scale(1.015);
   }
 </style>

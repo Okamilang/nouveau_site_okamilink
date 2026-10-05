@@ -14,73 +14,106 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
   const { Content } = await p.render();
   return { p, Content, i };
 }));
+
+const icons = {
+  user: "<path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/>",
+  chip: "<rect width='16' height='16' x='4' y='4' rx='2'/><rect width='6' height='6' x='9' y='9' rx='1'/><path d='M15 2v2'/><path d='M15 20v2'/><path d='M2 15h2'/><path d='M2 9h2'/><path d='M20 15h2'/><path d='M20 9h2'/><path d='M9 2v2'/><path d='M9 20v2'/>",
+  brain: "<path d='M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z'/><path d='M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z'/>",
+  folder: "<path d='M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/>",
+  book: "<path d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/><path d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/>",
+  file: "<path d='M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z'/><polyline points='14 2 14 8 20 8'/>",
+  terminal: "<polyline points='4 17 10 11 4 5'/><line x1='12' x2='20' y1='19' y2='19'/>",
+  display: "<rect width='20' height='14' x='2' y='3' rx='2'/><line x1='8' x2='16' y1='21' y2='21'/><line x1='12' x2='12' y1='17' y2='21'/>",
+  mobile: "<rect width='14' height='20' x='5' y='2' rx='2' ry='2'/><path d='M12 18h.01'/>",
+  power: "<path d='M12 2v10'/><path d='M18.4 6.6a9 9 0 1 1-12.77.04'/>",
+};
+
+const svg = (paths: string, size = 18) =>
+  `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'>${paths}</svg>`;
+
+const dock = [
+  { target: 'win-about', label: 'A_Propos', icon: icons.user },
+  { target: 'win-skills', label: 'Competences', icon: icons.chip },
+  { target: 'win-philo', label: 'Philosophie', icon: icons.brain },
+  { target: 'win-projects', label: 'Projets', icon: icons.folder },
+  { target: 'win-terminal', label: 'Terminal', icon: icons.terminal },
+  { target: 'win-wallpaper', label: 'Affichage', icon: icons.display },
+];
+
+const wallpapers = [
+  { id: 'wp1', name: 'Fond 1', url: '/os-backgrounds/fond1.webp' },
+  { id: 'wp2', name: 'Fond 2', url: '/os-backgrounds/fond2.webp' },
+  { id: 'wp3', name: 'Fond 3', url: '/os-backgrounds/fond3.webp' },
+  { id: 'wp4', name: 'Fond 4', url: '/os-backgrounds/fond4.webp' },
+  { id: 'wp5', name: 'Fond 5', url: '/os-backgrounds/fond5.webp' },
+  { id: 'wp6', name: 'Fond 6', url: '/os-backgrounds/fond6.webp' },
+  { id: 'wp7', name: 'Fond 7', url: '/os-backgrounds/fond7.webp' },
+];
+
+const websites = projects.filter(p => p.data.category === 'website');
+const programs = projects.filter(p => p.data.category === 'program');
 ---
 
 <div id="os-environment" class="os-environment" aria-hidden="true">
   <BootSequence />
-  
+
   <div class="desktop-area" id="desktop-area">
+    <!-- HUD : équerres d'angle et lecture de coordonnées -->
+    <div class="hud" aria-hidden="true">
+      <span class="hud-corner tl"></span>
+      <span class="hud-corner tr"></span>
+      <span class="hud-corner bl"></span>
+      <span class="hud-corner br"></span>
+      <div class="hud-readout">
+        <span>X <b id="hud-x">0000</b></span>
+        <span>Y <b id="hud-y">0000</b></span>
+        <span>WIN <b id="hud-win-count">00</b></span>
+        <span class="hud-sig">OKAMI://DESKTOP</span>
+      </div>
+    </div>
+
     <!-- Dock (Bottom) -->
     <div class="os-dock">
-      <div class="desktop-icon dock-item" data-target="win-about">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        <span class="icon-label">A_Propos</span>
-      </div>
-      <div class="desktop-icon dock-item" data-target="win-skills">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></svg>
-        <span class="icon-label">Competences</span>
-      </div>
-      <div class="desktop-icon dock-item" data-target="win-philo">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>
-        <span class="icon-label">Philosophie</span>
-      </div>
-      <div class="desktop-icon dock-item" data-target="win-projects">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
-        <span class="icon-label">Projets</span>
-      </div>
-      <div class="desktop-icon dock-item" data-target="win-terminal">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></svg>
-        <span class="icon-label">Terminal</span>
-      </div>
-      <div class="desktop-icon dock-item" data-target="win-wallpaper">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
-        <span class="icon-label">Affichage</span>
-      </div>
-      <div class="desktop-icon dock-item" id="btn-exit-os">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud" style="color: var(--cyber-magenta);"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77.04"/></svg>
+      {dock.map((item) => (
+        <div class="desktop-icon dock-item" data-target={item.target}>
+          <span class="icon-hud" set:html={svg(item.icon, 24)} />
+          <span class="icon-label">{item.label}</span>
+          <span class="dock-indicator"></span>
+        </div>
+      ))}
+      <span class="dock-sep"></span>
+      <div class="desktop-icon dock-item dock-exit" id="btn-exit-os">
+        <span class="icon-hud" set:html={svg(icons.power, 24)} />
         <span class="icon-label">Quitter</span>
       </div>
     </div>
 
     <!-- Windows Container -->
     <div id="windows-container">
-      <WindowTemplate id="win-projects" title="Projets/" icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/></svg>" x="10%" y="20%" width="600px" height="400px">
-        <div class="folder-content" style="position: relative; width: 100%; height: 100%;">
-          <div class="desktop-icon" data-target="win-projects-websites" style="position: absolute; left: 20px; top: 20px; pointer-events: auto;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+      <WindowTemplate id="win-projects" title="Projets/" icon={svg(icons.folder)} x="10%" y="20%" width="600px" height="400px">
+        <div class="folder-content">
+          <div class="desktop-icon folder-icon" data-target="win-projects-websites" style="left: 20px; top: 20px;">
+            <span class="icon-hud icon-lg" set:html={svg(icons.folder, 48)} />
             <span class="icon-label">Sites_Web/</span>
           </div>
-          <div class="desktop-icon" data-target="win-projects-programs" style="position: absolute; left: 160px; top: 20px; pointer-events: auto;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          <div class="desktop-icon folder-icon" data-target="win-projects-programs" style="left: 160px; top: 20px;">
+            <span class="icon-hud icon-lg" set:html={svg(icons.book, 48)} />
             <span class="icon-label">Programmes/</span>
           </div>
         </div>
       </WindowTemplate>
 
-      <WindowTemplate id="win-projects-websites" title="Sites_Web/" icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/></svg>" x="15%" y="25%" width="600px" height="400px">
-        <div class="folder-content" style="position: relative; width: 100%; height: 100%;">
-          {projects.filter(p => p.data.category === 'website').map((p, index) => {
-            const col = index % 5;
-            const row = Math.floor(index / 5);
-            const left = 20 + col * 140;
-            const top = 20 + row * 120;
-            
+      <WindowTemplate id="win-projects-websites" title="Sites_Web/" icon={svg(icons.folder)} x="15%" y="25%" width="600px" height="400px">
+        <div class="folder-content">
+          {websites.map((p, index) => {
+            const col = index % 4;
+            const row = Math.floor(index / 4);
             return (
-              <div class="desktop-icon" data-target={`win-proj-${p.slug}`} style={`position: absolute; left: ${left}px; top: ${top}px; pointer-events: auto;`}>
+              <div class="desktop-icon folder-icon" data-target={`win-proj-${p.slug}`} style={`left: ${20 + col * 140}px; top: ${20 + row * 120}px;`}>
                 {p.data.osIcon ? (
-                  <img src={p.data.osIcon} alt="" draggable="false" style="width: 2.5rem; height: 2.5rem; object-fit: contain; user-drag: none; -webkit-user-drag: none;" />
+                  <img src={p.data.osIcon} alt="" draggable="false" class="icon-img" />
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span class="icon-hud icon-lg" set:html={svg(icons.file, 48)} />
                 )}
                 <span class="icon-label">{p.data.title}.exe</span>
               </div>
@@ -89,25 +122,20 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
         </div>
       </WindowTemplate>
 
-      <WindowTemplate id="win-projects-programs" title="Programmes/" icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/><path d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/></svg>" x="20%" y="30%" width="600px" height="400px">
-        <div class="folder-content" style="position: relative; width: 100%; height: 100%;">
-          {projects.filter(p => p.data.category === 'program').length === 0 ? (
-            <div style="position: absolute; top: 20px; left: 20px; color: var(--cyber-cyan); font-family: var(--font-mono);">
-              > Aucun programme trouvé dans ce répertoire.
-            </div>
+      <WindowTemplate id="win-projects-programs" title="Programmes/" icon={svg(icons.book)} x="20%" y="30%" width="600px" height="400px">
+        <div class="folder-content">
+          {programs.length === 0 ? (
+            <p class="folder-empty">> Aucun programme trouvé dans ce répertoire.</p>
           ) : (
-            projects.filter(p => p.data.category === 'program').map((p, index) => {
-              const col = index % 5;
-              const row = Math.floor(index / 5);
-              const left = 20 + col * 140;
-              const top = 20 + row * 120;
-              
+            programs.map((p, index) => {
+              const col = index % 4;
+              const row = Math.floor(index / 4);
               return (
-                <div class="desktop-icon" data-target={`win-proj-${p.slug}`} style={`position: absolute; left: ${left}px; top: ${top}px; pointer-events: auto;`}>
+                <div class="desktop-icon folder-icon" data-target={`win-proj-${p.slug}`} style={`left: ${20 + col * 140}px; top: ${20 + row * 120}px;`}>
                   {p.data.osIcon ? (
-                    <img src={p.data.osIcon} alt="" draggable="false" style="width: 2.5rem; height: 2.5rem; object-fit: contain; user-drag: none; -webkit-user-drag: none;" />
+                    <img src={p.data.osIcon} alt="" draggable="false" class="icon-img" />
                   ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-hud"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span class="icon-hud icon-lg" set:html={svg(icons.file, 48)} />
                   )}
                   <span class="icon-label">{p.data.title}.exe</span>
                 </div>
@@ -119,10 +147,27 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
 
       {renderedProjects.map(({ p, Content, i }) => (
         <>
-          <WindowTemplate id={`win-proj-${p.slug}`} title={`${p.data.title}.exe`} icon={p.data.osIcon ? `<img src="${p.data.osIcon}" style="width:1.2em; height:1.2em; vertical-align:middle; object-fit:contain;"/>` : "<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z'/><polyline points='14 2 14 8 20 8'/></svg>"} x={`${15 + i*5}%`} y={`${25 + i*5}%`} width="800px" height="600px">
-            <div class="os-content-wrapper" style="padding: 30px;">
-              <h1 style="margin-bottom: 1rem; color: var(--text-main); font-size: 2rem;">{p.data.title}</h1>
-              <p style="color: var(--text-muted); margin-bottom: 2rem;">{p.data.description}</p>
+          <WindowTemplate
+            id={`win-proj-${p.slug}`}
+            title={`${p.data.title}.exe`}
+            icon={p.data.osIcon ? `<img src="${p.data.osIcon}" style="width:1.2em; height:1.2em; vertical-align:middle; object-fit:contain;"/>` : svg(icons.file)}
+            x={`${15 + i*5}%`} y={`${25 + i*5}%`} width="800px" height="600px"
+          >
+            <div class="os-content-wrapper project-window">
+              <header class="project-head">
+                <p class="project-kicker">
+                  <span>{p.data.category === 'program' ? 'PROGRAMME' : 'ÉTUDE DE CAS'}</span>
+                  <span class="kicker-sep">//</span>
+                  <span>{p.data.client}</span>
+                  <span class="kicker-sep">//</span>
+                  <span>{p.data.date.getFullYear()}</span>
+                </p>
+                <h1 class="project-title">{p.data.title}</h1>
+                <p class="project-desc">{p.data.description}</p>
+                <div class="project-tags">
+                  {p.data.tags.map(tag => <span class="project-tag">{tag}</span>)}
+                </div>
+              </header>
               <div class="project-markdown">
                 <Content />
               </div>
@@ -130,70 +175,55 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
           </WindowTemplate>
 
           {p.data.url && p.data.category === 'website' && (
-            <WindowTemplate 
-              id={`win-mobile-${p.slug}`} 
-              title={`Mobile - ${p.data.title}`} 
-              icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><rect width='14' height='20' x='5' y='2' rx='2' ry='2'/><path d='M12 18h.01'/></svg>" 
-              x={`${40 + i*5}%`} 
-              y={`${10 + i*5}%`} 
-              width="395px" 
-              height="800px"
+            <WindowTemplate
+              id={`win-mobile-${p.slug}`}
+              title={`Mobile - ${p.data.title}`}
+              icon={svg(icons.mobile)}
+              x={`${40 + i*5}%`} y={`${10 + i*5}%`} width="395px" height="800px"
             >
-              <div style="width: calc(100% + 40px); height: calc(100% + 40px); margin: -20px; background: black; position: relative; overflow: hidden;">
-                <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 25px; background: black; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 10;"></div>
-                <iframe src={p.data.url} title={`Mobile ${p.data.title}`} style="width: 100%; height: 100%; border: none;"></iframe>
+              <div class="mobile-frame">
+                <div class="mobile-notch"></div>
+                <iframe src={p.data.url} title={`Mobile ${p.data.title}`}></iframe>
               </div>
             </WindowTemplate>
           )}
         </>
       ))}
 
-      <WindowTemplate id="win-about" title="A_Propos.exe" icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>" x="5%" y="5%" width="800px" height="500px">
+      <WindowTemplate id="win-about" title="A_Propos.exe" icon={svg(icons.user)} x="5%" y="5%" width="800px" height="500px">
         <div class="os-content-wrapper">
           <Hero />
         </div>
       </WindowTemplate>
 
-      <WindowTemplate id="win-skills" title="Competences.exe" icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><rect width='16' height='16' x='4' y='4' rx='2'/><rect width='6' height='6' x='9' y='9' rx='1'/><path d='M15 2v2'/><path d='M15 20v2'/><path d='M2 15h2'/><path d='M2 9h2'/><path d='M20 15h2'/><path d='M20 9h2'/><path d='M9 2v2'/><path d='M9 20v2'/></svg>" x="15%" y="15%" width="900px" height="600px">
+      <WindowTemplate id="win-skills" title="Competences.exe" icon={svg(icons.chip)} x="15%" y="15%" width="900px" height="600px">
         <div class="os-content-wrapper">
           <ExpertiseGrid />
         </div>
       </WindowTemplate>
 
-      <WindowTemplate id="win-philo" title="Philosophie.txt" icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z'/><path d='M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z'/></svg>" x="25%" y="10%" width="700px" height="600px">
-        <div class="os-content-wrapper" style="padding: 20px;">
+      <WindowTemplate id="win-philo" title="Philosophie.txt" icon={svg(icons.brain)} x="25%" y="10%" width="700px" height="600px">
+        <div class="os-content-wrapper">
           <Philosophy />
         </div>
       </WindowTemplate>
 
-      <WindowTemplate id="win-terminal" title="Contact.sh" icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='4 17 10 11 4 5'/><line x1='12' x2='20' y1='19' y2='19'/></svg>" x="30%" y="30%" width="650px" height="450px">
+      <WindowTemplate id="win-terminal" title="Contact.sh" icon={svg(icons.terminal)} x="30%" y="30%" width="680px" height="520px">
         <div class="terminal-content">
           <ContactTerminal />
         </div>
       </WindowTemplate>
 
-      <WindowTemplate id="win-wallpaper" title="Affichage.exe" icon="<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><rect width='20' height='14' x='2' y='3' rx='2'/><line x1='8' x2='16' y1='21' y2='21'/><line x1='12' x2='12' y1='17' y2='21'/></svg>" x="20%" y="20%" width="650px" height="450px">
-        <div class="os-content-wrapper" style="padding: 25px;">
-          <h2 style="color: var(--text-main); font-family: var(--font-mono); margin-bottom: 20px; font-size: 1.2rem;">> Choisir_Fond_Ecran.sh</h2>
-          <div class="wallpaper-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;">
-            {[
-              { id: 'wp1', name: 'Fond 1', url: '/os-backgrounds/fond1.png' },
-              { id: 'wp2', name: 'Fond 2', url: '/os-backgrounds/fond2.png' },
-              { id: 'wp3', name: 'Fond 3', url: '/os-backgrounds/fond3.png' },
-              { id: 'wp4', name: 'Fond 4', url: '/os-backgrounds/fond4.png' },
-              { id: 'wp5', name: 'Fond 5', url: '/os-backgrounds/fond5.png' }
-            ].map(wp => (
-              <div 
-                class="wallpaper-btn" 
-                data-bg={wp.url}
-                style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid transparent; transition: all 0.2s; aspect-ratio: 16/9; position: relative;"
-                onmouseover="this.style.borderColor='var(--data-action)'; this.style.transform='scale(1.05)';"
-                onmouseout="this.style.borderColor='transparent'; this.style.transform='scale(1)';"
-              >
-                <img src={wp.url} alt={wp.name} style="width: 100%; height: 100%; object-fit: cover; display: block;" loading="lazy" />
-                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: white; padding: 4px; font-size: 0.75rem; text-align: center; font-family: var(--font-mono);">
-                  {wp.name}
-                </div>
+      <WindowTemplate id="win-wallpaper" title="Affichage.exe" icon={svg(icons.display)} x="20%" y="20%" width="680px" height="460px">
+        <div class="os-content-wrapper wallpaper-window">
+          <h2 class="wallpaper-title"><span>$</span> ./Choisir_Fond_Ecran.sh</h2>
+          <p class="wallpaper-hint"># Sélectionnez un fond. Le choix est mémorisé sur cet appareil.</p>
+          <div class="wallpaper-grid">
+            {wallpapers.map((wp, idx) => (
+              <div class="wallpaper-btn" data-bg={wp.url} role="button" tabindex="0">
+                <img src={wp.url} alt={wp.name} loading="lazy" />
+                <span class="wallpaper-name">{String(idx + 1).padStart(2, '0')} · {wp.name}</span>
+                <span class="wallpaper-check" aria-hidden="true">ACTIF</span>
               </div>
             ))}
           </div>
@@ -221,11 +251,27 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
     const icons = document.querySelectorAll('.desktop-icon') as NodeListOf<HTMLElement>;
     const taskbarItems = new Map<string, HTMLElement>();
 
+    // Synchronise les indicateurs du dock et le compteur HUD
+    const hudWinCount = document.getElementById('hud-win-count');
+    const syncDock = () => {
+      document.querySelectorAll('.dock-item[data-target]').forEach(item => {
+        const id = item.getAttribute('data-target');
+        const w = id ? document.getElementById(id) : null;
+        const open = !!w && w.classList.contains('open');
+        const visible = open && w!.style.display !== 'none';
+        item.classList.toggle('is-open', open);
+        item.classList.toggle('is-visible', visible);
+      });
+      if (hudWinCount) {
+        const count = document.querySelectorAll('.os-window.open').length;
+        hudWinCount.textContent = String(count).padStart(2, '0');
+      }
+    };
+
     const bringToFront = (win: HTMLElement) => {
       highestZIndex++;
       win.style.zIndex = highestZIndex.toString();
-      
-      // Update taskbar active state
+
       document.querySelectorAll('.taskbar-item').forEach(item => item.classList.remove('active'));
       const tbItem = taskbarItems.get(win.id);
       if (tbItem) tbItem.classList.add('active');
@@ -236,12 +282,10 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
       if (!win) return;
 
       if (!win.classList.contains('open')) {
-        // Open it
         win.classList.add('open');
         win.style.display = 'flex';
         bringToFront(win);
-        
-        // Add to taskbar if not exists
+
         if (!taskbarItems.has(winId)) {
           const tbItem = document.createElement('div');
           tbItem.className = 'taskbar-item active';
@@ -257,18 +301,18 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
             } else {
               bringToFront(win);
             }
+            syncDock();
           };
           taskbarWindows?.appendChild(tbItem);
           taskbarItems.set(winId, tbItem);
         }
       } else if (win.style.display === 'none') {
-        // Restore from minimized
         win.style.display = 'flex';
         bringToFront(win);
       } else {
-        // Already open and visible, just focus
         bringToFront(win);
       }
+      syncDock();
     };
 
     (window as any).openOSWindow = toggleWindow;
@@ -281,7 +325,6 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
       let currentX = 0, currentY = 0;
       let initialX = 0, initialY = 0;
 
-      // Make sure the icon has a relative positioning context if it isn't absolute
       if (window.getComputedStyle(icon).position === 'static') {
         icon.style.position = 'relative';
       }
@@ -289,10 +332,10 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
       const onMouseMove = (e: MouseEvent) => {
         if (!isDraggingIcon) return;
         e.preventDefault();
-        
+
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
-        
+
         if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
           hasMoved = true;
         }
@@ -312,7 +355,6 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
       };
 
       icon.addEventListener('mousedown', (e: MouseEvent) => {
-        // Ne pas drag si l'icône est dans le dock (on vérifie s'il a la classe dock-item)
         if (icon.classList.contains('dock-item')) return;
 
         isDraggingIcon = true;
@@ -322,37 +364,22 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
         initialX = currentX;
         initialY = currentY;
         icon.style.zIndex = '50';
-        
+
         window.addEventListener('mousemove', onMouseMove);
         window.addEventListener('mouseup', onMouseUp);
       });
 
+      // Simple clic pour tout : dock, dossiers et programmes (un drag annule l'ouverture)
       icon.addEventListener('click', (e) => {
         if (hasMoved) {
           e.preventDefault();
           e.stopPropagation();
-        } else if (icon.classList.contains('dock-item')) {
-          // Les éléments du dock s'ouvrent en un seul clic
-          const target = icon.getAttribute('data-target');
-          if (target) toggleWindow(target);
+          return;
         }
-      });
-
-      icon.addEventListener('dblclick', (e) => {
-        if (hasMoved) return;
-        // Le double clic reste pour les éventuelles icônes de bureau, mais le dock l'ignore
-        if (!icon.classList.contains('dock-item')) {
-          const target = icon.getAttribute('data-target');
-          if (target) toggleWindow(target);
-        }
-      });
-      
-      // Fallback for touch devices
-      icon.addEventListener('touchstart', (e: TouchEvent) => {
-        if (hasMoved) return;
         const target = icon.getAttribute('data-target');
         if (target) toggleWindow(target);
       });
+
     });
 
     // Exit OS Logic
@@ -363,12 +390,9 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
         document.documentElement.setAttribute('data-experience', 'vitrine');
         localStorage.setItem('okamilink_experience', 'vitrine');
       };
-      
-      // Le bouton quitter s'active au clic simple dans le dock
+
       exitBtn.addEventListener('click', exitOS);
-      
-      // Use touchstart with a small delay logic to simulate double tap, or just keep touchstart for mobile simplicity.
-      // But to be consistent, we'll listen for a double-tap pattern.
+
       let lastTap = 0;
       exitBtn.addEventListener('touchstart', (e: TouchEvent) => {
         const currentTime = new Date().getTime();
@@ -392,25 +416,49 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
 
     // Wallpaper Logic
     const osEnv = document.getElementById('os-environment');
+    const wallpaperBtns = document.querySelectorAll('.wallpaper-btn');
+    const applyWallpaper = (url: string) => {
+      if (osEnv) osEnv.style.backgroundImage = `linear-gradient(rgba(5, 5, 10, 0.2), rgba(5, 5, 10, 0.4)), url('${url}')`;
+      wallpaperBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-bg') === url));
+    };
+
     if (osEnv) {
-      const savedWallpaper = localStorage.getItem('os-wallpaper');
-      if (savedWallpaper) {
-        osEnv.style.backgroundImage = `linear-gradient(rgba(5, 5, 10, 0.2), rgba(5, 5, 10, 0.4)), url('${savedWallpaper}')`;
-      } else {
-        osEnv.style.backgroundImage = `linear-gradient(rgba(5, 5, 10, 0.2), rgba(5, 5, 10, 0.4)), url('/os-backgrounds/fond1.png')`;
-      }
+      // Migration : les anciens fonds .png ont été remplacés par des .webp
+      const savedWallpaper = (localStorage.getItem('os-wallpaper') || '/os-backgrounds/fond1.webp').replace(/\.png$/, '.webp');
+      applyWallpaper(savedWallpaper);
     }
 
-    const wallpaperBtns = document.querySelectorAll('.wallpaper-btn');
     wallpaperBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
+      const select = () => {
         const bgUrl = btn.getAttribute('data-bg');
         if (bgUrl && osEnv) {
-          osEnv.style.backgroundImage = `linear-gradient(rgba(5, 5, 10, 0.2), rgba(5, 5, 10, 0.4)), url('${bgUrl}')`;
+          applyWallpaper(bgUrl);
           localStorage.setItem('os-wallpaper', bgUrl);
         }
+      };
+      btn.addEventListener('click', select);
+      btn.addEventListener('keydown', (e) => {
+        if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') { e.preventDefault(); select(); }
       });
     });
+
+    // HUD : coordonnées du pointeur
+    const hudX = document.getElementById('hud-x');
+    const hudY = document.getElementById('hud-y');
+    if (desktopArea && hudX && hudY) {
+      let pending = false;
+      let px = 0, py = 0;
+      desktopArea.addEventListener('mousemove', (e: MouseEvent) => {
+        px = e.clientX; py = e.clientY;
+        if (pending) return;
+        pending = true;
+        requestAnimationFrame(() => {
+          hudX.textContent = String(px).padStart(4, '0');
+          hudY.textContent = String(py).padStart(4, '0');
+          pending = false;
+        });
+      }, { passive: true });
+    }
 
     // Window Controls
     windows.forEach(win => {
@@ -425,6 +473,7 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
         win.style.display = 'none';
         const tbItem = taskbarItems.get(win.id);
         if (tbItem) tbItem.classList.remove('active');
+        syncDock();
       });
 
       maximizeBtn?.addEventListener('click', (e: MouseEvent) => {
@@ -443,6 +492,7 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
           tbItem.remove();
           taskbarItems.delete(win.id);
         }
+        syncDock();
       });
 
       // Draggable logic
@@ -469,6 +519,7 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
 
       header?.addEventListener('mousedown', (e: MouseEvent) => {
         if (win.classList.contains('maximized')) return;
+        if ((e.target as HTMLElement).closest('.win-btn')) return;
         isDragging = true;
         startX = e.clientX;
         startY = e.clientY;
@@ -476,7 +527,7 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
         initialY = win.offsetTop;
         bringToFront(win);
         document.body.classList.add('window-is-dragging');
-        
+
         window.addEventListener('mousemove', onWinMouseMove);
         window.addEventListener('mouseup', onWinMouseUp);
       });
@@ -502,7 +553,7 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
       const target = e.target as HTMLElement;
       const icon = target.closest('.desktop-icon');
       const windowHeader = target.closest('.window-header');
-      
+
       contextMenuList.innerHTML = '';
 
       if (icon) {
@@ -510,7 +561,7 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
         contextMenuList.innerHTML = `
           <li id="cm-open">Ouvrir</li>
           <div class="separator"></div>
-          <li style="opacity: 0.5; cursor: default;">Propriétés de ${title}</li>
+          <li class="disabled">Propriétés de ${title}</li>
         `;
         document.getElementById('cm-open')?.addEventListener('click', () => {
           const targetId = icon.getAttribute('data-target');
@@ -518,7 +569,7 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
             toggleWindow(targetId);
           } else if (icon.id === 'btn-exit-os') {
             const exitBtn = document.getElementById('btn-exit-os');
-            if (exitBtn) exitBtn.dispatchEvent(new MouseEvent('dblclick'));
+            if (exitBtn) exitBtn.dispatchEvent(new MouseEvent('click'));
           }
         });
       } else if (windowHeader) {
@@ -534,7 +585,6 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
           win.querySelector('.win-btn.minimize')?.dispatchEvent(new MouseEvent('click'));
         });
       } else {
-        // Empty desktop
         contextMenuList.innerHTML = `
           <li id="cm-refresh">Actualiser</li>
           <div class="separator"></div>
@@ -551,13 +601,12 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
         });
         document.getElementById('cm-quit')?.addEventListener('click', () => {
           const exitBtn = document.getElementById('btn-exit-os');
-          if (exitBtn) exitBtn.dispatchEvent(new MouseEvent('dblclick'));
+          if (exitBtn) exitBtn.dispatchEvent(new MouseEvent('click'));
         });
       }
 
       contextMenu.style.display = 'block';
-      
-      // Position calculation to prevent overflow
+
       let x = e.clientX;
       let y = e.clientY;
       const menuWidth = contextMenu.offsetWidth || 180;
@@ -569,6 +618,8 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
       contextMenu.style.left = `${x}px`;
       contextMenu.style.top = `${y}px`;
     });
+
+    syncDock();
   });
 </script>
 
@@ -586,52 +637,127 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(rgba(5, 5, 10, 0.2), rgba(5, 5, 10, 0.4)), url('/os-backgrounds/fond1.png') center/cover no-repeat;
+    background: linear-gradient(rgba(5, 5, 10, 0.2), rgba(5, 5, 10, 0.4)), url('/os-backgrounds/fond1.webp') center/cover no-repeat;
+    background-size: cover;
+    background-position: center;
     z-index: 8000;
+    font-family: var(--font-mono);
   }
 
-  /* Rendre l'OS visible uniquement quand l'expérience est console */
   :global(html[data-experience="console"]) .os-environment {
     display: block;
   }
 
-  /* Overlay CRT (Scanlines + Vignette) */
+  /* Overlay CRT : scanlines + vignette + très légère aberration */
   .os-environment::after {
     content: "";
     position: absolute;
     inset: 0;
     z-index: 10000;
     pointer-events: none;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-    background-size: 100% 4px; /* Scanlines */
-    box-shadow: inset 0 0 150px rgba(0,0,0,0.95); /* Vignette sombres aux bords */
+    background:
+      linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+      linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.015), rgba(0, 0, 255, 0.03));
+    background-size: 100% 4px, 100% 100%;
+    box-shadow: inset 0 0 160px rgba(0, 0, 0, 0.95);
     opacity: 0.6;
   }
 
   .desktop-area {
     position: absolute;
-    top: 38px; /* Taskbar (Menu Bar) en haut */
+    top: 38px;
     left: 0;
     width: 100%;
     height: calc(100vh - 38px);
     padding: 20px;
     overflow: hidden;
+    transition: opacity 0.2s ease;
   }
 
+  /* ───────── HUD ───────── */
+  .hud {
+    position: absolute;
+    inset: 14px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .hud-corner {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border: 1px solid rgba(0, 243, 255, 0.45);
+  }
+
+  .hud-corner.tl { top: 0; left: 0; border-right: none; border-bottom: none; }
+  .hud-corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+  .hud-corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+  .hud-corner.br { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+  .hud-readout {
+    position: absolute;
+    left: 12px;
+    bottom: 8px;
+    display: flex;
+    gap: 1.25rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    color: rgba(0, 243, 255, 0.5);
+    text-transform: uppercase;
+  }
+
+  .hud-readout b {
+    font-weight: 600;
+    color: rgba(0, 243, 255, 0.85);
+    margin-left: 0.25rem;
+  }
+
+  .hud-sig {
+    color: rgba(255, 0, 234, 0.6);
+  }
+
+  @media (max-width: 720px) {
+    .hud-readout { display: none; }
+  }
+
+  /* ───────── Dock ───────── */
   .os-dock {
     position: absolute;
-    bottom: 20px;
+    bottom: 22px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 10px;
-    padding: 10px 15px;
-    background: rgba(5, 8, 12, 0.7);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(0, 243, 255, 0.2);
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 10px rgba(0, 243, 255, 0.1);
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(4, 7, 11, 0.78);
+    backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid rgba(0, 243, 255, 0.28);
+    box-shadow:
+      0 20px 40px -10px rgba(0, 0, 0, 0.7),
+      0 0 24px rgba(0, 243, 255, 0.08),
+      inset 0 1px 0 rgba(0, 243, 255, 0.15);
     z-index: 8500;
+  }
+
+  /* Équerres magenta sur le dock */
+  .os-dock::before, .os-dock::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border: 1px solid var(--cyber-magenta);
+    filter: drop-shadow(0 0 3px rgba(255, 0, 234, 0.7));
+  }
+
+  .os-dock::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+  .os-dock::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+  .dock-sep {
+    width: 1px;
+    height: 28px;
+    background: rgba(0, 243, 255, 0.25);
+    margin: 0 4px;
   }
 
   .desktop-icon {
@@ -642,169 +768,460 @@ const renderedProjects = await Promise.all(projects.map(async (p, i) => {
     color: white;
     cursor: pointer;
     padding: 10px;
-    border-radius: 8px;
     border: 1px solid transparent;
-    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     user-select: none;
     position: relative;
   }
 
+  .dock-item {
+    padding: 9px 11px 11px;
+  }
+
   .dock-item:hover {
-    transform: scale(1.15) translateY(-5px);
+    transform: translateY(-6px);
     background: rgba(0, 243, 255, 0.1);
-    border-color: rgba(0, 243, 255, 0.3);
-    box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.2);
+    border-color: rgba(0, 243, 255, 0.35);
+    box-shadow: inset 0 0 12px rgba(0, 243, 255, 0.15);
     z-index: 10;
   }
 
   .dock-item .icon-label {
     position: absolute;
-    bottom: -20px;
+    top: -34px;
     opacity: 0;
     white-space: nowrap;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    transition: opacity 0.2s;
-    border: 1px solid var(--cyber-cyan);
+    background: rgba(4, 7, 11, 0.95);
+    padding: 4px 10px;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cyber-cyan);
+    transform: translateY(6px);
+    transition: opacity 0.2s, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid rgba(0, 243, 255, 0.5);
     pointer-events: none;
   }
 
   .dock-item:hover .icon-label {
     opacity: 1;
+    transform: translateY(0);
   }
 
-  .desktop-icon:hover {
-    background: rgba(0, 243, 255, 0.1);
-    border-color: var(--cyber-cyan);
-    box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.2);
+  /* Indicateur fenêtre ouverte */
+  .dock-indicator {
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    transform: translateX(-50%) rotate(45deg) scale(0);
+    background: var(--cyber-cyan);
+    box-shadow: 0 0 6px var(--cyber-cyan);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s;
+  }
+
+  .dock-item.is-open .dock-indicator { transform: translateX(-50%) rotate(45deg) scale(1); }
+  .dock-item.is-open:not(.is-visible) .dock-indicator { background: rgba(0, 243, 255, 0.35); box-shadow: none; }
+
+  .dock-exit .icon-hud { color: var(--cyber-magenta); filter: drop-shadow(0 0 5px rgba(255, 0, 234, 0.6)); }
+  .dock-exit:hover {
+    background: rgba(255, 0, 234, 0.1);
+    border-color: rgba(255, 0, 234, 0.4);
+    box-shadow: inset 0 0 12px rgba(255, 0, 234, 0.15);
+  }
+  .dock-exit .icon-label { color: var(--cyber-magenta); border-color: rgba(255, 0, 234, 0.5); }
+
+  /* Icônes dans les dossiers */
+  .folder-icon {
+    position: absolute;
+    pointer-events: auto;
+    width: 112px;
+  }
+
+  .desktop-icon:not(.dock-item):hover {
+    background: rgba(0, 243, 255, 0.08);
+    border-color: rgba(0, 243, 255, 0.5);
+    box-shadow: inset 0 0 12px rgba(0, 243, 255, 0.15);
     color: var(--cyber-cyan);
   }
 
-  .desktop-icon:hover .icon-label {
+  .desktop-icon:not(.dock-item):hover .icon-label {
     text-shadow: 0 0 8px var(--cyber-cyan);
+    color: var(--cyber-cyan);
   }
 
   .icon-hud {
-    width: 2.5rem;
-    height: 2.5rem;
+    display: inline-flex;
     color: var(--cyber-cyan);
     filter: drop-shadow(0 0 5px rgba(0, 243, 255, 0.6));
   }
 
+  .icon-hud :global(svg) { width: 100%; height: 100%; }
+  .dock-item .icon-hud { width: 22px; height: 22px; }
+  .icon-lg { width: 2.75rem; height: 2.75rem; }
+
+  .icon-img {
+    width: 2.75rem;
+    height: 2.75rem;
+    object-fit: contain;
+    user-drag: none;
+    -webkit-user-drag: none;
+    filter: drop-shadow(0 0 6px rgba(0, 243, 255, 0.35));
+  }
+
   .icon-label {
     font-family: var(--font-mono);
-    font-size: 0.8rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
     text-shadow: 0 2px 4px rgba(0,0,0,0.8);
     text-align: center;
     word-break: break-word;
+    color: rgba(255, 255, 255, 0.85);
   }
 
   .desktop-icon:not(.dock-item) .icon-label {
     white-space: normal;
     max-width: 100px;
-    line-height: 1.2;
-    margin-top: 5px;
+    line-height: 1.25;
+    margin-top: 2px;
   }
 
-  /* Override standard component styles when inside OS windows */
+  .folder-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 260px;
+  }
+
+  .folder-empty {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: var(--cyber-cyan);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+
+  /* ───────── Contenu des fenêtres ───────── */
   .os-content-wrapper {
-    /* Reset padding or heights that rely on main viewport */
-    zoom: 0.8; /* Scale down standard components slightly to fit in windows */
+    zoom: 0.8;
   }
 
   .terminal-content {
     font-family: var(--font-mono);
     color: var(--data-action);
     font-size: 0.9rem;
+    padding-top: 0.5rem;
   }
 
-  .sys-msg {
-    margin-bottom: 0.5rem;
-    opacity: 0.8;
-  }
+  .project-window { padding: 20px 26px 30px; }
 
-  .cmd-line {
+  .project-head {
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(0, 243, 255, 0.2);
     display: flex;
-    gap: 10px;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
-  .cursor-blink {
-    animation: blink 1s step-end infinite;
+  .project-kicker {
+    display: flex;
+    gap: 0.6rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(0, 243, 255, 0.6);
   }
 
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+  .kicker-sep { color: var(--cyber-magenta); }
+
+  .project-title {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 2.2rem;
+    letter-spacing: -0.01em;
+    color: var(--text-main);
+    text-shadow: 0 0 20px rgba(0, 243, 255, 0.25);
   }
-  .folder-content {
+
+  .project-desc {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 1rem;
+    max-width: 70ch;
+    font-family: var(--font-sans);
+    font-weight: 300;
+  }
+
+  .project-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
-    padding: 20px;
+    gap: 0.4rem;
+    margin-top: 0.25rem;
+  }
+
+  .project-tag {
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    color: var(--cyber-cyan);
+    background: rgba(0, 243, 255, 0.05);
   }
 
   .project-markdown {
-    color: var(--text-main);
-    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.7;
     font-size: 0.95rem;
+    font-family: var(--font-sans);
+    font-weight: 300;
   }
 
-  /* Rendre les images et médias 100% responsives dans les fenêtres de l'OS */
-  .project-markdown img,
-  .project-markdown video,
-  .project-markdown iframe,
-  .project-markdown picture {
+  .project-markdown :global(img),
+  .project-markdown :global(video),
+  .project-markdown :global(iframe),
+  .project-markdown :global(picture) {
     max-width: 100%;
     height: auto;
-    border-radius: 8px;
+    border: 1px solid rgba(0, 243, 255, 0.2);
     margin: 1.5rem 0;
   }
 
-  .project-markdown h2, .project-markdown h3 {
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
+  .project-markdown :global(h1) {
+    font-family: var(--font-mono);
+    color: var(--cyber-cyan);
+    font-size: 1.6rem;
+    margin: 0 0 1rem;
+  }
+
+  .project-markdown :global(h2),
+  .project-markdown :global(h3) {
+    font-family: var(--font-mono);
+    margin-top: 2rem;
+    margin-bottom: 0.6rem;
     color: var(--data-tech);
+    font-weight: 600;
+    letter-spacing: 0.02em;
   }
 
-  .project-markdown p {
-    margin-bottom: 1rem;
+  .project-markdown :global(h2) { font-size: 1.25rem; }
+  .project-markdown :global(h2::before) { content: '## '; color: var(--cyber-magenta); }
+  .project-markdown :global(h3) { font-size: 1.05rem; }
+  .project-markdown :global(h3::before) { content: '### '; color: var(--cyber-magenta); }
+
+  .project-markdown :global(p) { margin-bottom: 1rem; }
+  .project-markdown :global(strong) { color: white; font-weight: 500; }
+
+  .project-markdown :global(a) {
+    color: var(--cyber-cyan);
+    border-bottom: 1px dashed rgba(0, 243, 255, 0.5);
   }
 
-  /* Context Menu Styles */
+  .project-markdown :global(ul), .project-markdown :global(ol) {
+    margin: 0 0 1rem 1.25rem;
+    list-style: square;
+  }
+
+  .project-markdown :global(li::marker) { color: var(--cyber-magenta); }
+
+  .project-markdown :global(blockquote) {
+    margin: 0 0 1.25rem;
+    padding: 0.75rem 1rem;
+    border-left: 2px solid var(--data-action);
+    background: rgba(0, 255, 102, 0.04);
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .project-markdown :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--data-action);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 0.1em 0.4em;
+    border: 1px solid rgba(0, 255, 102, 0.2);
+  }
+
+  /* Fenêtre mobile */
+  .mobile-frame {
+    width: calc(100% + 40px);
+    height: calc(100% + 40px);
+    margin: -20px;
+    background: black;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mobile-notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 25px;
+    background: black;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    z-index: 10;
+  }
+
+  .mobile-frame iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* Fenêtre fonds d'écran */
+  .wallpaper-window { padding: 8px 6px; }
+
+  .wallpaper-title {
+    color: var(--text-main);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.4rem;
+  }
+
+  .wallpaper-title span { color: var(--data-action); margin-right: 0.4rem; }
+
+  .wallpaper-hint {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.78rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .wallpaper-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 14px;
+  }
+
+  .wallpaper-btn {
+    cursor: pointer;
+    overflow: hidden;
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s, box-shadow 0.2s;
+    aspect-ratio: 16 / 9;
+    position: relative;
+    background: #000;
+  }
+
+  .wallpaper-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+    opacity: 0.85;
+  }
+
+  .wallpaper-btn:hover, .wallpaper-btn:focus-visible {
+    transform: translateY(-3px);
+    border-color: var(--cyber-cyan);
+    box-shadow: 0 10px 30px -10px rgba(0, 243, 255, 0.4);
+    outline: none;
+  }
+
+  .wallpaper-btn:hover img { transform: scale(1.05); opacity: 1; }
+
+  .wallpaper-btn.active {
+    border-color: var(--data-action);
+    box-shadow: 0 0 0 1px var(--data-action), 0 0 14px rgba(0, 255, 102, 0.35);
+  }
+
+  .wallpaper-name {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.75);
+    color: rgba(255, 255, 255, 0.85);
+    padding: 5px 8px;
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .wallpaper-check {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+    padding: 2px 6px;
+    color: #000;
+    background: var(--data-action);
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.2s, transform 0.3s;
+  }
+
+  .wallpaper-btn.active .wallpaper-check { opacity: 1; transform: translateY(0); }
+
+  /* ───────── Menu contextuel ───────── */
   .context-menu {
     position: absolute;
     z-index: 9999;
-    background: rgba(5, 8, 12, 0.95);
-    border: 1px solid var(--cyber-cyan);
-    border-radius: 0;
-    min-width: 180px;
-    box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+    background: rgba(4, 7, 11, 0.96);
+    border: 1px solid rgba(0, 243, 255, 0.7);
+    min-width: 200px;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 243, 255, 0.2);
     padding: 4px 0;
     color: var(--cyber-cyan);
-    font-size: 0.9rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
     font-family: var(--font-mono);
+    animation: cm-in 0.15s ease-out;
   }
-  .context-menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+
+  @keyframes cm-in {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: none; }
   }
-  .context-menu li {
+
+  .context-menu ul { list-style: none; margin: 0; padding: 0; }
+
+  .context-menu :global(li) {
     padding: 8px 16px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
   }
-  .context-menu li:hover {
-    background: rgba(0, 243, 255, 0.2);
+
+  .context-menu :global(li::before) {
+    content: '>';
+    color: var(--cyber-magenta);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .context-menu :global(li:hover) {
+    background: rgba(0, 243, 255, 0.15);
     color: white;
-    padding-left: 20px;
     box-shadow: inset 2px 0 0 var(--cyber-cyan);
   }
-  .context-menu .separator {
+
+  .context-menu :global(li:hover::before) { opacity: 1; }
+
+  .context-menu :global(li.disabled) {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  .context-menu :global(li.disabled:hover) {
+    background: transparent;
+    box-shadow: none;
+    color: var(--cyber-cyan);
+  }
+
+  .context-menu :global(li.disabled:hover::before) { opacity: 0; }
+
+  .context-menu :global(.separator) {
     height: 1px;
-    background: rgba(0, 243, 255, 0.3);
+    background: rgba(0, 243, 255, 0.25);
     margin: 4px 0;
     padding: 0;
     cursor: default;

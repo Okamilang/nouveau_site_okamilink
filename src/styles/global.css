@@ -1,47 +1,77 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800&family=Hanken+Grotesk:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* Dark Mode Palette - Midnight Blue / Dark Slate */
-  --bg-color: oklch(0.18 0.02 260); /* Deep Midnight */
-  --bg-surface: oklch(0.22 0.03 260);
-  --bg-surface-glass: oklch(0.22 0.03 260 / 0.6);
-  --text-main: oklch(0.95 0.01 260);
-  --text-muted: oklch(0.75 0.02 260);
+  /* ─────────────────────────────────────────────
+     Palette — Midnight + holographique (issu du logo)
+     ───────────────────────────────────────────── */
+  --bg-color: oklch(0.16 0.022 262);          /* Deep Midnight */
+  --bg-deep: oklch(0.12 0.02 262);            /* Encore plus profond (footer, zones sombres) */
+  --bg-surface: oklch(0.21 0.028 262);
+  --bg-surface-glass: oklch(0.21 0.028 262 / 0.6);
+  --bg-raised: oklch(0.25 0.03 262);
+  --text-main: oklch(0.96 0.008 260);
+  --text-muted: oklch(0.74 0.02 260);
+  --text-dim: oklch(0.58 0.02 260);
 
-  /* Holographic / Iridescent Accents - Pastel from Logo */
-  --accent-purple: oklch(0.85 0.10 300); /* Pastel purple */
-  --accent-pink: oklch(0.88 0.10 340);   /* Pastel pink */
-  --accent-blue: oklch(0.88 0.10 240);   /* Pastel/Silver blue */
-  --holographic-gradient: linear-gradient(135deg, var(--accent-purple), var(--accent-pink), var(--accent-blue));
-  
-  --glow-shadow: 0 0 25px oklch(0.85 0.10 300 / 0.35);
-  
-  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  
+  /* Accents iridescents (pastels du logo) */
+  --accent-purple: oklch(0.84 0.11 300);
+  --accent-pink: oklch(0.87 0.11 340);
+  --accent-blue: oklch(0.87 0.10 240);
+  --accent-silver: oklch(0.92 0.02 260);
+  --accent-cyan: var(--accent-blue);          /* alias historique (pages légales, cartes) */
+  --primary: var(--accent-purple);            /* alias historique (formulaires) */
+
+  --holographic-gradient: linear-gradient(135deg, var(--accent-purple), var(--accent-pink), var(--accent-silver), var(--accent-blue));
+  --holographic-soft: linear-gradient(135deg,
+    color-mix(in oklch, var(--accent-purple) 40%, transparent),
+    color-mix(in oklch, var(--accent-pink) 30%, transparent),
+    color-mix(in oklch, var(--accent-blue) 40%, transparent));
+
+  --glow-shadow: 0 0 25px oklch(0.84 0.11 300 / 0.35);
+  --line: color-mix(in oklch, var(--text-main) 8%, transparent);
+  --line-strong: color-mix(in oklch, var(--text-main) 16%, transparent);
+
+  /* ─────────────────────────────────────────────
+     Typographie
+     ───────────────────────────────────────────── */
+  --font-display: 'Unbounded', 'Hanken Grotesk', sans-serif;
+  --font-sans: 'Hanken Grotesk', 'Segoe UI Variable', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, Menlo, Consolas, monospace;
+
+  /* ─────────────────────────────────────────────
+     Rythme & mouvement
+     ───────────────────────────────────────────── */
   --container-width: 1200px;
-  
+  --container-wide: 1400px;
+  --radius-lg: 1.75rem;
+  --radius-md: 1.125rem;
+  --radius-sm: 0.625rem;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
   /* Scroll Timeline setup */
   --scroll-progress: 0;
 }
 
-/* Thème Mode Console */
+/* ─────────────────────────────────────────────
+   Thème Mode Console
+   ───────────────────────────────────────────── */
 html[data-experience="console"] {
-  /* Typographie */
-  --font-mono: 'Fira Code', 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  
+  --font-mono: 'Fira Code', 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+
   /* Couleurs Cyber/Data HUD */
   --cyber-cyan: #00f3ff;
   --cyber-magenta: #ff00ea;
-  
+
   --data-tech: var(--cyber-cyan);
   --data-design: var(--cyber-magenta);
-  --data-action: #00ff66; /* Vert terminal brillant */
-  
+  --data-action: #00ff66;
+
   --terminal-bg: rgba(5, 8, 12, 0.95);
   --terminal-text: var(--cyber-cyan);
   --neon-line: 0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px rgba(0, 243, 255, 0.3);
-  
-  /* Surcharges du thème vitrine pour un look cyberpunk brut */
+
   --holographic-gradient: linear-gradient(135deg, var(--cyber-cyan), var(--cyber-magenta));
   --bg-surface: rgba(10, 12, 16, 0.95);
   --bg-surface-glass: rgba(10, 12, 16, 0.85);
@@ -49,27 +79,21 @@ html[data-experience="console"] {
 
 /* Utilitaires de visibilité dual-mode */
 html[data-experience="console"] .only-vitrine { display: none !important; }
-html[data-experience="console"] .only-console { display: flex !important; } /* Utiliser flex par défaut pour nos composants */
+html[data-experience="console"] .only-console { display: flex !important; }
 html:not([data-experience="console"]) .only-console { display: none !important; }
 
-/* Styles spécifiques Console */
-html[data-experience="console"] body {
-  /* Fond retiré à la demande de l'utilisateur */
-}
-
-/* Base Styles */
+/* ─────────────────────────────────────────────
+   Base
+   ───────────────────────────────────────────── */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  cursor: none; /* Cacher le curseur par défaut partout pour le remplacer par CustomCursor */
+  cursor: none;
 }
 
-/* Restauration du curseur par défaut sur mobile / touch devices */
 @media (hover: none) and (pointer: coarse) {
-  * {
-    cursor: auto;
-  }
+  * { cursor: auto; }
 }
 
 html {
@@ -77,18 +101,59 @@ html {
   background-color: var(--bg-color);
   color: var(--text-main);
   scroll-behavior: smooth;
-  /* Scroll timeline setup */
   scroll-timeline: --page-scroll block;
   overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   min-height: 100vh;
   overflow-x: hidden;
   line-height: 1.6;
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  position: relative;
 }
+
+/* Atmosphère de fond : maillage + grille technique (vitrine uniquement) */
+html:not([data-experience="console"]) body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(60vw 40vh at 85% -10%, color-mix(in oklch, var(--accent-blue) 9%, transparent), transparent 70%),
+    radial-gradient(50vw 40vh at 0% 20%, color-mix(in oklch, var(--accent-purple) 8%, transparent), transparent 70%),
+    var(--bg-color);
+}
+
+html:not([data-experience="console"]) body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: 96px 96px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 0%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 0%, transparent 100%);
+  opacity: 0.6;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+p { text-wrap: pretty; }
 
 a {
   color: inherit;
@@ -101,71 +166,127 @@ img, svg {
   height: auto;
 }
 
-ul {
-  list-style: none;
+ul { list-style: none; }
+
+::selection {
+  background: color-mix(in oklch, var(--accent-pink) 45%, transparent);
+  color: var(--text-main);
 }
 
-/* Scroll Animations */
+:focus-visible {
+  outline: 2px solid var(--accent-pink);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* Scrollbar discrète */
+html:not([data-experience="console"]) {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--text-main) 18%, transparent) transparent;
+}
+html:not([data-experience="console"])::-webkit-scrollbar { width: 10px; }
+html:not([data-experience="console"])::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--text-main) 18%, transparent);
+  border-radius: 999px;
+  border: 3px solid var(--bg-color);
+}
+
+/* ─────────────────────────────────────────────
+   Utilitaires éditoriaux
+   ───────────────────────────────────────────── */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.section-label::before {
+  content: '';
+  width: 2rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.section-label em {
+  font-style: normal;
+  color: var(--accent-pink);
+}
+
+.text-gradient {
+  background: var(--holographic-gradient);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: holographic-shift 10s ease infinite;
+}
+
+/* ─────────────────────────────────────────────
+   Animations
+   ───────────────────────────────────────────── */
 @supports (animation-timeline: scroll()) {
   .scroll-reveal {
     animation: reveal both;
     animation-timeline: view();
     animation-range: entry 10% cover 30%;
   }
-
-  @keyframes reveal {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
 }
 
-/* Fallback for browsers without scroll-timeline */
 @supports not (animation-timeline: scroll()) {
   .scroll-reveal {
-    animation: reveal-fallback 1s ease-out forwards;
-  }
-  
-  @keyframes reveal-fallback {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+    animation: reveal 1s var(--ease-out-expo) forwards;
   }
 }
 
-/* Kinetic Typography - Text Reveal Animation */
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Typographie cinétique : le texte monte depuis son masque */
 .reveal-text {
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 110%, 0% 110%);
   display: inline-block;
 }
 
 .reveal-text span {
   display: inline-block;
-  transform: translateY(100%);
+  transform: translateY(110%);
   opacity: 0;
-  animation: slide-up-text 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slide-up-text 1s var(--ease-out-expo) forwards;
 }
 
 @keyframes slide-up-text {
-  0% { transform: translateY(100%); opacity: 0; }
+  0% { transform: translateY(110%); opacity: 0; }
   100% { transform: translateY(0); opacity: 1; }
 }
 
-/* Staggered delays for kinetic typography */
 .delay-1 { animation-delay: 0.1s !important; }
-.delay-2 { animation-delay: 0.3s !important; }
-.delay-3 { animation-delay: 0.5s !important; }
-.delay-4 { animation-delay: 0.7s !important; }
+.delay-2 { animation-delay: 0.25s !important; }
+.delay-3 { animation-delay: 0.45s !important; }
+.delay-4 { animation-delay: 0.65s !important; }
+.delay-5 { animation-delay: 0.85s !important; }
 
-/* Global Orbs & Smoke Animation */
+/* Apparition en cascade via --i (chaque enfant définit son index) */
+.stagger > * {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: reveal 0.9s var(--ease-out-expo) forwards;
+  animation-delay: calc(0.12s + var(--i, 0) * 0.09s);
+}
+
+/* Orbes lumineuses */
 .glow-orb {
   position: absolute;
   border-radius: 50%;
-  animation: smoke-drift 10s ease-in-out infinite alternate;
+  animation: smoke-drift 14s ease-in-out infinite alternate;
   opacity: 0.5;
   z-index: -1;
   pointer-events: none;
@@ -184,11 +305,22 @@ ul {
   100% { background-position: 0% 50%; }
 }
 
-.text-gradient {
-  background: var(--holographic-gradient);
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: holographic-shift 8s ease infinite;
+/* Marquee horizontal */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Respect des préférences d'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal-text span, .stagger > *, .scroll-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

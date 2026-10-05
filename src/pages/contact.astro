@@ -7,55 +7,92 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   description="Parlez-moi de votre projet web ou applicatif. Développeur freelance basé à Éragny (Val-d'Oise), je réponds rapidement pour établir un devis sur-mesure."
 >
   <div class="page-container">
-    <header class="page-header reveal-text">
-      <h1 class="title"><span class="delay-1">Initialiser le</span> <span class="text-gradient delay-2">Contact.</span></h1>
-      <p class="subtitle delay-3">Parlez-moi de votre projet. Je reviendrai vers vous dans les plus brefs délais.</p>
-    </header>
+    <div class="contact-layout">
+      <!-- Colonne éditoriale -->
+      <aside class="contact-intro">
+        <p class="section-label reveal-up" style="--i: 0"><em>03</em> Contact</p>
+        <h1 class="title">
+          <span class="reveal-text"><span class="delay-1">Initialiser le</span></span>
+          <span class="reveal-text"><span class="text-gradient delay-2">Contact.</span></span>
+        </h1>
+        <p class="subtitle reveal-up" style="--i: 3">Parlez-moi de votre projet. Je reviendrai vers vous dans les plus brefs délais.</p>
 
-    <div class="contact-content reveal-fade delay-4">
-      <div class="contact-card bento-card">
-        <form id="vitrine-contact-form" class="contact-form">
-          <div class="form-group">
-            <label for="type">Vous êtes :</label>
-            <select id="type" name="type" required>
-              <option value="" disabled selected>Sélectionnez une option</option>
-              <option value="Entreprise">Entreprise</option>
-              <option value="Particulier">Particulier</option>
-              <option value="Auto-entrepreneur">Auto-entrepreneur</option>
-              <option value="Association">Association</option>
-              <option value="Autre">Autre</option>
-            </select>
+        <dl class="contact-details reveal-up" style="--i: 4">
+          <div class="detail">
+            <dt>Email</dt>
+            <dd><a href="mailto:contact@okamilink.com">contact@okamilink.com</a></dd>
+          </div>
+          <div class="detail">
+            <dt>Localisation</dt>
+            <dd>Éragny · Val-d'Oise (95)<br/><span class="dd-sub">Interventions en Île-de-France et à distance</span></dd>
+          </div>
+          <div class="detail">
+            <dt>Délai de réponse</dt>
+            <dd>Sous 48h ouvrées</dd>
+          </div>
+        </dl>
+
+        <ul class="contact-services reveal-up" style="--i: 5">
+          <li><span>01</span>Site vitrine ou e-commerce sur-mesure</li>
+          <li><span>02</span>Application web ou Android</li>
+          <li><span>03</span>Refonte, performance & SEO technique</li>
+          <li><span>04</span>Intégration WordPress ou Odoo</li>
+        </ul>
+      </aside>
+
+      <!-- Formulaire -->
+      <div class="contact-content reveal-up" style="--i: 2">
+        <div class="contact-card">
+          <div class="card-head">
+            <span class="card-dot"></span>
+            <span class="card-head-label">nouveau_message.txt</span>
           </div>
 
-          <div class="form-row">
+          <form id="vitrine-contact-form" class="contact-form">
             <div class="form-group">
-              <label for="name">Nom complet :</label>
-              <input type="text" id="name" name="name" required placeholder="Votre nom" />
+              <label for="type">Vous êtes</label>
+              <select id="type" name="type" required>
+                <option value="" disabled selected>Sélectionnez une option</option>
+                <option value="Entreprise">Entreprise</option>
+                <option value="Particulier">Particulier</option>
+                <option value="Auto-entrepreneur">Auto-entrepreneur</option>
+                <option value="Association">Association</option>
+                <option value="Autre">Autre</option>
+              </select>
             </div>
-            
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Nom complet</label>
+                <input type="text" id="name" name="name" required placeholder="Votre nom" autocomplete="name" />
+              </div>
+
+              <div class="form-group">
+                <label for="phone">Téléphone <span class="optional">optionnel</span></label>
+                <input type="tel" id="phone" name="phone" placeholder="06 00 00 00 00" autocomplete="tel" />
+              </div>
+            </div>
+
             <div class="form-group">
-              <label for="phone">Téléphone :</label>
-              <input type="tel" id="phone" name="phone" placeholder="Optionnel" />
+              <label for="email">Adresse email</label>
+              <input type="email" id="email" name="email" required placeholder="vous@exemple.com" autocomplete="email" />
             </div>
-          </div>
 
-          <div class="form-group">
-            <label for="email">Adresse email :</label>
-            <input type="email" id="email" name="email" required placeholder="vous@exemple.com" />
-          </div>
+            <div class="form-group">
+              <label for="message">Votre message</label>
+              <textarea id="message" name="message" required rows="6" placeholder="Décrivez votre besoin, vos objectifs, votre calendrier..."></textarea>
+            </div>
 
-          <div class="form-group">
-            <label for="message">Votre message :</label>
-            <textarea id="message" name="message" required rows="5" placeholder="Décrivez votre besoin..."></textarea>
-          </div>
+            <button type="submit" class="submit-btn">
+              <span class="btn-text">Envoyer le message</span>
+              <span class="btn-arrow" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+              </span>
+            </button>
 
-          <button type="submit" class="primary-btn submit-btn">
-            <span class="btn-text">Envoyer le message</span>
-            <div class="btn-glow"></div>
-          </button>
-          
-          <div id="form-status" class="form-status"></div>
-        </form>
+            <div id="form-status" class="form-status" role="status" aria-live="polite"></div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -65,19 +102,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   document.addEventListener('astro:page-load', () => {
     const form = document.getElementById('vitrine-contact-form') as HTMLFormElement;
     const statusDiv = document.getElementById('form-status');
-    
+
     if (form && statusDiv) {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const submitBtn = form.querySelector('.submit-btn') as HTMLButtonElement;
         const btnText = submitBtn.querySelector('.btn-text');
-        
+
         if (submitBtn && btnText) {
           submitBtn.disabled = true;
           btnText.textContent = 'Envoi en cours...';
         }
-        
+
         statusDiv.className = 'form-status';
         statusDiv.textContent = '';
 
@@ -88,9 +125,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         try {
           const response = await fetch('/sendmail.php', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
           });
 
@@ -120,51 +155,204 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <style>
   .page-container {
-    max-width: 800px;
+    max-width: var(--container-width);
     margin: 0 auto;
-    padding: 4rem 2rem 8rem;
+    padding: 3rem 2rem 8rem;
   }
 
-  .page-header {
-    margin-bottom: 3rem;
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  @media (max-width: 960px) {
+    .contact-layout { grid-template-columns: 1fr; gap: 3rem; }
+  }
+
+  .reveal-up {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: reveal 0.9s var(--ease-out-expo) forwards;
+    animation-delay: calc(0.05s + var(--i, 0) * 0.12s);
+  }
+
+  /* ───── Colonne éditoriale ───── */
+  .contact-intro {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: sticky;
+    top: 7rem;
+  }
+
+  @media (max-width: 960px) {
+    .contact-intro { position: static; }
   }
 
   .title {
-    font-size: clamp(2.5rem, 4vw, 4rem);
-    line-height: 1.1;
-    margin-bottom: 1rem;
+    font-size: clamp(2.5rem, 5vw, 4.2rem);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    display: flex;
+    flex-direction: column;
   }
+
+  .title .reveal-text { padding: 0.08em 0.05em; margin: -0.08em -0.05em; }
 
   .subtitle {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
+    font-weight: 300;
     color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 44ch;
   }
 
+  .contact-details {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .detail {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .detail dt {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding-top: 0.2rem;
+  }
+
+  .detail dd {
+    color: var(--text-main);
+    font-size: 0.98rem;
+    line-height: 1.55;
+  }
+
+  .detail dd a {
+    position: relative;
+    transition: color 0.3s ease;
+  }
+
+  .detail dd a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 1px;
+    background: var(--line-strong);
+    transition: background 0.3s ease;
+  }
+
+  .detail dd a:hover { color: var(--accent-pink); }
+  .detail dd a:hover::after { background: var(--accent-pink); }
+
+  .dd-sub {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    font-weight: 300;
+  }
+
+  .contact-services {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+  }
+
+  .contact-services li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 300;
+  }
+
+  .contact-services li span {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    color: var(--accent-pink);
+  }
+
+  /* ───── Carte formulaire ───── */
   .contact-card {
-    padding: 2.5rem;
-    background: rgba(10, 10, 15, 0.6);
+    position: relative;
+    background: color-mix(in oklch, var(--bg-surface) 70%, transparent);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 30px 60px -30px rgba(0,0,0,0.6);
+    overflow: hidden;
+  }
+
+  .contact-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--holographic-gradient);
+    background-size: 300% auto;
+    animation: holographic-shift 8s linear infinite;
+  }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 1.5rem;
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in oklch, var(--bg-color) 40%, transparent);
+  }
+
+  .card-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-pink);
+    box-shadow: 0 0 10px var(--accent-pink);
+  }
+
+  .card-head-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
   }
 
   .contact-form {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.4rem;
+    padding: 2rem;
+  }
+
+  @media (max-width: 600px) {
+    .contact-form { padding: 1.5rem; }
   }
 
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+    gap: 1.4rem;
   }
 
   @media (max-width: 600px) {
-    .form-row {
-      grid-template-columns: 1fr;
-    }
+    .form-row { grid-template-columns: 1fr; }
   }
 
   .form-group {
@@ -174,57 +362,123 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   label {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    font-weight: 500;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .optional {
+    text-transform: none;
+    letter-spacing: 0.02em;
+    opacity: 0.7;
   }
 
   input, select, textarea {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 0.8rem 1rem;
+    background: color-mix(in oklch, var(--bg-color) 60%, transparent);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    padding: 0.9rem 1rem;
     color: var(--text-main);
-    font-family: inherit;
+    font-family: var(--font-sans);
     font-size: 1rem;
-    transition: all 0.3s ease;
+    font-weight: 300;
+    transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: var(--text-dim);
   }
 
   input:focus, select:focus, textarea:focus {
     outline: none;
-    border-color: var(--primary);
-    background: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    border-color: color-mix(in oklch, var(--accent-purple) 70%, transparent);
+    background: color-mix(in oklch, var(--bg-color) 80%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent-purple) 18%, transparent);
+  }
+
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a9a9c0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
   }
 
   select option {
-    background: #0f111a;
+    background: #12141c;
     color: white;
   }
 
   textarea {
     resize: vertical;
-    min-height: 120px;
+    min-height: 140px;
   }
 
   .submit-btn {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     width: 100%;
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
-    padding: 1rem;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
     border: none;
+    border-radius: 999px;
+    background: var(--text-main);
+    color: var(--bg-color);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.98rem;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s ease;
   }
 
+  .submit-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--holographic-gradient);
+    background-size: 300% auto;
+    animation: holographic-shift 6s linear infinite;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .btn-text, .btn-arrow { position: relative; z-index: 1; }
+
+  .btn-arrow {
+    display: inline-grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: color-mix(in oklch, var(--bg-color) 12%, transparent);
+    transition: transform 0.4s var(--ease-out-expo);
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px -14px color-mix(in oklch, var(--accent-purple) 60%, transparent);
+  }
+
+  .submit-btn:hover::before { opacity: 1; }
+  .submit-btn:hover .btn-arrow { transform: translateX(3px); }
+
   .submit-btn:disabled {
-    opacity: 0.7;
+    opacity: 0.6;
     cursor: not-allowed;
+    transform: none;
   }
 
   .form-status {
-    margin-top: 1rem;
     padding: 1rem;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 0.95rem;
     text-align: center;
     display: none;
@@ -234,13 +488,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: block;
     background: rgba(34, 197, 94, 0.1);
     color: #4ade80;
-    border: 1px solid rgba(34, 197, 94, 0.2);
+    border: 1px solid rgba(34, 197, 94, 0.25);
   }
 
   .form-status.error {
     display: block;
     background: rgba(239, 68, 68, 0.1);
     color: #f87171;
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.25);
   }
 </style>

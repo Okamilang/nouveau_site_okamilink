@@ -8,12 +8,16 @@
     <span class="dot yellow"></span>
     <span class="dot green"></span>
     <span class="title">~/contact/sendMessage.sh</span>
+    <span class="header-right">bash · 80×24</span>
   </div>
   <form id="console-contact-form" class="terminal-body">
+    <p class="term-comment"># Remplissez les arguments puis exécutez la fonction.</p>
+
     <div class="cmd-line">
+      <span class="prompt">$</span>
       <span class="cmd-function">sendMessage</span><span class="syntax">(</span>
     </div>
-    
+
     <div class="cmd-args">
       <div class="cmd-arg">
         <label for="term-type" class="arg-key">type:</label>
@@ -30,30 +34,33 @@
 
       <div class="cmd-arg">
         <label for="term-name" class="arg-key">name:</label>
-        <input type="text" id="term-name" class="term-input string-val" placeholder='"Entrez votre nom"' required />
+        <input type="text" id="term-name" class="term-input string-val" placeholder='"Entrez votre nom"' required autocomplete="name" />
         <span class="syntax">,</span>
       </div>
-      
+
       <div class="cmd-arg">
         <label for="term-phone" class="arg-key">phone:</label>
-        <input type="tel" id="term-phone" class="term-input string-val" placeholder='"Optionnel"' />
+        <input type="tel" id="term-phone" class="term-input string-val" placeholder='"Optionnel"' autocomplete="tel" />
         <span class="syntax">,</span>
       </div>
-      
+
       <div class="cmd-arg">
         <label for="term-email" class="arg-key">email:</label>
-        <input type="email" id="term-email" class="term-input string-val" placeholder='"votre@email.com"' required />
+        <input type="email" id="term-email" class="term-input string-val" placeholder='"votre@email.com"' required autocomplete="email" />
         <span class="syntax">,</span>
       </div>
-      
+
       <div class="cmd-arg">
         <label for="term-message" class="arg-key">payload:</label>
         <textarea id="term-message" class="term-input string-val" placeholder='"Votre message détaillé ici..."' rows="4" required></textarea>
       </div>
     </div>
-    
-    <div class="cmd-line">
-      <span class="syntax">)</span> <button type="submit" class="term-submit">[ EXECUTE ]</button>
+
+    <div class="cmd-line cmd-end">
+      <span class="prompt">$</span>
+      <span class="syntax">)</span>
+      <button type="submit" class="term-submit">[ EXECUTE ]</button>
+      <span class="term-cursor" aria-hidden="true">_</span>
     </div>
   </form>
 </div>
@@ -61,17 +68,17 @@
 <script>
   document.addEventListener('astro:page-load', () => {
     const form = document.getElementById('console-contact-form') as HTMLFormElement;
-    
+
     if (form) {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const typeInput = document.getElementById('term-type') as HTMLSelectElement;
         const nameInput = document.getElementById('term-name') as HTMLInputElement;
         const phoneInput = document.getElementById('term-phone') as HTMLInputElement;
         const emailInput = document.getElementById('term-email') as HTMLInputElement;
         const messageInput = document.getElementById('term-message') as HTMLTextAreaElement;
-        
+
         const data = {
           type: typeInput.value,
           name: nameInput.value,
@@ -88,9 +95,7 @@
         try {
           const response = await fetch('/sendmail.php', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
           });
 
@@ -103,12 +108,12 @@
             }
           } else {
             if ((window as any).pushToast) {
-              (window as any).pushToast(`[ERR]: ${result.message || 'Delivery failed.'}`, 'err');
+              (window as any).pushToast(`[ERR]: ${result.message || 'Delivery failed.'}`, 'error');
             }
           }
         } catch (error) {
           if ((window as any).pushToast) {
-            (window as any).pushToast('[ERR]: Network error. Cannot reach mail server.', 'err');
+            (window as any).pushToast('[ERR]: Network error. Cannot reach mail server.', 'error');
           }
         }
       });
@@ -118,30 +123,31 @@
 
 <style>
   .contact-terminal {
-    background: oklch(0.1 0.02 260);
-    border: 1px solid color-mix(in oklch, var(--data-action) 30%, transparent);
-    border-radius: 0.5rem;
+    flex-direction: column; /* .only-console force display:flex */
+    background: rgba(2, 4, 6, 0.9);
+    border: 1px solid rgba(0, 255, 102, 0.3);
     overflow: hidden;
     font-family: var(--font-mono);
-    max-width: 600px;
+    max-width: 640px;
     width: 100%;
-    margin: 2rem auto;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    margin: 0 auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 30px rgba(0, 255, 102, 0.03);
   }
 
   .terminal-header {
-    background: color-mix(in oklch, var(--bg-surface) 50%, transparent);
-    padding: 0.5rem 1rem;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 0.55rem 1rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    border-bottom: 1px solid color-mix(in oklch, var(--data-action) 20%, transparent);
+    border-bottom: 1px solid rgba(0, 255, 102, 0.2);
   }
 
   .dot {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
+    opacity: 0.85;
   }
 
   .dot.red { background: oklch(0.6 0.2 20); }
@@ -149,37 +155,62 @@
   .dot.green { background: oklch(0.7 0.2 150); }
 
   .title {
-    margin-left: 1rem;
-    color: var(--text-muted);
-    font-size: 0.8rem;
+    margin-left: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+  }
+
+  .header-right {
+    margin-left: auto;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: rgba(0, 255, 102, 0.5);
+    text-transform: uppercase;
   }
 
   .terminal-body {
-    padding: 1.5rem;
+    padding: 1.25rem 1.5rem 1.5rem;
     display: flex;
     flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .term-comment {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
   }
 
   .cmd-line {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .prompt {
+    color: var(--data-action);
+    font-weight: 700;
+    text-shadow: 0 0 6px rgba(0, 255, 102, 0.5);
   }
 
   .cmd-function {
-    color: var(--data-design); /* Violet */
+    color: var(--cyber-magenta);
+    text-shadow: 0 0 8px rgba(255, 0, 234, 0.35);
   }
 
   .syntax {
-    color: var(--text-muted);
+    color: rgba(255, 255, 255, 0.5);
   }
 
   .cmd-args {
     display: flex;
     flex-direction: column;
-    padding-left: 2rem;
-    margin: 0.5rem 0;
-    gap: 0.5rem;
-    border-left: 1px dashed color-mix(in oklch, var(--text-muted) 30%, transparent);
-    margin-left: 0.5rem;
+    padding-left: 1.5rem;
+    margin: 0.25rem 0 0.25rem 0.65rem;
+    gap: 0.55rem;
+    border-left: 1px dashed rgba(0, 243, 255, 0.25);
   }
 
   .cmd-arg {
@@ -190,8 +221,10 @@
   }
 
   .arg-key {
-    color: var(--data-tech); /* Bleu */
+    color: var(--cyber-cyan);
     min-width: 80px;
+    font-size: 0.95rem;
+    padding-top: 0.15rem;
   }
 
   .term-input {
@@ -199,10 +232,12 @@
     border: none;
     outline: none;
     font-family: var(--font-mono);
-    font-size: 1rem;
+    font-size: 0.95rem;
     flex-grow: 1;
     resize: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.15rem 0.35rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   }
 
   select.term-input {
@@ -211,37 +246,52 @@
   }
 
   select.term-input option {
-    background: rgba(10, 10, 15, 0.95);
-    color: var(--accent-cyan);
-    font-family: 'Fira Code', monospace;
+    background: #05080c;
+    color: var(--cyber-cyan);
+    font-family: var(--font-mono);
   }
 
   .string-val {
-    color: oklch(0.8 0.15 80); /* Orange/Jaune pour les strings */
+    color: oklch(0.85 0.16 80);
   }
 
   .term-input::placeholder {
-    color: color-mix(in oklch, var(--text-muted) 50%, transparent);
+    color: rgba(255, 255, 255, 0.25);
   }
 
   .term-input:focus {
-    background: rgba(255,255,255,0.02);
+    background: rgba(0, 243, 255, 0.04);
+    border-bottom-color: var(--cyber-cyan);
+    box-shadow: 0 1px 0 var(--cyber-cyan), 0 6px 14px -8px rgba(0, 243, 255, 0.5);
   }
+
+  .cmd-end { margin-top: 0.4rem; }
 
   .term-submit {
     background: transparent;
-    border: none;
+    border: 1px solid rgba(0, 255, 102, 0.5);
     color: var(--data-action);
     font-family: var(--font-mono);
-    font-size: 1rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    padding: 0.4rem 0.9rem;
     cursor: pointer;
-    font-weight: bold;
-    margin-left: 1rem;
+    font-weight: 700;
+    margin-left: 0.5rem;
     transition: all 0.2s;
   }
 
   .term-submit:hover {
+    background: rgba(0, 255, 102, 0.12);
+    border-color: var(--data-action);
     text-shadow: 0 0 8px var(--data-action);
-    transform: scale(1.05);
+    box-shadow: 0 0 14px rgba(0, 255, 102, 0.35);
   }
+
+  .term-cursor {
+    color: var(--data-action);
+    animation: term-blink 1s step-end infinite;
+  }
+
+  @keyframes term-blink { 50% { opacity: 0; } }
 </style>

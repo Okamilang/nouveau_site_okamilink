@@ -136,7 +136,7 @@ const schemas = [organizationSchema, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd
     <NoiseOverlay />
     <div class="only-vitrine">
       <Navbar />
-      <main style="padding-top: 100px;">
+      <main>
         <slot />
       </main>
       <Footer />
@@ -212,8 +212,8 @@ const schemas = [organizationSchema, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd
 
 <style is:global>
   main {
-    padding-top: 80px; /* Compense la navbar fixe */
-    min-height: calc(100vh - 80px);
+    padding-top: 104px; /* Compense la navbar fixe */
+    min-height: calc(100vh - 104px);
   }
 
   /* Global Lightbox Styles */

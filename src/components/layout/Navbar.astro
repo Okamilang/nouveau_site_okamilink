@@ -1,38 +1,96 @@
 ---
 // Composant Navbar
+const links = [
+  { href: '/realisations', label: 'Réalisations', index: '01' },
+  { href: '/programmes', label: 'Programmes', index: '02' },
+];
+const currentPath = Astro.url.pathname;
 ---
 
-<header class="navbar">
+<header class="navbar" id="site-navbar">
   <div class="nav-container">
-    <a href="/" class="brand" transition:name="brand-logo">
-      <img src="/logo.png" alt="Okamilink Développement Web" class="brand-logo" width="180" />
+    <a href="/" class="brand" transition:name="brand-logo" aria-label="Okamilink — Accueil">
+      <img src="/logo.png" alt="Okamilink Développement Web" class="brand-logo" width="180" height="146" />
     </a>
-    
-    <nav class="nav-links">
-      <a href="/realisations" class="nav-link">Réalisations</a>
-      <a href="/programmes" class="nav-link">Programmes</a>
-      <a href="/contact" class="nav-link contact-link">Initialiser le contact</a>
-      <button id="mode-toggle-btn" class="nav-link mode-toggle-btn" title="Accéder au système" aria-label="Toggle Mode">
+
+    <nav class="nav-links" aria-label="Navigation principale">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          class="nav-link"
+          aria-current={currentPath.startsWith(link.href) ? 'page' : undefined}
+        >
+          <span class="nav-index">{link.index}</span>
+          <span class="nav-label">{link.label}</span>
+        </a>
+      ))}
+      <a href="/contact" class="nav-link contact-link">
+        <span class="contact-dot" aria-hidden="true"></span>
+        Initialiser le contact
+      </a>
+      <button id="mode-toggle-btn" class="nav-link mode-toggle-btn" title="Accéder au système" aria-label="Basculer le mode d'affichage">
         <span class="mode-icon vitrine-icon matrix-glitch" data-text="[SYS.OS]">[SYS.OS]</span>
         <span class="mode-icon console-icon">&lt; VITRINE</span>
       </button>
     </nav>
+
+    <button class="menu-toggle" id="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobile-menu">
+      <span></span><span></span>
+    </button>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <div class="mobile-menu-inner">
+      {links.map((link, i) => (
+        <a href={link.href} class="mobile-link" style={`--i: ${i}`}>
+          <span class="mobile-index">{link.index}</span>
+          {link.label}
+        </a>
+      ))}
+      <a href="/contact" class="mobile-link" style="--i: 2">
+        <span class="mobile-index">03</span>
+        Contact
+      </a>
+      <button class="mobile-link mobile-mode" id="mobile-mode-toggle" style="--i: 3">
+        <span class="mobile-index">&gt;_</span>
+        Mode Console
+      </button>
+    </div>
   </div>
 </header>
 
 <script>
-  // Script gérant la bascule de mode
   document.addEventListener('astro:page-load', () => {
+    const toggleExperience = () => {
+      const current = document.documentElement.getAttribute('data-experience');
+      const next = current === 'console' ? 'vitrine' : 'console';
+      document.documentElement.setAttribute('data-experience', next);
+      localStorage.setItem('okamilink_experience', next);
+    };
 
-    // Bascule de Mode
-    const modeToggleBtn = document.getElementById('mode-toggle-btn');
-    if (modeToggleBtn) {
-      modeToggleBtn.addEventListener('click', () => {
-        const current = document.documentElement.getAttribute('data-experience');
-        const next = current === 'console' ? 'vitrine' : 'console';
-        document.documentElement.setAttribute('data-experience', next);
-        localStorage.setItem('okamilink_experience', next);
-      });
+    document.getElementById('mode-toggle-btn')?.addEventListener('click', toggleExperience);
+    document.getElementById('mobile-mode-toggle')?.addEventListener('click', toggleExperience);
+
+    // Navbar compacte au scroll
+    const navbar = document.getElementById('site-navbar');
+    if (navbar) {
+      const onScroll = () => navbar.classList.toggle('scrolled', window.scrollY > 24);
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+
+    // Menu mobile
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (menuToggle && mobileMenu && navbar) {
+      const setOpen = (open: boolean) => {
+        navbar.classList.toggle('menu-open', open);
+        menuToggle.setAttribute('aria-expanded', String(open));
+        mobileMenu.setAttribute('aria-hidden', String(!open));
+        document.body.style.overflow = open ? 'hidden' : '';
+      };
+      menuToggle.addEventListener('click', () => setOpen(!navbar.classList.contains('menu-open')));
+      mobileMenu.querySelectorAll('a, button').forEach((el) => el.addEventListener('click', () => setOpen(false)));
     }
   });
 </script>
@@ -44,20 +102,40 @@
     left: 0;
     width: 100%;
     z-index: 1000;
-    background: color-mix(in oklch, var(--bg-surface) 60%, transparent);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid color-mix(in oklch, var(--text-main) 5%, transparent);
-    transition: background 0.3s ease, padding 0.3s ease;
+    background: color-mix(in oklch, var(--bg-color) 55%, transparent);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    transition: background 0.4s ease;
+  }
+
+  /* Ligne inférieure iridescente, très fine */
+  .navbar::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line-strong) 20%, var(--line-strong) 80%, transparent);
+    transition: opacity 0.3s ease;
+  }
+
+  .navbar.scrolled {
+    background: color-mix(in oklch, var(--bg-color) 78%, transparent);
   }
 
   .nav-container {
-    max-width: var(--container-width);
+    max-width: var(--container-wide);
     margin: 0 auto;
-    padding: 1.5rem 2rem;
+    padding: 1.25rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: padding 0.4s var(--ease-out-expo);
+  }
+
+  .navbar.scrolled .nav-container {
+    padding: 0.75rem 2rem;
   }
 
   .brand {
@@ -66,69 +144,108 @@
   }
 
   .brand-logo {
-    height: auto;
-    max-height: 60px;
+    width: auto;
+    height: 56px;
     object-fit: contain;
     filter: drop-shadow(0 0 12px color-mix(in oklch, var(--accent-purple) 30%, transparent));
-    transition: filter 0.3s ease, transform 0.3s ease;
+    transition: filter 0.3s ease, transform 0.4s var(--ease-out-expo), height 0.4s var(--ease-out-expo);
+  }
+
+  .navbar.scrolled .brand-logo {
+    height: 44px;
   }
 
   .brand:hover .brand-logo {
     filter: drop-shadow(0 0 20px var(--accent-purple));
-    transform: scale(1.02);
+    transform: scale(1.03);
   }
 
   .nav-links {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 2.25rem;
   }
 
   .nav-link {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
     font-weight: 500;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     color: var(--text-muted);
-    transition: color 0.2s ease;
+    transition: color 0.25s ease;
     position: relative;
   }
 
-  .nav-link:hover {
+  .nav-index {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    transition: color 0.25s ease;
+  }
+
+  .nav-link:hover,
+  .nav-link[aria-current="page"] {
     color: var(--text-main);
+  }
+
+  .nav-link:hover .nav-index,
+  .nav-link[aria-current="page"] .nav-index {
+    color: var(--accent-pink);
   }
 
   .nav-link::after {
     content: '';
     position: absolute;
-    bottom: -4px;
+    bottom: -6px;
     left: 0;
     width: 100%;
-    height: 2px;
+    height: 1px;
     background: var(--holographic-gradient);
     transform: scaleX(0);
     transform-origin: right;
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: transform 0.4s var(--ease-out-expo);
   }
 
-  .nav-link:hover::after {
+  .nav-link:hover::after,
+  .nav-link[aria-current="page"]::after {
     transform: scaleX(1);
     transform-origin: left;
   }
 
   .contact-link {
     color: var(--text-main);
-    padding: 0.5rem 1.25rem;
-    border: 1px solid color-mix(in oklch, var(--text-main) 20%, transparent);
+    padding: 0.55rem 1.15rem 0.55rem 0.9rem;
+    border: 1px solid var(--line-strong);
     border-radius: 999px;
+    align-items: center;
+    gap: 0.6rem;
+    transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
   }
-  
-  .contact-link::after {
-    display: none;
+
+  .contact-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-pink);
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--accent-pink) 60%, transparent);
+    animation: pulse-dot 2.4s ease-out infinite;
   }
+
+  @keyframes pulse-dot {
+    0% { box-shadow: 0 0 0 0 color-mix(in oklch, var(--accent-pink) 60%, transparent); }
+    70% { box-shadow: 0 0 0 8px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+
+  .contact-link::after { display: none; }
 
   .contact-link:hover {
-    background: color-mix(in oklch, var(--text-main) 10%, transparent);
+    background: var(--text-main);
+    color: var(--bg-color);
+    border-color: var(--text-main);
   }
-
 
   .mode-toggle-btn {
     background: none;
@@ -139,22 +256,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0.7;
+    opacity: 0.75;
     transition: opacity 0.3s ease, transform 0.3s ease;
   }
-  
+
   .mode-toggle-btn:hover {
     opacity: 1;
-    transform: scale(1.1);
+    transform: scale(1.08);
   }
 
-  .mode-toggle-btn::after {
-    display: none;
-  }
+  .mode-toggle-btn::after { display: none; }
 
-  .vitrine-icon, .console-icon {
-    display: none;
-  }
+  .vitrine-icon, .console-icon { display: none; }
 
   :global(html:not([data-experience="console"])) .vitrine-icon {
     display: inline-block;
@@ -172,16 +285,16 @@
 
   /* Effet Matrix Glitch */
   .matrix-glitch {
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: 900;
-    font-size: 1rem;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.85rem;
     color: #0f0;
     text-shadow: 0 0 8px rgba(0, 255, 0, 0.6);
     letter-spacing: 2px;
     position: relative;
     display: inline-block;
   }
-  
+
   .matrix-glitch::before, .matrix-glitch::after {
     content: attr(data-text);
     position: absolute;
@@ -192,19 +305,19 @@
     background: transparent;
     opacity: 0.8;
   }
-  
+
   .matrix-glitch::before {
     left: 2px;
     text-shadow: -2px 0 rgba(0, 255, 0, 0.8);
     animation: glitch-anim-1 2s infinite linear alternate-reverse;
   }
-  
+
   .matrix-glitch::after {
     left: -2px;
     text-shadow: 2px 0 rgba(0, 150, 0, 0.8);
     animation: glitch-anim-2 3s infinite linear alternate-reverse;
   }
-  
+
   @keyframes glitch-anim-1 {
     0% { clip-path: inset(20% 0 80% 0); }
     20% { clip-path: inset(60% 0 10% 0); }
@@ -221,5 +334,97 @@
     60% { clip-path: inset(20% 0 50% 0); }
     80% { clip-path: inset(50% 0 30% 0); }
     100% { clip-path: inset(5% 0 80% 0); }
+  }
+
+  /* ───────── Menu mobile ───────── */
+  .menu-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    cursor: pointer;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .menu-toggle span {
+    display: block;
+    width: 18px;
+    height: 1.5px;
+    background: var(--text-main);
+    transition: transform 0.4s var(--ease-out-expo), opacity 0.2s ease;
+  }
+
+  .navbar.menu-open .menu-toggle span:first-child { transform: translateY(3.25px) rotate(45deg); }
+  .navbar.menu-open .menu-toggle span:last-child { transform: translateY(-3.25px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    top: 0;
+    background: color-mix(in oklch, var(--bg-color) 92%, transparent);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: -1;
+  }
+
+  .navbar.menu-open .mobile-menu {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .mobile-menu-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 7rem 2rem 2rem;
+  }
+
+  .mobile-link {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.75rem, 8vw, 2.5rem);
+    color: var(--text-main);
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--line);
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    text-align: left;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .navbar.menu-open .mobile-link {
+    animation: reveal 0.7s var(--ease-out-expo) forwards;
+    animation-delay: calc(0.1s + var(--i) * 0.07s);
+  }
+
+  .mobile-index {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--accent-pink);
+  }
+
+  @media (max-width: 820px) {
+    .nav-links { display: none; }
+    .menu-toggle { display: flex; }
+    .mobile-menu { display: block; }
+    .nav-container { padding: 1rem 1.25rem; }
+    .brand-logo { height: 48px; }
   }
 </style>

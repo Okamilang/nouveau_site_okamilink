@@ -2,16 +2,25 @@
 ---
 
 <div class="taskbar">
-  <button id="start-button" class="start-button">
-    <span class="start-icon">🐺</span>
+  <button id="start-button" class="start-button" title="A_Propos">
+    <svg class="start-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></svg>
     OKAMILINK
   </button>
-  
+
   <div class="taskbar-windows" id="taskbar-windows">
     <!-- Les fenêtres ouvertes apparaîtront ici -->
   </div>
-  
+
   <div class="taskbar-system">
+    <div class="sys-stat" aria-hidden="true">
+      <span class="sys-label">CPU</span>
+      <span class="sys-bars"><i></i><i></i><i></i><i></i><i></i></span>
+    </div>
+    <div class="sys-stat sys-net" aria-hidden="true">
+      <span class="sys-dot"></span>
+      <span class="sys-label">NET</span>
+    </div>
+    <div id="os-date" class="os-date">--.--</div>
     <div id="os-clock" class="os-clock">00:00</div>
   </div>
 </div>
@@ -19,15 +28,20 @@
 <script>
   document.addEventListener('astro:page-load', () => {
     const clock = document.getElementById('os-clock');
-    if (!clock) return;
+    const date = document.getElementById('os-date');
 
-    const updateClock = () => {
+    const update = () => {
       const now = new Date();
-      clock.textContent = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      if (clock) clock.textContent = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      if (date) date.textContent = now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }).replace('/', '.');
     };
 
-    updateClock();
-    setInterval(updateClock, 1000);
+    update();
+    setInterval(update, 1000);
+
+    document.getElementById('start-button')?.addEventListener('click', () => {
+      (window as any).openOSWindow?.('win-about');
+    });
   });
 </script>
 
@@ -38,10 +52,10 @@
     left: 0;
     width: 100%;
     height: 38px;
-    background: rgba(5, 8, 12, 0.95);
-    backdrop-filter: blur(15px);
-    border-bottom: 1px solid var(--cyber-cyan);
-    box-shadow: 0 2px 15px rgba(0, 243, 255, 0.2);
+    background: rgba(4, 7, 11, 0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(0, 243, 255, 0.55);
+    box-shadow: 0 2px 20px rgba(0, 243, 255, 0.12);
     display: flex;
     align-items: center;
     padding: 0 10px;
@@ -49,26 +63,51 @@
     user-select: none;
   }
 
+  /* Balayage lumineux lent sur la ligne du bas */
+  .taskbar::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 160px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #fff, transparent);
+    opacity: 0.8;
+    animation: taskbar-sweep 6s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes taskbar-sweep {
+    from { transform: translateX(-160px); }
+    to { transform: translateX(100vw); }
+  }
+
   .start-button {
     height: 100%;
-    padding: 0 20px;
+    padding: 0 18px;
     background: transparent;
     border: none;
     border-right: 1px solid rgba(0, 243, 255, 0.3);
     color: var(--cyber-cyan);
     font-family: var(--font-mono);
     font-weight: 700;
+    font-size: 0.8rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     cursor: pointer;
     transition: all 0.2s;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 0.22em;
+  }
+
+  .start-icon {
+    color: var(--cyber-magenta);
+    filter: drop-shadow(0 0 4px rgba(255, 0, 234, 0.6));
   }
 
   .start-button:hover {
-    background: rgba(0, 243, 255, 0.15);
+    background: rgba(0, 243, 255, 0.12);
     color: white;
     text-shadow: 0 0 8px var(--cyber-cyan);
   }
@@ -76,61 +115,142 @@
   .taskbar-windows {
     flex-grow: 1;
     display: flex;
-    gap: 8px;
-    margin-left: 15px;
+    gap: 6px;
+    margin-left: 12px;
     overflow-x: auto;
     scrollbar-width: none;
   }
 
-  .taskbar-windows::-webkit-scrollbar {
-    display: none;
-  }
+  .taskbar-windows::-webkit-scrollbar { display: none; }
 
-  /* Styles pour les items injectés en JS */
+  /* Items injectés en JS */
   :global(.taskbar-item) {
-    height: 28px;
-    padding: 0 15px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(0, 243, 255, 0.2);
-    border-radius: 4px;
-    color: white;
+    height: 26px;
+    padding: 0 12px 0 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(0, 243, 255, 0.18);
+    color: rgba(255, 255, 255, 0.75);
     display: flex;
     align-items: center;
     gap: 8px;
     cursor: pointer;
     font-family: var(--font-mono);
-    font-size: 0.8rem;
-    max-width: 150px;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    max-width: 170px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    position: relative;
     transition: all 0.2s;
   }
 
+  :global(.taskbar-item::before) {
+    content: '';
+    width: 5px;
+    height: 5px;
+    flex-shrink: 0;
+    background: rgba(0, 243, 255, 0.35);
+    transform: rotate(45deg);
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+
   :global(.taskbar-item:hover) {
-    background: rgba(0, 243, 255, 0.15);
-    border-color: var(--cyber-cyan);
+    background: rgba(0, 243, 255, 0.12);
+    border-color: rgba(0, 243, 255, 0.6);
+    color: white;
   }
 
   :global(.taskbar-item.active) {
-    background: rgba(0, 243, 255, 0.2);
+    background: rgba(0, 243, 255, 0.14);
     border-color: var(--cyber-cyan);
-    box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+    color: white;
+    box-shadow: 0 0 12px rgba(0, 243, 255, 0.25), inset 0 -2px 0 var(--cyber-cyan);
+  }
+
+  :global(.taskbar-item.active::before) {
+    background: var(--cyber-cyan);
+    box-shadow: 0 0 6px var(--cyber-cyan);
   }
 
   .taskbar-system {
     display: flex;
     align-items: center;
-    padding-left: 15px;
+    gap: 14px;
+    padding-left: 14px;
     border-left: 1px solid rgba(0, 243, 255, 0.3);
     height: 60%;
   }
 
+  .sys-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    color: rgba(0, 243, 255, 0.55);
+  }
+
+  .sys-bars {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 10px;
+  }
+
+  .sys-bars i {
+    display: block;
+    width: 3px;
+    background: var(--cyber-cyan);
+    opacity: 0.7;
+    animation: cpu-bar 1.4s ease-in-out infinite;
+  }
+
+  .sys-bars i:nth-child(1) { height: 40%; animation-delay: 0s; }
+  .sys-bars i:nth-child(2) { height: 70%; animation-delay: 0.2s; }
+  .sys-bars i:nth-child(3) { height: 50%; animation-delay: 0.4s; }
+  .sys-bars i:nth-child(4) { height: 90%; animation-delay: 0.6s; }
+  .sys-bars i:nth-child(5) { height: 60%; animation-delay: 0.8s; }
+
+  @keyframes cpu-bar {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.4); }
+  }
+
+  .sys-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--data-action);
+    box-shadow: 0 0 8px var(--data-action);
+    animation: net-blink 2s ease-in-out infinite;
+  }
+
+  @keyframes net-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  .os-date {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
   .os-clock {
     font-family: var(--font-mono);
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: var(--cyber-cyan);
     text-shadow: 0 0 8px var(--cyber-cyan);
-    font-weight: bold;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+
+  @media (max-width: 720px) {
+    .sys-stat, .os-date { display: none; }
+    .start-button { padding: 0 12px; letter-spacing: 0.12em; }
   }
 </style>
