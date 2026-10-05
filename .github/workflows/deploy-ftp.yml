@@ -37,13 +37,4 @@ jobs:
           port: 22
           local_path: './dist/*'
           remote_path: './okamilink/'
-
-      - name: 🔒 Upload .htaccess (ignoré par le glob ./dist/*)
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 22
-          local_path: './dist/.htaccess'
-          remote_path: './okamilink/.htaccess'
+          # Note : le glob ./dist/* inclut bien .htaccess (vérifié en prod : redirections actives)
