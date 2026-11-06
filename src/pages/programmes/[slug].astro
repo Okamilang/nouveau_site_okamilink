@@ -469,4 +469,9 @@ const appSchema = {
   /* Longueur de ligne lisible (≈ 68 caractères), le conteneur garde l'alignement */
   .project-content :global(p),
   .project-content :global(li) { max-width: 68ch; }
+  /* … sauf légendes et paragraphes-images : ils restent centrés sous leur média */
+  .project-content :global(p:has(> img)),
+  .project-content :global(.mockup-hint),
+  .project-content :global(figcaption),
+  .project-content :global(figure p) { max-width: none; }
 </style>
