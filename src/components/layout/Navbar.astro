@@ -53,7 +53,7 @@ const currentPath = Astro.url.pathname;
       </a>
       <button class="mobile-link mobile-mode" id="mobile-mode-toggle" style="--i: 3">
         <span class="mobile-index">&gt;_</span>
-        Mode Console
+        Mode console
       </button>
     </div>
   </div>
@@ -316,14 +316,18 @@ const currentPath = Astro.url.pathname;
   .navbar.menu-open .menu-toggle span:first-child { transform: translateY(3.25px) rotate(45deg); }
   .navbar.menu-open .menu-toggle span:last-child { transform: translateY(-3.25px) rotate(-45deg); }
 
+  /* Le backdrop-filter de la navbar fait d'elle le bloc conteneur des éléments fixes :
+     on donne donc au menu la hauteur de l'écran explicitement. */
   .mobile-menu {
     display: none;
     position: fixed;
-    inset: 0;
     top: 0;
-    background: color-mix(in oklch, var(--bg-color) 92%, transparent);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
+    background: var(--bg-color); /* plein : un flou imbriqué dans la navbar ne s'applique pas */
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.4s ease;
@@ -339,7 +343,7 @@ const currentPath = Astro.url.pathname;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    padding: 7rem 2rem 2rem;
+    padding: 7rem 1.25rem 2rem;
   }
 
   .mobile-link {
