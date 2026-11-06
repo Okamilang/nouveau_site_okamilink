@@ -384,6 +384,18 @@ const appSchema = {
     .project-content :global(.two-col) { grid-template-columns: 1fr; gap: 0; }
   }
 
+  /* Vidéo de présentation */
+  .project-content :global(.promo-video) { margin: 0 0 1rem; }
+  .project-content :global(.promo-video video) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line-strong);
+    background: var(--bg-surface);
+  }
+
   /* Démo interactive et captures légendées */
   .project-content :global(.live-demo) {
     display: block;

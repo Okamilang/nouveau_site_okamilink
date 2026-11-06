@@ -3,25 +3,43 @@ title: "Keskiécool"
 description: "Le hasard choisit votre prochaine sortie."
 client: "Okamilink"
 date: 2026-07-09
-tags: ["Application Android", "Géolocalisation", "Loisirs", "En test"]
+tags: ["Application Android", "Géolocalisation", "Loisirs"]
 category: "program"
-accent: "#ff7ea6"
-ctaLabel: "Envie de tester l'application ? Accès anticipé sur demande."
+accent: "#8f80ff"
+url: "https://play.google.com/store/apps/details?id=com.okamilink.keskiecool"
 osIcon: "/os-icons/keskiecool.webp"
 coverImage: "../../assets/projects/screenshots/keskiécool-banner.png"
 ---
 import { Image } from 'astro:assets';
+import PremiumButton from '../../components/common/PremiumButton.astro';
 import k1 from '../../assets/projects/screenshots/keskiecoolm (1).png';
 import k2 from '../../assets/projects/screenshots/keskiecoolm (2).png';
 import k3 from '../../assets/projects/screenshots/keskiecoolm (3).png';
 import k4 from '../../assets/projects/screenshots/keskiecoolm (4).png';
 import k5 from '../../assets/projects/screenshots/keskiecoolm (5).png';
 
-<p class="app-kicker">Application Android · en test fermé, accès anticipé sur demande</p>
+<p class="app-kicker">Application Android · disponible sur Google Play</p>
 
 # Keskiécool
 
 <p class="app-lede">L'application qui répond à la question que l'on se pose tous : <strong>« On va où ? »</strong> D'un geste, elle propose un lieu près de vous, noté 4 étoiles ou plus.</p>
+
+## En vidéo
+
+<figure class="promo-video">
+  <video
+    controls
+    preload="none"
+    playsinline
+    poster="/videos/keskiecool-promo-poster.webp"
+    width="1280"
+    height="720"
+    aria-label="Vidéo de présentation de Keskiécool (41 secondes)"
+  >
+    <source src="/videos/keskiecool-promo.mp4" type="video/mp4" />
+  </video>
+  <figcaption>Keskiécool en 40 secondes : un bouton, un lieu, c'est parti.</figcaption>
+</figure>
 
 ## Aperçu
 
@@ -44,3 +62,10 @@ import k5 from '../../assets/projects/screenshots/keskiecoolm (5).png';
   <li><strong>Itinéraire en un geste</strong><span>Avis, horaires, puis départ direct avec Waze ou Google Maps.</span></li>
 </ul>
 
+## Télécharger
+
+Keskiécool est gratuite sur Google Play.
+
+<div class="app-cta">
+  <PremiumButton text="Télécharger sur Google Play" href="https://play.google.com/store/apps/details?id=com.okamilink.keskiecool" external />
+</div>
