@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800&family=Hanken+Grotesk:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* Polices auto-hébergées (importées dans BaseLayout via @fontsource-variable) :
+   aucun aller-retour vers Google Fonts, rendu immédiat. */
 
 :root {
   /* ─────────────────────────────────────────────
@@ -11,7 +12,7 @@
   --bg-raised: oklch(0.25 0.03 262);
   --text-main: oklch(0.96 0.008 260);
   --text-muted: oklch(0.74 0.02 260);
-  --text-dim: oklch(0.58 0.02 260);
+  --text-dim: oklch(0.66 0.02 260);   /* relevé : contraste AA sur fond nuit */
 
   /* Accents iridescents (pastels du logo) */
   --accent-purple: oklch(0.84 0.11 300);
@@ -34,9 +35,17 @@
   /* ─────────────────────────────────────────────
      Typographie
      ───────────────────────────────────────────── */
-  --font-display: 'Unbounded', 'Hanken Grotesk', sans-serif;
-  --font-sans: 'Hanken Grotesk', 'Segoe UI Variable', sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, Menlo, Consolas, monospace;
+  --font-display: 'Unbounded Variable', 'Hanken Grotesk Variable', sans-serif;
+  --font-sans: 'Hanken Grotesk Variable', 'Segoe UI Variable', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'Fira Code', ui-monospace, Menlo, Consolas, monospace;
+
+  /* Échelle typographique : display (titre de page), headline (titre de section),
+     title (titre d'élément), body (texte) + label (mono). Rien entre les deux. */
+  --step-display: clamp(2.6rem, 6vw, 5.2rem);  /* titres de page / Hero */
+  --step-headline: clamp(2.1rem, 4.4vw, 3.6rem); /* titres de section */
+  --step-title: clamp(1.6rem, 3vw, 2.4rem);    /* titres de section */
+  --step-body: 1.0625rem;                       /* texte courant */
+  --step-label: 0.8rem;                         /* labels mono */
 
   /* ─────────────────────────────────────────────
      Rythme & mouvement
@@ -58,7 +67,7 @@
    Thème Mode Console
    ───────────────────────────────────────────── */
 html[data-experience="console"] {
-  --font-mono: 'Fira Code', 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+  --font-mono: 'JetBrains Mono Variable', 'Fira Code', ui-monospace, Menlo, Consolas, monospace;
 
   /* Couleurs Cyber/Data HUD */
   --cyber-cyan: #00f3ff;
@@ -89,11 +98,12 @@ html:not([data-experience="console"]) .only-console { display: none !important; 
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  cursor: none;
 }
 
-@media (hover: none) and (pointer: coarse) {
-  * { cursor: auto; }
+/* Le curseur personnalisé n'existe que dans l'OS : en vitrine, le curseur
+   natif garde ses repères (main sur les liens, I sur le texte). */
+@media (pointer: fine) {
+  html[data-experience="console"] * { cursor: none; }
 }
 
 html {
@@ -109,6 +119,7 @@ html {
 body {
   min-height: 100vh;
   overflow-x: hidden;
+  font-size: var(--step-body); /* tout texte non stylé hérite du palier courant */
   line-height: 1.6;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
@@ -199,11 +210,11 @@ html:not([data-experience="console"])::-webkit-scrollbar-thumb {
   align-items: center;
   gap: 0.75rem;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--step-label);
   font-weight: 500;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: var(--text-muted);
 }
 
 .section-label::before {
@@ -226,6 +237,15 @@ html:not([data-experience="console"])::-webkit-scrollbar-thumb {
   background-clip: text;
   color: transparent;
   animation: holographic-shift 10s ease infinite;
+}
+
+/* Titres de section : un seul palier, aucune décoration */
+.section-title {
+  font-size: var(--step-headline);
+  color: var(--text-main);
+  max-width: 16ch;
+  line-height: 1;
+  letter-spacing: -0.035em;
 }
 
 /* ─────────────────────────────────────────────

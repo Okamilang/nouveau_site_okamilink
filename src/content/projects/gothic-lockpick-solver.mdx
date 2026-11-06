@@ -1,50 +1,87 @@
 ---
-title: "Gothic 1 Remake - Lockpick Solver"
-description: "Outil algorithmique pour la résolution du mini-jeu de crochetage dans Gothic 1 Remake."
+title: "Gothic 1 Remake : Lockpick Solver"
+description: "La bonne séquence pour chaque serrure."
 client: "Open Source"
 date: 2026-07-04
-tags: ["Outil", "Gaming", "Jeux vidéo", "Algorithme", "Gothic 1 Remake"]
+tags: ["Outil web", "Jeux vidéo", "Algorithme"]
 url: "https://okamilang.github.io/gothic1-lockpick-solver/"
 category: "program"
 osIcon: "/os-icons/lockpick.webp"
 coverImage: "../../assets/projects/screenshots/gothic-banner.png"
 ---
+import BrowserWindow from '../../components/mockups/BrowserWindow.astro';
 
-# Lisez-moi : G1-Lockpick_Solver.exe
+<p class="app-kicker">Outil web · gratuit et open source</p>
 
-> [!NOTE]
-> Bienvenue dans le terminal de décryptage des serrures pour l'univers de Gothic 1 Remake. 
+# Gothic 1 Remake : Lockpick Solver
+
+Un outil gratuit et open source pour ne plus jamais casser un crochet dans la Colonie.
+
+## Essayez-le ici
+
+L'outil tourne directement dans la fenêtre ci-dessous : c'est la vraie application, pas une capture.
+
+<BrowserWindow title="okamilang.github.io/gothic1-lockpick-solver">
+  <iframe
+    class="live-demo"
+    src="https://okamilang.github.io/gothic1-lockpick-solver/"
+    title="Gothic 1 Remake : Lockpick Solver (démo interactive)"
+    loading="lazy"
+  ></iframe>
+</BrowserWindow>
+
+<p class="mockup-hint">La démo ne s'affiche pas ? Utilisez « Accéder au programme » en haut de page.</p>
+
+<div class="two-col">
+<div>
 
 ## À propos de cet outil
 
-**Gothic 1 Remake - Lockpick Solver** est un utilitaire tactique conçu pour les pilleurs de tombes et les explorateurs de la Colonie Pénitentiaire. Le système de crochetage dans le remake demande de la précision et une bonne mémoire pour trouver la séquence exacte (Gauche/Droite). Cet outil a été développé pour automatiser et mémoriser cette séquence sans risquer de briser tous vos précieux crochets.
+Dans le remake de Gothic 1, le crochetage demande de la précision et de la mémoire pour trouver la bonne séquence (gauche/droite). Cet outil calcule et mémorise cette séquence à votre place, sans sacrifier vos précieux crochets.
+
+</div>
+<div>
 
 ## Fonctionnalités
 
-- **Tracking de séquence :** Mémorise vos entrées et déduit les mouvements restants.
-- **Minimisation des casses :** L'algorithme calcule le chemin optimal pour préserver vos crochets.
-- **Interface Rapide :** Pensé pour être utilisé en surimpression (ou sur un second écran/téléphone) pendant que vous jouez.
+- **Suivi de la séquence :** l'outil mémorise vos entrées et déduit les mouvements restants.
+- **Moins de casse :** l'algorithme choisit le chemin le plus court qui préserve vos crochets.
+- **Pensé pour jouer :** utilisable en surimpression, sur un second écran ou sur téléphone.
 
-## Aperçu de l'interface
-
-![Serrure en jeu](../../assets/projects/screenshots/gothic-lock-3.png)
-
-![Interface du solveur - Étape 1](../../assets/projects/screenshots/gothic-lock-1.png)
-
-![Interface du solveur - Étape 2](../../assets/projects/screenshots/gothic-lock-2.png)
+</div>
+</div>
 
 ## Mode d'emploi
 
-1. **Saisis la serrure**
-   Choisis le nombre de plaques. Puis, pour chaque plaque, clique le trou où se trouve son pion (laiton), de 1 (gauche) à 7 (droite). Le centre (trou 4) est la cible : tous les pions doivent finir là.
-2. **Renseigne les liaisons**
-   En jeu, pousse le pion de chaque plaque d'un cran vers un espace libre et regarde quels autres pions bougent. Reporte-le dans la grille : · aucune, = même sens, ≠ sens inverse. (Une case = « quand je bouge la plaque de la ligne, la plaque de la colonne réagit comme ceci ».)
-3. **Lance la résolution**
-   Clique Résoudre. L'outil calcule la séquence de coups la plus courte qui n'écrase jamais un pion contre un mur.
-4. **Reproduis coup par coup**
-   Avance avec Suivant et refais chaque mouvement en jeu. Choisis le mode qui te parle — Plaque (la touche à presser) ou Pion (ce que tu vois bouger) — le plateau animé confirme à chaque fois. Si un coup demandé est impossible en jeu (pion déjà au mur), c'est qu'une position ou une liaison saisie est fausse : corrige-la et relance.
+1. **Saisissez la serrure.** Choisissez le nombre de plaques, puis, pour chaque plaque, cliquez sur le trou où se trouve son pion, de 1 (gauche) à 7 (droite). Le centre (trou 4) est la cible.
+2. **Renseignez les liaisons.** En jeu, poussez le pion de chaque plaque d'un cran et observez quels autres pions bougent. Reportez-le dans la grille : · aucune, = même sens, ≠ sens inverse.
+3. **Lancez la résolution.** Cliquez sur Résoudre : l'outil calcule la séquence la plus courte qui n'écrase jamais un pion contre un mur.
+4. **Reproduisez coup par coup.** Avancez avec Suivant et refaites chaque mouvement en jeu. Si un coup est impossible, une position ou une liaison saisie est fausse : corrigez-la et relancez.
 
-<div style="margin-top: 30px; padding: 15px; border: 1px solid var(--cyber-cyan); background: rgba(0, 243, 255, 0.05); text-align: center; border-radius: 8px;">
-  <p style="margin-bottom: 15px; color: var(--text-main);">Lancer l'application externe :</p>
-  <a href="https://okamilang.github.io/gothic1-lockpick-solver/" target="_blank" style="display: inline-block; padding: 10px 20px; background: var(--cyber-cyan); color: black; font-weight: bold; text-decoration: none; border-radius: 4px; font-family: var(--font-mono);">> EXECUTER SOLVER_WEB</a>
-</div>
+## En jeu
+
+<figure class="shot">
+
+![Une serrure dans Gothic 1 Remake](../../assets/projects/screenshots/gothic-lock-3.png)
+
+<figcaption>La serrure telle qu'elle apparaît dans le jeu : c'est elle que l'outil résout.</figcaption>
+</figure>
+
+<details class="shots-more">
+<summary>Captures de l'outil (si la démo ne s'affiche pas)</summary>
+
+<figure class="shot">
+
+![Le solveur : saisie des plaques](../../assets/projects/screenshots/gothic-lock-1.png)
+
+<figcaption>Capture : saisie des plaques et des liaisons.</figcaption>
+</figure>
+
+<figure class="shot">
+
+![Le solveur : séquence calculée](../../assets/projects/screenshots/gothic-lock-2.png)
+
+<figcaption>Capture : la séquence calculée, coup par coup.</figcaption>
+</figure>
+
+</details>

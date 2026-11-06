@@ -4,9 +4,13 @@ import Navbar from '../components/layout/Navbar.astro';
 import Footer from '../components/layout/Footer.astro';
 import CustomCursor from '../components/common/CustomCursor.astro';
 import NoiseOverlay from '../components/common/NoiseOverlay.astro';
-import ExperienceSelector from '../components/common/ExperienceSelector.astro';
 import OSDesktop from '../components/os/OSDesktop.astro';
 import TerminalToast from '../components/common/TerminalToast.astro';
+import '@fontsource-variable/unbounded';
+import unboundedWoff2 from '@fontsource-variable/unbounded/files/unbounded-latin-wght-normal.woff2?url';
+import hankenWoff2 from '@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2?url';
+import '@fontsource-variable/hanken-grotesk';
+import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
 
 interface Props {
@@ -91,8 +95,12 @@ const schemas = [organizationSchema, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd
     <meta name="author" content="Daniel Cohen — Okamilink" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/logo.png" />
-    <link rel="apple-touch-icon" href="/logo.png" />
+    <!-- Préchargements : logo (LCP) et polices de titre/texte -->
+    <link rel="preload" as="image" href="/logo-mark.webp" fetchpriority="high" />
+    <link rel="preload" as="font" type="font/woff2" href={unboundedWoff2} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={hankenWoff2} crossorigin />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <!-- Open Graph (Facebook, LinkedIn, WhatsApp…) -->
     <meta property="og:type" content={ogType} />
@@ -132,11 +140,11 @@ const schemas = [organizationSchema, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd
     </script>
   </head>
   <body>
-    <ExperienceSelector />
+    <a href="#contenu" class="skip-link only-vitrine">Aller au contenu</a>
     <NoiseOverlay />
     <div class="only-vitrine">
       <Navbar />
-      <main>
+      <main id="contenu" tabindex="-1">
         <slot />
       </main>
       <Footer />
@@ -147,8 +155,8 @@ const schemas = [organizationSchema, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd
     <CustomCursor />
 
     <!-- Lightbox Globale -->
-    <div id="global-lightbox" class="lightbox-overlay" aria-hidden="true">
-      <img id="global-lightbox-img" src="" alt="Zoomed view" />
+    <div id="global-lightbox" class="lightbox-overlay" role="dialog" aria-modal="true" aria-label="Image agrandie" aria-hidden="true" inert>
+      <img id="global-lightbox-img" src="" alt="" />
       <button id="global-lightbox-close" class="lightbox-close" aria-label="Fermer">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       </button>
@@ -171,38 +179,57 @@ const schemas = [organizationSchema, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd
           });
         });
 
-        // Lightbox Logic
-        const images = document.querySelectorAll('.project-markdown img, .project-content img');
+
+        // [data-open-console] : tout bouton du site peut ouvrir l'OS (navbar, Hero, footer)
+        document.querySelectorAll<HTMLElement>('[data-open-console]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-experience', 'console');
+            try { localStorage.setItem('okamilink_experience', 'console'); } catch {}
+            window.scrollTo({ top: 0 });
+          });
+        });
+
+        // Lightbox : souris ET clavier, focus rendu à l'image à la fermeture
+        const images = document.querySelectorAll<HTMLImageElement>('.project-markdown img, .project-content img:not(.scroll-content img):not(.mobile-content img)');
         const lightbox = document.getElementById('global-lightbox');
         const lightboxImg = document.getElementById('global-lightbox-img') as HTMLImageElement;
         const lightboxClose = document.getElementById('global-lightbox-close');
+        let opener: HTMLElement | null = null;
 
-        if (lightbox && lightboxImg) {
+        if (lightbox && lightboxImg && lightboxClose) {
+          const open = (img: HTMLImageElement) => {
+            opener = img;
+            lightboxImg.src = img.currentSrc || img.src;
+            lightboxImg.alt = img.alt;
+            lightbox.removeAttribute('inert');
+            lightbox.setAttribute('aria-hidden', 'false');
+            lightbox.classList.add('active');
+            lightboxClose.focus();
+          };
+          const close = () => {
+            lightbox.classList.remove('active');
+            lightbox.setAttribute('aria-hidden', 'true');
+            lightbox.setAttribute('inert', '');
+            setTimeout(() => { lightboxImg.src = ''; }, 300);
+            opener?.focus();
+          };
+
           images.forEach(img => {
-            (img as HTMLElement).style.cursor = 'zoom-in';
-            img.addEventListener('click', (e) => {
-              lightboxImg.src = (e.target as HTMLImageElement).src;
-              lightbox.classList.add('active');
+            img.style.cursor = 'zoom-in';
+            img.tabIndex = 0;
+            img.setAttribute('role', 'button');
+            img.setAttribute('aria-label', `Agrandir : ${img.alt || 'image'}`);
+            img.addEventListener('click', () => open(img));
+            img.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(img); }
             });
           });
 
-          const closeLightbox = () => {
-            lightbox.classList.remove('active');
-            setTimeout(() => {
-              lightboxImg.src = '';
-            }, 300);
-          };
-
           lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox || e.target === lightboxClose || (e.target as HTMLElement).closest('.lightbox-close')) {
-              closeLightbox();
-            }
+            if (e.target === lightbox || (e.target as HTMLElement).closest('.lightbox-close')) close();
           });
-
           document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-              closeLightbox();
-            }
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) close();
           });
         }
       });
@@ -211,6 +238,23 @@ const schemas = [organizationSchema, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd
 </html>
 
 <style is:global>
+  /* Lien d'évitement : invisible jusqu'au premier Tab */
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 2000;
+    padding: 0.7rem 1.1rem;
+    border-radius: 999px;
+    background: var(--text-main);
+    color: var(--bg-color);
+    font-weight: 600;
+    transform: translateY(-200%);
+    transition: transform 0.2s ease;
+  }
+  .skip-link:focus { transform: translateY(0); }
+  main:focus { outline: none; }
+
   main {
     padding-top: 104px; /* Compense la navbar fixe */
     min-height: calc(100vh - 104px);

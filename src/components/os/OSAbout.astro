@@ -1,0 +1,167 @@
+---
+/**
+ * A_Propos.exe — la présentation propre au mode console :
+ * une session de terminal, avec des commandes qui ouvrent les autres fenêtres.
+ */
+import { getCollection } from 'astro:content';
+const projects = (await getCollection('projects')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<div class="os-about">
+  <p class="line"><span class="ps1">okami@link:~$</span> whoami</p>
+  <p class="out out-title">Daniel Cohen</p>
+  <p class="out">Développeur web freelance · Éragny, Val-d'Oise (95)</p>
+  <p class="out dim">Sites sur-mesure, e-commerce B2B sur Odoo, applications Android.</p>
+
+  <p class="line"><span class="ps1">okami@link:~$</span> cat stack.txt</p>
+  <p class="out">Astro · TypeScript · CSS moderne · WordPress · Odoo · Android</p>
+
+  <p class="line"><span class="ps1">okami@link:~$</span> ls projets/</p>
+  <ul class="out ls">
+    {projects.map((p) => (
+      <li>
+        <button type="button" class="ls-entry" data-open-window={`win-proj-${p.slug}`}>
+          {p.slug}{p.data.category === 'program' ? '.exe' : '/'}
+        </button>
+      </li>
+    ))}
+  </ul>
+
+  <p class="line"><span class="ps1">okami@link:~$</span> help</p>
+  <div class="out help">
+    <button type="button" class="cmd" data-open-window="win-skills">competences</button>
+    <button type="button" class="cmd" data-open-window="win-philo">philosophie</button>
+    <button type="button" class="cmd" data-open-window="win-terminal">contact</button>
+    <button type="button" class="cmd" data-open-window="win-wallpaper">affichage</button>
+  </div>
+
+  <div class="history" aria-live="polite"></div>
+
+  <form class="prompt" autocomplete="off">
+    <span class="ps1" aria-hidden="true">okami@link:~$</span>
+    <input id="os-about-input" class="cmd-input" data-autofocus type="text" spellcheck="false" aria-label="Commande" aria-describedby="os-about-tip" />
+  </form>
+  <p class="tip" id="os-about-tip">Tapez une commande (essayez <kbd>help</kbd>) puis Entrée.</p>
+</div>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const root = document.querySelector<HTMLElement>('.os-about');
+    if (!root) return;
+    const open = (id: string) => (window as any).openOSWindow?.(id);
+
+    root.querySelectorAll<HTMLElement>('[data-open-window]').forEach((btn) => {
+      btn.addEventListener('click', () => btn.dataset.openWindow && open(btn.dataset.openWindow));
+    });
+
+    // Un vrai petit shell : chaque commande réutilise les fenêtres existantes
+    const form = root.querySelector<HTMLFormElement>('.prompt');
+    const input = root.querySelector<HTMLInputElement>('.cmd-input');
+    const history = root.querySelector<HTMLElement>('.history');
+    if (!form || !input || !history) return;
+
+    const projects = Array.from(root.querySelectorAll<HTMLElement>('.ls-entry'))
+      .map((b) => ({ name: (b.textContent || '').trim().replace(/[\/]$|\.exe$/, ''), win: b.dataset.openWindow || '' }));
+
+    const windows: Record<string, string> = {
+      competences: 'win-skills', skills: 'win-skills',
+      philosophie: 'win-philo',
+      contact: 'win-terminal',
+      affichage: 'win-wallpaper', wallpaper: 'win-wallpaper',
+      projets: 'win-projects', ls: 'win-projects', 'projets/': 'win-projects',
+    };
+
+    const print = (cmd: string, lines: string[]) => {
+      const block = document.createElement('div');
+      const l = document.createElement('p'); l.className = 'line';
+      const ps = document.createElement('span'); ps.className = 'ps1'; ps.textContent = 'okami@link:~$';
+      l.append(ps, ' ', cmd);
+      block.append(l);
+      lines.forEach((t) => { const o = document.createElement('p'); o.className = 'out'; o.textContent = t; block.append(o); });
+      history.append(block);
+      root.closest('.window-content')?.scrollTo({ top: 1e6 });
+    };
+
+    const run = (raw: string) => {
+      const cmd = raw.trim().toLowerCase();
+      if (!cmd) return;
+      if (cmd === 'clear') { history.innerHTML = ''; return; }
+      if (cmd === 'help') return print(raw, ['whoami · ls · projets · competences · philosophie · contact · affichage · clear · exit', 'ou le nom d’un projet : ' + projects.map((p) => p.name).join(', ')]);
+      if (cmd === 'whoami') return print(raw, ['Daniel Cohen, développeur web freelance · Éragny (95)']);
+      if (cmd === 'exit' || cmd === 'quit') { print(raw, ['Retour à la vitrine…']); setTimeout(() => document.getElementById('btn-exit-os')?.click(), 400); return; }
+      const proj = projects.find((p) => p.name === cmd || cmd.endsWith(' ' + p.name));
+      if (proj) { print(raw, [`ouverture de ${proj.name}…`]); return open(proj.win); }
+      const key = cmd.replace(/^(open|cd|cat)\s+/, '');
+      if (windows[key]) { print(raw, [`ouverture de ${key === 'ls' ? 'projets/' : key}…`]); return open(windows[key]); }
+      print(raw, [`commande introuvable : ${raw.trim()} — tapez help`]);
+    };
+
+    form.addEventListener('submit', (e) => { e.preventDefault(); run(input.value); input.value = ''; });
+  });
+</script>
+
+<style>
+  .os-about {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: rgba(220, 240, 245, 0.9);
+    padding: 0.5rem 0.25rem;
+  }
+
+  .line, .os-about :global(.history .line) { margin-top: 1rem; color: #fff; }
+  .os-about :global(.history .out) { padding-left: 1rem; }
+  .os-about :global(.history .ps1) { color: var(--data-action, #00ff66); margin-right: 0.5rem; }
+  .line:first-child { margin-top: 0; }
+  .ps1 { color: var(--data-action, #00ff66); margin-right: 0.5rem; }
+
+  .out { padding-left: 1rem; }
+  .out-title { font-size: 1.15rem; font-weight: 600; color: var(--cyber-cyan, #00f3ff); }
+  .dim { color: rgba(220, 240, 245, 0.6); }
+
+  .ls { display: flex; flex-wrap: wrap; gap: 0.25rem 1.5rem; list-style: none; }
+
+  .ls-entry,
+  .cmd {
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    color: var(--cyber-cyan, #00f3ff);
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 3px;
+  }
+
+  .help { display: flex; flex-wrap: wrap; gap: 0.25rem 1.5rem; }
+  .cmd { color: var(--cyber-magenta, #ff00ea); }
+
+  .ls-entry:hover, .ls-entry:focus-visible,
+  .cmd:hover, .cmd:focus-visible {
+    text-decoration-style: solid;
+    outline: none;
+    color: #fff;
+  }
+
+  .prompt {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  .prompt .ps1 { margin-right: 0; }
+
+  .cmd-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    outline: none;
+    font: inherit;
+    color: #fff;
+    caret-color: var(--cyber-cyan, #00f3ff);
+  }
+
+  .tip { margin-top: 0.5rem; font-size: 0.78rem; color: rgba(220, 240, 245, 0.5); }
+  .tip kbd { font-family: inherit; color: var(--cyber-magenta, #ff00ea); }
+</style>

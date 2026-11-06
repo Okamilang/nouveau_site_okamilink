@@ -73,7 +73,10 @@
     const clickableSelector = 'a, button, .magnetic, [role="button"], .desktop-icon, .wallpaper-btn, .win-btn, .taskbar-item, label';
     const textSelector = 'input:not([type="submit"]):not([type="button"]), textarea, select, [contenteditable="true"]';
 
+    const inOS = () => document.documentElement.getAttribute('data-experience') === 'console';
+
     document.addEventListener('mouseover', (e) => {
+      if (!inOS()) return; // vitrine : curseur natif, pas de magnétisme
       const el = e.target as HTMLElement;
 
       const textEl = el.closest(textSelector);
@@ -112,6 +115,9 @@
 </script>
 
 <style>
+  /* Réservé à l'OS : en vitrine on garde le curseur natif */
+  :global(html:not([data-experience="console"])) .custom-cursor { display: none !important; }
+
   .custom-cursor {
     position: fixed;
     top: 0;

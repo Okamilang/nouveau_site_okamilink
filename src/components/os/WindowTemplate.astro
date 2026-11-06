@@ -27,12 +27,14 @@ const {
   class={`os-window ${isOpen ? 'open' : ''}`}
   style={`width: ${width}; height: ${height}; top: ${y}; left: ${x};`}
   data-window-id={id}
+  role="dialog"
+  aria-labelledby={`${id}-title`}
 >
   <span class="win-corner tl" aria-hidden="true"></span>
   <span class="win-corner br" aria-hidden="true"></span>
 
   <div class="window-header">
-    <div class="window-title">
+    <div class="window-title" id={`${id}-title`}>
       <span class="window-icon" set:html={icon}></span>
       {title}
     </div>
@@ -48,7 +50,7 @@ const {
       </button>
     </div>
   </div>
-  <div class="window-content">
+  <div class="window-content" tabindex="-1">
     <slot />
   </div>
   <div class="window-statusline" aria-hidden="true">
@@ -244,4 +246,6 @@ const {
   }
 
   @keyframes status-blink { 50% { opacity: 0; } }
+  .window-content:focus { outline: none; }
+  .window-content:focus-visible { box-shadow: inset 0 0 0 1px rgba(0, 243, 255, 0.35); }
 </style>

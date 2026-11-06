@@ -2,7 +2,8 @@
 /**
  * Fond d'écran procédural de l'OS Okamilink.
  * Aucune image de fond : dégradés, circuits, aurores et reflets sont en CSS,
- * le loup est le logo du site (public/logo.png) utilisé comme masque et teinté.
+ * le loup est l'emblème du logo (public/logo-emblem.webp) utilisé comme masque et teinté,
+ * le nom et la mention sont du vrai texte (accents corrects, net à toute taille).
  *
  * - theme : identifiant du thème (voir wallpapers.ts)
  * - thumb : version miniature (sélecteur), animations coupées
@@ -24,6 +25,8 @@ const { theme, thumb = false } = Astro.props;
     <div class="wp-ring"></div>
     <div class="wp-logo-reflection"></div>
     <div class="wp-logo"></div>
+    <div class="wp-word">Okamilink</div>
+    <div class="wp-tag">Développement web</div>
     <div class="wp-plate">Premium</div>
   </div>
 </div>
@@ -64,19 +67,52 @@ const { theme, thumb = false } = Astro.props;
     z-index: 3;
   }
 
-  /* Le loup : logo.png en masque, teinté par --wp-ink */
+  /* Le loup : emblème en masque, teinté par --wp-ink */
   .wp-logo {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 62%;
     background: var(--wp-ink);
-    -webkit-mask: url('/logo.png') center / contain no-repeat;
-    mask: url('/logo.png') center / contain no-repeat;
+    -webkit-mask: url('/logo-emblem.webp') center / contain no-repeat;
+    mask: url('/logo-emblem.webp') center / contain no-repeat;
     filter: drop-shadow(0 0 18px var(--wp-glow));
   }
 
   .wp-ring,
   .wp-logo-reflection,
   .wp-plate { display: none; }
+
+  /* Nom et mention : vrai texte, même encre que l'emblème */
+  .wp-word,
+  .wp-tag {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    color: var(--wp-ink);
+    text-shadow: 0 0 18px var(--wp-glow);
+  }
+  .wp-word {
+    top: 67%;
+    font-family: var(--font-display, sans-serif);
+    font-weight: 500;
+    font-size: calc(var(--wp-logo-w) * 0.13);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .wp-tag {
+    top: 86%;
+    font-family: var(--font-sans, sans-serif);
+    font-size: calc(var(--wp-logo-w) * 0.045);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+  .os-wallpaper[data-theme="circuit"] .wp-word,
+  .os-wallpaper[data-theme="circuit"] .wp-tag { color: #e9e4f7; }
 
   /* Vignette commune (remplace l'ancien assombrissement de l'image) */
   .os-wallpaper::after {
@@ -126,7 +162,7 @@ const { theme, thumb = false } = Astro.props;
     display: block;
     position: absolute;
     left: 50%;
-    bottom: -14%;
+    bottom: -20%;
     transform: translateX(-50%);
     padding: 0.25em 1.6em;
     font-family: var(--font-display, serif);
@@ -170,7 +206,7 @@ const { theme, thumb = false } = Astro.props;
   }
   /* Ici on garde le vrai logo holographique */
   .os-wallpaper[data-theme="circuit"] .wp-logo {
-    background: url('/logo.png') center / contain no-repeat;
+    background: url('/logo-emblem.webp') center / contain no-repeat;
     -webkit-mask: none;
     mask: none;
     filter: drop-shadow(0 0 22px var(--wp-glow)) drop-shadow(0 0 60px rgba(0, 243, 255, 0.15));
@@ -209,7 +245,7 @@ const { theme, thumb = false } = Astro.props;
     display: block;
     position: absolute;
     left: 50%;
-    bottom: -14%;
+    bottom: -20%;
     transform: translateX(-50%);
     padding: 0.25em 1.6em;
     font-family: var(--font-display, serif);
@@ -259,10 +295,10 @@ const { theme, thumb = false } = Astro.props;
     left: 0;
     right: 0;
     top: 100%;
-    aspect-ratio: 1256 / 1024;
+    aspect-ratio: 900 / 505;
     background: linear-gradient(180deg, #7ff6ff, #00f3ff);
-    -webkit-mask: url('/logo.png') center / contain no-repeat;
-    mask: url('/logo.png') center / contain no-repeat;
+    -webkit-mask: url('/logo-emblem.webp') center / contain no-repeat;
+    mask: url('/logo-emblem.webp') center / contain no-repeat;
     transform: scaleY(-0.55) skewX(-6deg);
     transform-origin: 50% 0;
     opacity: 0.22;

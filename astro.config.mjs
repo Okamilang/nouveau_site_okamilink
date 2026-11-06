@@ -21,6 +21,8 @@ export default defineConfig({
   build: {
     format: 'directory',
     assets: 'assets',
+    // CSS intégré au HTML : aucune feuille de style bloquante à télécharger avant l'affichage
+    inlineStylesheets: 'always',
   },
   server: {
     port: 3000,

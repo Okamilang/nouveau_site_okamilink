@@ -11,4 +11,4 @@ export const WALLPAPERS = [
 ] as const;
 
 export type WallpaperId = (typeof WALLPAPERS)[number]['id'];
-export const DEFAULT_WALLPAPER: WallpaperId = 'brass';
+export const DEFAULT_WALLPAPER: WallpaperId = 'circuit';

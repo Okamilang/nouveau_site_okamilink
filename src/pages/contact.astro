@@ -10,12 +10,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="contact-layout">
       <!-- Colonne éditoriale -->
       <aside class="contact-intro">
-        <p class="section-label reveal-up" style="--i: 0"><em>03</em> Contact</p>
+        <p class="section-label reveal-up" style="--i: 0">Contact</p>
         <h1 class="title">
-          <span class="reveal-text"><span class="delay-1">Initialiser le</span></span>
-          <span class="reveal-text"><span class="text-gradient delay-2">Contact.</span></span>
+          <span class="reveal-text"><span class="delay-1">Parlons de</span></span>
+          <span class="reveal-text"><span class="delay-2">votre projet.</span></span>
         </h1>
-        <p class="subtitle reveal-up" style="--i: 3">Parlez-moi de votre projet. Je reviendrai vers vous dans les plus brefs délais.</p>
+        <p class="subtitle reveal-up" style="--i: 3">Décrivez votre besoin en quelques lignes : je lis chaque message et je vous réponds personnellement.</p>
 
         <dl class="contact-details reveal-up" style="--i: 4">
           <div class="detail">
@@ -33,10 +33,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </dl>
 
         <ul class="contact-services reveal-up" style="--i: 5">
-          <li><span>01</span>Site vitrine ou e-commerce sur-mesure</li>
-          <li><span>02</span>Application web ou Android</li>
-          <li><span>03</span>Refonte, performance & SEO technique</li>
-          <li><span>04</span>Intégration WordPress ou Odoo</li>
+          <li><span aria-hidden="true">—</span>Site vitrine ou e-commerce sur-mesure</li>
+          <li><span aria-hidden="true">—</span>Application web ou Android</li>
+          <li><span aria-hidden="true">—</span>Refonte, performance & SEO technique</li>
+          <li><span aria-hidden="true">—</span>Intégration WordPress ou Odoo</li>
         </ul>
       </aside>
 
@@ -192,7 +192,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .title {
-    font-size: clamp(2.5rem, 5vw, 4.2rem);
+    font-size: var(--step-title);
     line-height: 0.98;
     letter-spacing: -0.035em;
     display: flex;
@@ -202,7 +202,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .title .reveal-text { padding: 0.08em 0.05em; margin: -0.08em -0.05em; }
 
   .subtitle {
-    font-size: 1.15rem;
+    font-size: var(--step-body);
     font-weight: 300;
     color: var(--text-muted);
     line-height: 1.7;
@@ -226,7 +226,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .detail dt {
     font-family: var(--font-mono);
-    font-size: 0.68rem;
+    font-size: var(--step-label);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--text-dim);
@@ -235,7 +235,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .detail dd {
     color: var(--text-main);
-    font-size: 0.98rem;
+    font-size: var(--step-body);
     line-height: 1.55;
   }
 
@@ -260,7 +260,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .dd-sub {
     color: var(--text-dim);
-    font-size: 0.85rem;
+    font-size: var(--step-label);
     font-weight: 300;
   }
 
@@ -276,13 +276,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     align-items: baseline;
     gap: 0.9rem;
     color: var(--text-muted);
-    font-size: 0.95rem;
+    font-size: var(--step-body);
     font-weight: 300;
   }
 
   .contact-services li span {
     font-family: var(--font-mono);
-    font-size: 0.68rem;
+    font-size: var(--step-label);
     letter-spacing: 0.12em;
     color: var(--accent-pink);
   }
@@ -305,9 +305,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     left: 0;
     right: 0;
     height: 1px;
-    background: var(--holographic-gradient);
-    background-size: 300% auto;
-    animation: holographic-shift 8s linear infinite;
+    background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
   }
 
   .card-head {
@@ -329,7 +327,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .card-head-label {
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: var(--step-label);
     letter-spacing: 0.08em;
     color: var(--text-dim);
   }
@@ -363,7 +361,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   label {
     font-family: var(--font-mono);
-    font-size: 0.68rem;
+    font-size: var(--step-label);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--text-dim);
@@ -374,7 +372,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .optional {
     text-transform: none;
     letter-spacing: 0.02em;
-    opacity: 0.7;
+    color: var(--text-muted);
   }
 
   input, select, textarea {
@@ -384,7 +382,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     padding: 0.9rem 1rem;
     color: var(--text-main);
     font-family: var(--font-sans);
-    font-size: 1rem;
+    font-size: var(--step-body);
     font-weight: 300;
     transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
   }
@@ -432,23 +430,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     color: var(--bg-color);
     font-family: var(--font-sans);
     font-weight: 600;
-    font-size: 0.98rem;
+    font-size: var(--step-body);
     cursor: pointer;
     position: relative;
     overflow: hidden;
     transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s ease;
   }
 
-  .submit-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--holographic-gradient);
-    background-size: 300% auto;
-    animation: holographic-shift 6s linear infinite;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-  }
 
   .btn-text, .btn-arrow { position: relative; z-index: 1; }
 
@@ -467,7 +455,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     box-shadow: 0 16px 40px -14px color-mix(in oklch, var(--accent-purple) 60%, transparent);
   }
 
-  .submit-btn:hover::before { opacity: 1; }
   .submit-btn:hover .btn-arrow { transform: translateX(3px); }
 
   .submit-btn:disabled {
@@ -479,7 +466,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .form-status {
     padding: 1rem;
     border-radius: var(--radius-sm);
-    font-size: 0.95rem;
+    font-size: var(--step-body);
     text-align: center;
     display: none;
   }
@@ -496,5 +483,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     background: rgba(239, 68, 68, 0.1);
     color: #f87171;
     border: 1px solid rgba(239, 68, 68, 0.25);
+  }
+
+  /* Gouttière mobile commune à tout le site */
+  @media (max-width: 480px) {
+    .page-container { padding-left: 1.25rem; padding-right: 1.25rem; }
   }
 </style>

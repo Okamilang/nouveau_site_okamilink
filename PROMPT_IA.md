@@ -14,8 +14,8 @@ Tu es un assistant IA expert en développement web moderne, spécialisé dans **
 - `src/layouts/BaseLayout.astro` : `<head>` SEO (title, description, canonical, Open Graph, robots), chargement des composants globaux.
 - `src/components/`
   - `layout/` : `Navbar`, `Footer`.
-  - `sections/` : `Hero`, `ExpertiseGrid`, `Philosophy`.
-  - `common/` : `PremiumButton`, `CustomCursor`, `ExperienceSelector`, `ContactTerminal`, `TerminalToast`, `GlowingLogo`, `NoiseOverlay`.
+  - `sections/` : `Hero`, `FeaturedWork` (études de cas + programmes sur l'accueil), `Approach` (services + méthode) ; `ExpertiseGrid` et `Philosophy` ne servent plus que dans les fenêtres de l'OS.
+  - `common/` : `PremiumButton`, `CustomCursor` (OS uniquement), `ContactTerminal`, `TerminalToast`, `NoiseOverlay`.
   - `os/` : l'**expérience « OS »** (bureau cyberpunk alternatif à la vitrine) : `BootSequence`, `OSDesktop`, `Taskbar`, `WindowTemplate`.
   - `mockups/`, `ui/` : mockups navigateur/mobile, cartes projets.
 - `src/content/projects/*.mdx` : collection des projets (schéma dans `src/content/config.ts`). `category: 'website' | 'program'`, `osIcon` (icône dans l'OS), `coverImage`.
@@ -23,7 +23,7 @@ Tu es un assistant IA expert en développement web moderne, spécialisé dans **
 - `public/` : `.htaccess` (HTTPS, non-www, redirections ex-WordPress), `robots.txt`, `sendmail.php`, `logo.png`, `os-icons/*.webp` (les fonds d'écran de l'OS sont 100 % CSS/JS : `src/components/os/Wallpaper.astro` + `wallpapers.ts`).
 
 ## 3. Fonctionnalités clés
-- **Deux expériences** au choix du visiteur (`ExperienceSelector`) : la **vitrine** classique et l'**OS** (bureau interactif avec fenêtres, terminal de contact, fonds d'écran, icônes de projets).
+- **Deux expériences** : la **vitrine** s'affiche par défaut ; l'**OS** (bureau interactif) se découvre via le bouton « >_ Mode console » de la navbar ou l'invitation sous le Hero (tout élément `[data-open-console]`).
 - Fonds d'écran OS mémorisés en `localStorage` (`os-wallpaper`).
 - Lightbox globale pour les captures de projets.
 - Pages légales en `noindex`, exclues du sitemap.
@@ -35,3 +35,12 @@ Tu es un assistant IA expert en développement web moderne, spécialisé dans **
 4. **Images** : tout ce qui est dans `public/` doit être livré déjà optimisé (WebP, dimensions raisonnables) ; ce qui est dans `src/assets/` passe par `<Image>`/Astro.
 5. **Précision** : indique toujours le chemin du fichier à créer ou modifier.
 6. **Vérification** : `npm run build` (= `astro check && astro build`) doit passer sans erreur avant tout commit.
+
+## 5. Principes de design (revue « Design Council »)
+- Typographie en trois paliers : `--step-display`, `--step-title`, `--step-body` (+ `--step-label` pour les labels mono). Pas de taille intermédiaire.
+- Le dégradé holographique (`.text-gradient`) est réservé au titre du Hero.
+- Pas de numérotation décorative (001, 01…) dans la vitrine ; elle reste permise dans l'OS.
+- Un élément qui réagit au survol doit être cliquable, et inversement.
+- Curseur natif en vitrine ; curseur personnalisé et magnétisme uniquement dans l'OS.
+- Textes : « je », des faits vérifiables plutôt que des superlatifs ; « Me contacter » en vitrine, vocabulaire terminal dans l'OS.
+- Les études de cas affichent des `highlights` (frontmatter) : uniquement des faits réels.

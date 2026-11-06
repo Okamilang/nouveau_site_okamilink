@@ -1,8 +1,8 @@
 ---
 // Composant Navbar
 const links = [
-  { href: '/realisations', label: 'Réalisations', index: '01' },
-  { href: '/programmes', label: 'Programmes', index: '02' },
+  { href: '/realisations', label: 'Réalisations' },
+  { href: '/programmes', label: 'Programmes' },
 ];
 const currentPath = Astro.url.pathname;
 ---
@@ -10,7 +10,11 @@ const currentPath = Astro.url.pathname;
 <header class="navbar" id="site-navbar">
   <div class="nav-container">
     <a href="/" class="brand" transition:name="brand-logo" aria-label="Okamilink — Accueil">
-      <img src="/logo.png" alt="Okamilink Développement Web" class="brand-logo" width="180" height="146" />
+      <img src="/logo-mark.webp" alt="" class="brand-logo" width="128" height="72" fetchpriority="high" />
+      <span class="brand-name">
+        <span class="brand-plain">Okamilink</span>
+        <span class="brand-shell" aria-hidden="true">okami@link:~$</span>
+      </span>
     </a>
 
     <nav class="nav-links" aria-label="Navigation principale">
@@ -20,17 +24,15 @@ const currentPath = Astro.url.pathname;
           class="nav-link"
           aria-current={currentPath.startsWith(link.href) ? 'page' : undefined}
         >
-          <span class="nav-index">{link.index}</span>
           <span class="nav-label">{link.label}</span>
         </a>
       ))}
       <a href="/contact" class="nav-link contact-link">
-        <span class="contact-dot" aria-hidden="true"></span>
-        Initialiser le contact
+        Me contacter
       </a>
-      <button id="mode-toggle-btn" class="nav-link mode-toggle-btn" title="Accéder au système" aria-label="Basculer le mode d'affichage">
-        <span class="mode-icon vitrine-icon matrix-glitch" data-text="[SYS.OS]">[SYS.OS]</span>
-        <span class="mode-icon console-icon">&lt; VITRINE</span>
+      <button id="mode-toggle-btn" class="nav-link mode-toggle-btn" title="Explorer le site sous forme de bureau interactif">
+        <span class="mode-icon vitrine-icon"><span class="mode-prompt" aria-hidden="true">&gt;_</span> Mode console</span>
+        <span class="mode-icon console-icon">&lt; Vitrine</span>
       </button>
     </nav>
 
@@ -39,17 +41,15 @@ const currentPath = Astro.url.pathname;
     </button>
   </div>
 
-  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+  <div class="mobile-menu" id="mobile-menu" aria-hidden="true" inert>
     <div class="mobile-menu-inner">
       {links.map((link, i) => (
         <a href={link.href} class="mobile-link" style={`--i: ${i}`}>
-          <span class="mobile-index">{link.index}</span>
           {link.label}
         </a>
       ))}
       <a href="/contact" class="mobile-link" style="--i: 2">
-        <span class="mobile-index">03</span>
-        Contact
+        Me contacter
       </a>
       <button class="mobile-link mobile-mode" id="mobile-mode-toggle" style="--i: 3">
         <span class="mobile-index">&gt;_</span>
@@ -87,6 +87,7 @@ const currentPath = Astro.url.pathname;
         navbar.classList.toggle('menu-open', open);
         menuToggle.setAttribute('aria-expanded', String(open));
         mobileMenu.setAttribute('aria-hidden', String(!open));
+        mobileMenu.toggleAttribute('inert', !open);
         document.body.style.overflow = open ? 'hidden' : '';
       };
       menuToggle.addEventListener('click', () => setOpen(!navbar.classList.contains('menu-open')));
@@ -125,7 +126,7 @@ const currentPath = Astro.url.pathname;
   }
 
   .nav-container {
-    max-width: var(--container-wide);
+    max-width: var(--container-width); /* même colonne que le contenu */
     margin: 0 auto;
     padding: 1.25rem 2rem;
     display: flex;
@@ -141,18 +142,44 @@ const currentPath = Astro.url.pathname;
   .brand {
     display: flex;
     align-items: center;
+    gap: 0.7rem;
+  }
+
+  /* Clin d'œil : au survol, le nom devient l'invite du mode console */
+  .brand-name { display: inline-grid; }
+  .brand-plain, .brand-shell { grid-area: 1 / 1; transition: opacity 0.25s ease, transform 0.35s var(--ease-out-expo); }
+  .brand-shell {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: var(--step-label);
+    letter-spacing: 0;
+    align-self: center;
+    color: oklch(0.86 0.2 150);
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  .brand:hover .brand-plain, .brand:focus-visible .brand-plain { opacity: 0; transform: translateY(-6px); }
+  .brand:hover .brand-shell, .brand:focus-visible .brand-shell { opacity: 1; transform: translateY(0); }
+
+  /* Emblème seul + nom en HTML : net à toutes les tailles */
+  .brand-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step-body);
+    letter-spacing: 0.04em;
+    color: var(--text-main);
   }
 
   .brand-logo {
     width: auto;
-    height: 56px;
+    height: 34px;
     object-fit: contain;
     filter: drop-shadow(0 0 12px color-mix(in oklch, var(--accent-purple) 30%, transparent));
     transition: filter 0.3s ease, transform 0.4s var(--ease-out-expo), height 0.4s var(--ease-out-expo);
   }
 
   .navbar.scrolled .brand-logo {
-    height: 44px;
+    height: 30px;
   }
 
   .brand:hover .brand-logo {
@@ -171,29 +198,18 @@ const currentPath = Astro.url.pathname;
     align-items: baseline;
     gap: 0.4rem;
     font-weight: 500;
-    font-size: 0.92rem;
+    font-size: var(--step-body);
     color: var(--text-muted);
     transition: color 0.25s ease;
     position: relative;
   }
 
-  .nav-index {
-    font-family: var(--font-mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.08em;
-    color: var(--text-dim);
-    transition: color 0.25s ease;
-  }
 
   .nav-link:hover,
   .nav-link[aria-current="page"] {
     color: var(--text-main);
   }
 
-  .nav-link:hover .nav-index,
-  .nav-link[aria-current="page"] .nav-index {
-    color: var(--accent-pink);
-  }
 
   .nav-link::after {
     content: '';
@@ -224,20 +240,7 @@ const currentPath = Astro.url.pathname;
     transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
   }
 
-  .contact-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent-pink);
-    box-shadow: 0 0 0 0 color-mix(in oklch, var(--accent-pink) 60%, transparent);
-    animation: pulse-dot 2.4s ease-out infinite;
-  }
 
-  @keyframes pulse-dot {
-    0% { box-shadow: 0 0 0 0 color-mix(in oklch, var(--accent-pink) 60%, transparent); }
-    70% { box-shadow: 0 0 0 8px transparent; }
-    100% { box-shadow: 0 0 0 0 transparent; }
-  }
 
   .contact-link::after { display: none; }
 
@@ -247,94 +250,45 @@ const currentPath = Astro.url.pathname;
     border-color: var(--text-main);
   }
 
+  /* Bascule vers l'OS : libellé explicite, l'invite >_ s'allume au survol */
   .mode-toggle-btn {
     background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    padding: 0.5rem;
-    display: flex;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.55rem 1rem;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    opacity: 0.75;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    font-family: var(--font-mono);
+    font-size: var(--step-label);
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    transition: color 0.3s ease, border-color 0.3s ease;
   }
 
-  .mode-toggle-btn:hover {
-    opacity: 1;
-    transform: scale(1.08);
+  .mode-toggle-btn:hover,
+  .mode-toggle-btn:focus-visible {
+    color: var(--text-main);
+    border-color: var(--line-strong);
   }
 
   .mode-toggle-btn::after { display: none; }
 
+  .mode-prompt {
+    color: var(--text-dim);
+    margin-right: 0.35rem;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
+
+  .mode-toggle-btn:hover .mode-prompt,
+  .mode-toggle-btn:focus-visible .mode-prompt {
+    color: oklch(0.86 0.2 150);
+    text-shadow: 0 0 10px oklch(0.86 0.2 150 / 0.6);
+  }
+
   .vitrine-icon, .console-icon { display: none; }
 
-  :global(html:not([data-experience="console"])) .vitrine-icon {
-    display: inline-block;
-  }
-
-  :global(html[data-experience="console"]) .console-icon {
-    display: inline-block;
-    color: var(--accent-purple);
-    font-family: var(--font-mono);
-    font-weight: 600;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-    text-shadow: 0 0 10px color-mix(in oklch, var(--accent-purple) 50%, transparent);
-  }
-
-  /* Effet Matrix Glitch */
-  .matrix-glitch {
-    font-family: var(--font-mono);
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: #0f0;
-    text-shadow: 0 0 8px rgba(0, 255, 0, 0.6);
-    letter-spacing: 2px;
-    position: relative;
-    display: inline-block;
-  }
-
-  .matrix-glitch::before, .matrix-glitch::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    opacity: 0.8;
-  }
-
-  .matrix-glitch::before {
-    left: 2px;
-    text-shadow: -2px 0 rgba(0, 255, 0, 0.8);
-    animation: glitch-anim-1 2s infinite linear alternate-reverse;
-  }
-
-  .matrix-glitch::after {
-    left: -2px;
-    text-shadow: 2px 0 rgba(0, 150, 0, 0.8);
-    animation: glitch-anim-2 3s infinite linear alternate-reverse;
-  }
-
-  @keyframes glitch-anim-1 {
-    0% { clip-path: inset(20% 0 80% 0); }
-    20% { clip-path: inset(60% 0 10% 0); }
-    40% { clip-path: inset(40% 0 50% 0); }
-    60% { clip-path: inset(80% 0 5% 0); }
-    80% { clip-path: inset(10% 0 70% 0); }
-    100% { clip-path: inset(30% 0 40% 0); }
-  }
-
-  @keyframes glitch-anim-2 {
-    0% { clip-path: inset(10% 0 60% 0); }
-    20% { clip-path: inset(30% 0 20% 0); }
-    40% { clip-path: inset(70% 0 10% 0); }
-    60% { clip-path: inset(20% 0 50% 0); }
-    80% { clip-path: inset(50% 0 30% 0); }
-    100% { clip-path: inset(5% 0 80% 0); }
-  }
+  :global(html:not([data-experience="console"])) .vitrine-icon { display: inline; }
+  :global(html[data-experience="console"]) .console-icon { display: inline; }
 
   /* ───────── Menu mobile ───────── */
   .menu-toggle {
@@ -394,7 +348,7 @@ const currentPath = Astro.url.pathname;
     gap: 1rem;
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: clamp(1.75rem, 8vw, 2.5rem);
+    font-size: var(--step-title);
     color: var(--text-main);
     padding: 0.85rem 0;
     border-bottom: 1px solid var(--line);
@@ -415,7 +369,7 @@ const currentPath = Astro.url.pathname;
 
   .mobile-index {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: var(--step-label);
     letter-spacing: 0.1em;
     color: var(--accent-pink);
   }
@@ -425,6 +379,6 @@ const currentPath = Astro.url.pathname;
     .menu-toggle { display: flex; }
     .mobile-menu { display: block; }
     .nav-container { padding: 1rem 1.25rem; }
-    .brand-logo { height: 48px; }
+    .brand-logo { height: 30px; }
   }
 </style>

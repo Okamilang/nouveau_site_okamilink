@@ -1,13 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import BentoProjectCard from '../../components/ui/BentoProjectCard.astro';
+import FeaturedWork from '../../components/sections/FeaturedWork.astro';
 import { getCollection } from 'astro:content';
 
 const allProjects = await getCollection('projects');
 // On ne garde que les sites web pour le portfolio vitrine (les programmes restent exclusifs à l'OS)
 const websiteProjects = allProjects.filter(p => p.data.category === 'website');
 const sortedProjects = websiteProjects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-const count = String(sortedProjects.length).padStart(2, '0');
 ---
 
 <BaseLayout
@@ -17,24 +16,16 @@ const count = String(sortedProjects.length).padStart(2, '0');
   <div class="page-container">
     <header class="page-header">
       <div class="header-main">
-        <p class="section-label reveal-up" style="--i: 0"><em>01</em> Portfolio</p>
+        <p class="section-label reveal-up" style="--i: 0">Portfolio</p>
         <h1 class="title">
           <span class="reveal-text"><span class="delay-1">Mes</span></span>
-          <span class="reveal-text"><span class="text-gradient delay-2">Réalisations.</span></span>
+          <span class="reveal-text"><span class="delay-2">réalisations.</span></span>
         </h1>
-        <p class="subtitle reveal-up" style="--i: 3">Plongez dans des études de cas où l'ingénierie rencontre le design. Des architectures robustes aux interfaces immersives.</p>
-      </div>
-      <div class="header-aside reveal-up" style="--i: 4">
-        <span class="aside-count">{count}</span>
-        <span class="aside-label">études<br/>de cas</span>
+        <p class="subtitle reveal-up" style="--i: 3">Le contexte et les choix techniques de chaque projet, expliqués simplement.</p>
       </div>
     </header>
 
-    <div class="bento-grid">
-      {sortedProjects.map((project, i) => (
-        <BentoProjectCard project={project} index={i} />
-      ))}
-    </div>
+    <FeaturedWork mode="cases" />
   </div>
 </BaseLayout>
 
@@ -43,6 +34,10 @@ const count = String(sortedProjects.length).padStart(2, '0');
     max-width: var(--container-width);
     margin: 0 auto;
     padding: 3rem 2rem 8rem;
+  }
+
+  @media (max-width: 480px) {
+    .page-container { padding-left: 1.25rem; padding-right: 1.25rem; }
   }
 
   .page-header {
@@ -70,7 +65,7 @@ const count = String(sortedProjects.length).padStart(2, '0');
   }
 
   .title {
-    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-size: var(--step-display);
     line-height: 0.98;
     letter-spacing: -0.035em;
     display: flex;
@@ -81,60 +76,18 @@ const count = String(sortedProjects.length).padStart(2, '0');
   .title .reveal-text { padding: 0.08em 0.05em; margin: -0.08em -0.05em; }
 
   .subtitle {
-    font-size: 1.15rem;
+    font-size: var(--step-body);
     font-weight: 300;
     color: var(--text-muted);
     max-width: 58ch;
     line-height: 1.7;
   }
 
-  .header-aside {
-    display: flex;
-    align-items: baseline;
-    gap: 0.75rem;
-    flex-shrink: 0;
-  }
 
-  .aside-count {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: clamp(3rem, 6vw, 5rem);
-    line-height: 0.9;
-    color: transparent;
-    -webkit-text-stroke: 1px color-mix(in oklch, var(--text-main) 30%, transparent);
-  }
 
-  .aside-label {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    line-height: 1.4;
-  }
 
   @media (max-width: 720px) {
     .page-header { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
   }
 
-  .bento-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  @media (min-width: 768px) {
-    .bento-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .bento-grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
-    .bento-grid :global(.bento-card.featured) {
-      grid-column: span 2;
-    }
-  }
 </style>

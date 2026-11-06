@@ -1,43 +1,37 @@
 ---
 import PremiumButton from '../common/PremiumButton.astro';
-import GlowingLogo from '../common/GlowingLogo.astro';
 
-const stack = [
-  'Astro', 'TypeScript', 'CSS moderne', 'WordPress', 'Odoo', 'Accessibilité',
-  'SEO technique', 'Performance', 'Applications Android', 'Sur-mesure',
-];
 ---
 
 <section class="hero">
-  <div class="hero-ghost" aria-hidden="true">OKAMI</div>
-
   <div class="hero-content">
-    <div class="hero-logo-wrapper reveal-in" style="--i: 0">
-      <GlowingLogo width="180" height="180" />
-    </div>
-
-    <p class="section-label reveal-in" style="--i: 1">
-      <em>001</em> Développeur web freelance · Val-d'Oise
+    <p class="section-label reveal-in" style="--i: 0">
+      Daniel Cohen · Développeur web freelance · Val-d'Oise
     </p>
 
     <h1 class="title">
-      <span class="reveal-text"><span class="delay-2">L'ingénierie web,</span></span>
-      <span class="reveal-text"><span class="text-gradient delay-3">sans compromis.</span></span>
+      <span class="reveal-text"><span class="delay-1">Des sites sur-mesure,</span></span>
+      <span class="reveal-text"><span class="text-gradient delay-2">codés à la main.</span></span>
     </h1>
 
-    <p class="subtitle reveal-in" style="--i: 4">
-      Au-delà du design, je conçois des plateformes web sur-mesure où chaque ligne de code
-      sert la performance, l'accessibilité et l'expérience utilisateur.
-      <span class="subtitle-em">L'exigence technologique au service de votre marque.</span>
+    <p class="subtitle reveal-in" style="--i: 3">
+      Boutiques B2B sur Odoo, vitrines immersives sous WordPress, applications Android&nbsp;:
+      je conçois et je développe chaque projet de A à Z.
     </p>
 
-    <div class="actions reveal-in" style="--i: 5">
-      <PremiumButton text="Explorer mes réalisations" href="/realisations" />
+    <div class="actions reveal-in" style="--i: 4">
+      <PremiumButton text="Voir mes réalisations" href="#travaux" />
       <a href="/contact" class="secondary-btn">
-        <span>Discuter de votre projet</span>
+        <span>Me contacter</span>
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13 13 3M6 3h7v7"/></svg>
       </a>
     </div>
+
+    <!-- Porte dérobée vers l'OS : on la découvre, on n'est pas obligé de la franchir -->
+    <button type="button" class="console-invite only-vitrine reveal-in" style="--i: 6" data-open-console>
+      <span class="invite-text">Curieux&nbsp;? Ce site se visite aussi comme un bureau.</span>
+      <span class="invite-cmd"><span class="invite-prompt" aria-hidden="true">&gt;_</span> ouvrir le mode console</span>
+    </button>
   </div>
 
   <div class="hero-visual" aria-hidden="true" id="hero-orbs">
@@ -46,15 +40,8 @@ const stack = [
     <div class="glow-orb orb-3"></div>
   </div>
 
-  <!-- Bandeau technologique défilant -->
-  <div class="stack-marquee reveal-in" style="--i: 7" aria-label="Technologies maîtrisées">
-    <div class="marquee-track">
-      {[...stack, ...stack].map((item) => (
-        <span class="marquee-item"><span class="marquee-dot"></span>{item}</span>
-      ))}
-    </div>
-  </div>
 </section>
+
 
 <style>
   .hero {
@@ -68,31 +55,6 @@ const stack = [
     overflow: hidden;
   }
 
-  /* Mot fantôme en contour, casse la grille en arrière-plan */
-  .hero-ghost {
-    position: absolute;
-    top: 42%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: clamp(9rem, 26vw, 24rem);
-    line-height: 1;
-    letter-spacing: 0.04em;
-    color: transparent;
-    -webkit-text-stroke: 1px color-mix(in oklch, var(--text-main) 7%, transparent);
-    white-space: nowrap;
-    pointer-events: none;
-    user-select: none;
-    z-index: 0;
-    animation: ghost-in 2.4s var(--ease-out-expo) forwards;
-    opacity: 0;
-  }
-
-  @keyframes ghost-in {
-    from { opacity: 0; letter-spacing: 0.2em; }
-    to { opacity: 1; letter-spacing: 0.04em; }
-  }
 
   .hero-content {
     position: relative;
@@ -114,19 +76,9 @@ const stack = [
     animation-delay: calc(0.05s + var(--i, 0) * 0.11s);
   }
 
-  .hero-logo-wrapper {
-    animation: reveal 1s var(--ease-out-expo) forwards, float-logo 7s ease-in-out 1s infinite;
-    animation-delay: 0s, 1s;
-    margin-bottom: -0.5rem;
-  }
-
-  @keyframes float-logo {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
 
   .title {
-    font-size: clamp(2.3rem, 5.4vw, 4.9rem);
+    font-size: var(--step-display);
     font-weight: 800;
     line-height: 0.98;
     letter-spacing: -0.035em;
@@ -136,24 +88,65 @@ const stack = [
     gap: 0.1em;
   }
 
+  /* Le titre est peint immédiatement (LCP) : il glisse, mais n'est jamais invisible */
+  .title .reveal-text span {
+    opacity: 1;
+    animation-name: title-rise;
+  }
+
+  @keyframes title-rise {
+    from { transform: translateY(110%); }
+    to { transform: translateY(0); }
+  }
+
   .title .reveal-text {
     padding: 0.08em 0.1em;
     margin: -0.08em -0.1em;
   }
 
   .subtitle {
-    font-size: clamp(1.05rem, 1.6vw, 1.2rem);
-    font-weight: 300;
+    font-size: var(--step-body);
+    font-weight: 400;
     color: var(--text-muted);
     max-width: 620px;
     line-height: 1.7;
   }
 
-  .subtitle-em {
-    display: block;
+  /* Invitation discrète vers l'OS : l'invite >_ s'allume au survol */
+  .console-invite {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem 0.6rem;
     margin-top: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: none;
+    border: 0;
+    font-family: var(--font-mono);
+    font-size: var(--step-label);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  .invite-cmd {
+    color: var(--text-muted);
+    border-bottom: 1px dashed var(--line-strong);
+    transition: color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .invite-prompt { transition: color 0.3s ease, text-shadow 0.3s ease; }
+
+  .console-invite:hover .invite-cmd,
+  .console-invite:focus-visible .invite-cmd {
     color: var(--text-main);
-    font-weight: 400;
+    border-color: currentColor;
+  }
+
+  .console-invite:hover .invite-prompt,
+  .console-invite:focus-visible .invite-prompt {
+    color: oklch(0.86 0.2 150);
+    text-shadow: 0 0 10px oklch(0.86 0.2 150 / 0.6);
   }
 
   .actions {
@@ -173,7 +166,7 @@ const stack = [
     align-items: center;
     gap: 0.5rem;
     font-weight: 500;
-    font-size: 0.95rem;
+    font-size: var(--step-body);
     color: var(--text-main);
     padding: 0.5rem 0;
     position: relative;
@@ -221,7 +214,7 @@ const stack = [
     width: 820px;
     height: 820px;
     background: radial-gradient(circle, color-mix(in oklch, var(--accent-blue) 50%, transparent) 0%, transparent 68%);
-    bottom: -8%;
+    top: 45%;
     right: -8%;
     animation-delay: -5s;
   }
@@ -235,78 +228,10 @@ const stack = [
     animation-delay: -10s;
   }
 
-  /* Bandeau technologique */
-  .stack-marquee {
-    position: relative;
-    z-index: 5;
-    width: 100vw;
-    margin-top: auto;
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    background: color-mix(in oklch, var(--bg-color) 40%, transparent);
-    backdrop-filter: blur(6px);
-    overflow: hidden;
-    mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
-    -webkit-mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
-  }
-
-  .marquee-track {
-    display: flex;
-    width: max-content;
-    animation: marquee 40s linear infinite;
-  }
-
-  .stack-marquee:hover .marquee-track {
-    animation-play-state: paused;
-  }
-
-  .marquee-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 1.25rem;
-    padding: 0.9rem 1.5rem;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    white-space: nowrap;
-  }
-
-  .marquee-dot {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--accent-pink);
-    opacity: 0.7;
-  }
 
   @media (max-width: 640px) {
-    .hero { padding-top: 2rem; min-height: auto; }
+    .hero { padding: 2rem 1.25rem 0; min-height: auto; }
     .hero-content { padding-bottom: 3.5rem; gap: 1.4rem; }
-    .hero-ghost { top: 38%; }
     .actions { flex-direction: column; gap: 1rem; }
   }
-</style>
-
-<!-- Surcharges pour l'affichage dans une fenêtre du mode console -->
-<style>
-  :global(html[data-experience="console"]) .hero {
-    min-height: auto;
-    padding: 1.5rem 1rem 0;
-  }
-  :global(html[data-experience="console"]) .hero-content { padding-bottom: 2rem; gap: 1.25rem; }
-  :global(html[data-experience="console"]) .hero-ghost { font-size: 9rem; -webkit-text-stroke-color: rgba(0, 243, 255, 0.08); }
-  :global(html[data-experience="console"]) .title { font-size: clamp(1.8rem, 4vw, 3rem); }
-  :global(html[data-experience="console"]) .section-label { color: var(--cyber-cyan); }
-  :global(html[data-experience="console"]) .section-label em { color: var(--cyber-magenta); }
-  :global(html[data-experience="console"]) .stack-marquee {
-    width: 100%;
-    border-color: rgba(0, 243, 255, 0.2);
-    background: rgba(0, 0, 0, 0.4);
-  }
-  :global(html[data-experience="console"]) .marquee-item { color: rgba(0, 243, 255, 0.6); }
-  :global(html[data-experience="console"]) .marquee-dot { background: var(--cyber-magenta); }
-  :global(html[data-experience="console"]) .hero-visual { display: none; }
 </style>

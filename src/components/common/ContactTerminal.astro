@@ -7,7 +7,7 @@
     <span class="dot red"></span>
     <span class="dot yellow"></span>
     <span class="dot green"></span>
-    <span class="title">~/contact/sendMessage.sh</span>
+    <span class="title">~/contact/envoyer.sh</span>
     <span class="header-right">bash · 80×24</span>
   </div>
   <form id="console-contact-form" class="terminal-body">
@@ -15,12 +15,12 @@
 
     <div class="cmd-line">
       <span class="prompt">$</span>
-      <span class="cmd-function">sendMessage</span><span class="syntax">(</span>
+      <span class="cmd-function">envoyerMessage</span><span class="syntax">(</span>
     </div>
 
     <div class="cmd-args">
       <div class="cmd-arg">
-        <label for="term-type" class="arg-key">type:</label>
+        <label for="term-type" class="arg-key">profil:</label>
         <select id="term-type" class="term-input string-val" required>
           <option value="" disabled selected>"Sélectionnez..."</option>
           <option value="Entreprise">"Entreprise"</option>
@@ -33,13 +33,13 @@
       </div>
 
       <div class="cmd-arg">
-        <label for="term-name" class="arg-key">name:</label>
+        <label for="term-name" class="arg-key">nom:</label>
         <input type="text" id="term-name" class="term-input string-val" placeholder='"Entrez votre nom"' required autocomplete="name" />
         <span class="syntax">,</span>
       </div>
 
       <div class="cmd-arg">
-        <label for="term-phone" class="arg-key">phone:</label>
+        <label for="term-phone" class="arg-key">téléphone:</label>
         <input type="tel" id="term-phone" class="term-input string-val" placeholder='"Optionnel"' autocomplete="tel" />
         <span class="syntax">,</span>
       </div>
@@ -51,7 +51,7 @@
       </div>
 
       <div class="cmd-arg">
-        <label for="term-message" class="arg-key">payload:</label>
+        <label for="term-message" class="arg-key">message:</label>
         <textarea id="term-message" class="term-input string-val" placeholder='"Votre message détaillé ici..."' rows="4" required></textarea>
       </div>
     </div>
@@ -59,7 +59,7 @@
     <div class="cmd-line cmd-end">
       <span class="prompt">$</span>
       <span class="syntax">)</span>
-      <button type="submit" class="term-submit">[ EXECUTE ]</button>
+      <button type="submit" class="term-submit">[ ENVOYER ]</button>
       <span class="term-cursor" aria-hidden="true">_</span>
     </div>
   </form>

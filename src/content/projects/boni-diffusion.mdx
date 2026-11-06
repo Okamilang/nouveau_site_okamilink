@@ -1,6 +1,6 @@
 ---
 title: "Boni Diffusion"
-description: "Création d'une plateforme e-commerce B2B hautement personnalisée sur l'écosystème Odoo."
+description: "Une boutique B2B sur-mesure, branchée directement sur l'ERP Odoo de l'entreprise."
 client: "Boni Diffusion"
 date: 2025-10-15
 tags: ["E-commerce B2B", "Odoo", "JavaScript", "CSS"]
@@ -8,42 +8,35 @@ featured: true
 coverImage: "../../assets/projects/screenshots/boni-mockup-browser.png"
 url: "https://www.bonidiffusion.com"
 osIcon: "/logo-boni-icon.png"
+fullpage: "../../assets/projects/screenshots/boni-fullpage.png"
+highlights:
+  - value: "1 outil"
+    label: "pour le site, les devis, les factures et le stock"
+  - value: "B2B"
+    label: "catalogue et prix réservés aux installateurs professionnels"
+  - value: "Odoo 18"
+    label: "ERP et boutique sur le même socle, sans double saisie"
 ---
 
-import BrowserWindow from '../../components/mockups/BrowserWindow.astro';
 import MobileDevice from '../../components/mockups/MobileDevice.astro';
-import ScrollingMockup from '../../components/mockups/ScrollingMockup.astro';
 
-## Le Défi
+## Le défi
 
-Boni Diffusion avait un impératif stratégique fort : l'entreprise devait exploiter tout l'environnement ERP **Odoo** pour gérer l'intégralité de sa société (stocks, facturation, clients). Le défi consistait donc à concevoir une plateforme e-commerce B2B unique et ultra-personnalisée, tout en devant composer avec les contraintes techniques et structurelles inhérentes au constructeur de site d'Odoo.
+Boni Diffusion pilote toute son activité dans l'ERP **Odoo** : stocks, facturation, clients. Il fallait donc une boutique B2B qui s'appuie sur ces données sans double saisie, tout en dépassant les limites visuelles du constructeur de site d'Odoo.
 
-## L'Approche Technique
+## L'approche technique
 
-Plutôt que de se limiter aux templates standards d'Odoo, nous avons poussé le moteur de rendu dans ses retranchements grâce à un développement intensif en **JavaScript** et **CSS personnalisé**. L'objectif était de créer une expérience utilisateur qui masque totalement la lourdeur d'un ERP classique pour offrir une navigation B2B moderne, rapide et sur-mesure.
+Plutôt que de s'arrêter aux modèles standards d'Odoo, j'ai repris le rendu des pages avec du **JavaScript** et du **CSS sur-mesure**. Le visiteur navigue dans un catalogue moderne et rapide ; l'équipe, elle, continue de tout gérer depuis Odoo.
 
-<BrowserWindow title="boni-diffusion.com">
+## Un catalogue pensé pour les pros
 
-![Boni Desktop](../../assets/projects/screenshots/boni-fullpage.png)
+Recherche rapide, fiches produits enrichies, prix et conditions réservés aux installateurs connectés : l'interface a été redessinée pour un usage professionnel, y compris sur téléphone, sur le terrain.
 
-</BrowserWindow>
+<MobileDevice target="win-mobile-boni-diffusion">
 
-## L'Écosystème B2B & Interface
+![Version mobile de bonidiffusion.com](../../assets/projects/screenshots/boni-mobile.png)
 
-L'interface a été intégralement repensée. En travaillant de concert avec les modules de gestion Odoo, le site offre une recherche optimisée, une présentation des fiches produits enrichie et une expérience d'achat sans friction. La personnalisation avancée du code a permis de contourner les limitations natives d'Odoo pour obtenir le design premium souhaité par la marque.
+</MobileDevice>
 
-<div style="display: flex; justify-content: center; margin: 3rem 0;">
-  <MobileDevice target="win-mobile-boni-diffusion" url="https://www.bonidiffusion.com" />
-</div>
+<p class="mockup-hint">La version mobile, telle qu'un installateur la voit sur chantier.</p>
 
-## Résultat
-
-- **E-commerce unifié** : Un front-end magnifique entièrement connecté à la puissance de gestion d'Odoo.
-- **Design Unique** : Un rendu visuel qui se démarque totalement des standards rigides du CMS de base.
-- **Gestion simplifiée** : L'équipe Boni Diffusion gère toute l'entreprise (site web, factures, stocks) depuis une seule interface.
-
-<ScrollingMockup height="600px">
-
-![Boni Fullpage](../../assets/projects/screenshots/boni-fullpage.png)
-
-</ScrollingMockup>

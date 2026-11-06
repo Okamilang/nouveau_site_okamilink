@@ -5,7 +5,7 @@ import WindowTemplate from './WindowTemplate.astro';
 import Wallpaper from './Wallpaper.astro';
 import { WALLPAPERS, DEFAULT_WALLPAPER } from './wallpapers';
 
-import Hero from '../sections/Hero.astro';
+import OSAbout from './OSAbout.astro';
 import ExpertiseGrid from '../sections/ExpertiseGrid.astro';
 import Philosophy from '../sections/Philosophy.astro';
 import ContactTerminal from '../common/ContactTerminal.astro';
@@ -77,17 +77,17 @@ const programs = projects.filter(p => p.data.category === 'program');
     <!-- Dock (Bottom) -->
     <div class="os-dock">
       {dock.map((item) => (
-        <div class="desktop-icon dock-item" data-target={item.target}>
+        <button type="button" class="desktop-icon dock-item" data-target={item.target} aria-label={item.label}>
           <span class="icon-hud" set:html={svg(item.icon, 24)} />
-          <span class="icon-label">{item.label}</span>
+          <span class="icon-label" aria-hidden="true">{item.label}</span>
           <span class="dock-indicator"></span>
-        </div>
+        </button>
       ))}
       <span class="dock-sep"></span>
-      <div class="desktop-icon dock-item dock-exit" id="btn-exit-os">
+      <button type="button" class="desktop-icon dock-item dock-exit" id="btn-exit-os" aria-label="Quitter le mode console">
         <span class="icon-hud" set:html={svg(icons.power, 24)} />
-        <span class="icon-label">Quitter</span>
-      </div>
+        <span class="icon-label" aria-hidden="true">Quitter le mode console</span>
+      </button>
     </div>
 
     <!-- Windows Container -->
@@ -185,7 +185,7 @@ const programs = projects.filter(p => p.data.category === 'program');
             >
               <div class="mobile-frame">
                 <div class="mobile-notch"></div>
-                <iframe src={p.data.url} title={`Mobile ${p.data.title}`}></iframe>
+                <iframe data-src={p.data.url} title={`Version mobile de ${p.data.title}`}></iframe>
               </div>
             </WindowTemplate>
           )}
@@ -194,7 +194,7 @@ const programs = projects.filter(p => p.data.category === 'program');
 
       <WindowTemplate id="win-about" title="A_Propos.exe" icon={svg(icons.user)} x="5%" y="5%" width="800px" height="500px">
         <div class="os-content-wrapper">
-          <Hero />
+          <OSAbout />
         </div>
       </WindowTemplate>
 
@@ -279,6 +279,32 @@ const programs = projects.filter(p => p.data.category === 'program');
       if (tbItem) tbItem.classList.add('active');
     };
 
+    // Accessibilité des fenêtres : focus dans la fenêtre à l'ouverture,
+    // Échap pour fermer, focus rendu à l'élément qui l'a ouverte.
+    const openers = new Map<string, HTMLElement | null>();
+    const activate = (win: HTMLElement) => {
+      // Les sites tiers ne sont chargés qu'à l'ouverture (pas de requêtes cachées)
+      win.querySelectorAll<HTMLIFrameElement>('iframe[data-src]').forEach((f) => {
+        if (!f.src) f.src = f.dataset.src || '';
+      });
+      if (!openers.has(win.id)) openers.set(win.id, document.activeElement as HTMLElement | null);
+      requestAnimationFrame(() => ((win.querySelector('[data-autofocus]') || win.querySelector('.window-content')) as HTMLElement | null)?.focus({ preventScroll: true }));
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || document.documentElement.getAttribute('data-experience') !== 'console') return;
+      const visible = Array.from(document.querySelectorAll<HTMLElement>('.os-window.open'))
+        .filter((w) => w.style.display !== 'none')
+        .sort((a, b) => Number(b.style.zIndex || 0) - Number(a.style.zIndex || 0));
+      const top = visible[0];
+      if (!top) return;
+      e.preventDefault();
+      const opener = openers.get(top.id);
+      (top.querySelector('.win-btn.close') as HTMLElement | null)?.click();
+      openers.delete(top.id);
+      opener?.focus();
+    });
+
     const toggleWindow = (winId: string) => {
       const win = document.getElementById(winId);
       if (!win) return;
@@ -287,6 +313,7 @@ const programs = projects.filter(p => p.data.category === 'program');
         win.classList.add('open');
         win.style.display = 'flex';
         bringToFront(win);
+        activate(win);
 
         if (!taskbarItems.has(winId)) {
           const tbItem = document.createElement('div');
@@ -311,6 +338,7 @@ const programs = projects.filter(p => p.data.category === 'program');
       } else if (win.style.display === 'none') {
         win.style.display = 'flex';
         bringToFront(win);
+        activate(win);
       } else {
         bringToFront(win);
       }
@@ -421,7 +449,7 @@ const programs = projects.filter(p => p.data.category === 'program');
     const wallpaperLayers = document.querySelectorAll<HTMLElement>('.os-wallpaper-layer');
     const wallpaperBtns = document.querySelectorAll('.wallpaper-btn');
     const wallpaperIds = Array.from(wallpaperLayers, l => l.dataset.wallpaper || '');
-    const DEFAULT_WP = wallpaperIds[0] || 'brass';
+    const DEFAULT_WP = 'circuit';
 
     const applyWallpaper = (id: string) => {
       if (!wallpaperIds.includes(id)) id = DEFAULT_WP;
@@ -492,6 +520,7 @@ const programs = projects.filter(p => p.data.category === 'program');
 
       closeBtn?.addEventListener('click', (e: MouseEvent) => {
         e.stopPropagation();
+        openers.delete(win.id);
         win.classList.remove('open');
         win.style.display = 'none';
         win.classList.remove('maximized');
@@ -787,7 +816,18 @@ const programs = projects.filter(p => p.data.category === 'program');
 
   .dock-item {
     padding: 9px 11px 11px;
+    background: none;
+    border: 1px solid transparent;
+    font: inherit;
+    color: inherit;
   }
+
+  /* Le libellé apparaît aussi au focus clavier */
+  .dock-item:focus-visible {
+    outline: 1px solid var(--cyber-cyan);
+    outline-offset: 2px;
+  }
+  .dock-item:focus-visible .icon-label { opacity: 1; }
 
   .dock-item:hover {
     transform: translateY(-6px);

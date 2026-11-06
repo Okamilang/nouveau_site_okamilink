@@ -5,12 +5,13 @@ interface Props {
   as?: 'a' | 'button';
   type?: 'submit' | 'button';
   arrow?: boolean;
+  external?: boolean;
 }
 
-const { text, href, as: Component = href ? 'a' : 'button', type, arrow = true } = Astro.props;
+const { text, href, as: Component = href ? 'a' : 'button', type, arrow = true, external = false } = Astro.props;
 ---
 
-<Component class="premium-button" href={href} type={Component === 'button' ? type : undefined}>
+<Component class="premium-button" href={href} type={Component === 'button' ? type : undefined} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
   <span class="button-content">
     <span class="button-label">{text}</span>
     {arrow && (
@@ -24,131 +25,55 @@ const { text, href, as: Component = href ? 'a' : 'button', type, arrow = true } 
 </Component>
 
 <style>
+  /* Bouton principal du site — même dessin que « Envoyer le message »
+     et « Accéder au programme » : une pilule pleine, sans ambiguïté. */
   .premium-button {
-    position: relative;
     display: inline-flex;
-    padding: 1.5px;
-    border-radius: 9999px;
-    background: transparent;
+    align-items: center;
+    border-radius: 999px;
+    background: var(--text-main);
+    color: var(--bg-color);
     border: none;
-    cursor: pointer;
     text-decoration: none;
-    outline: none;
-    isolation: isolate;
-    transition: transform 0.4s var(--ease-out-expo);
-  }
-
-  /* Bordure iridescente vivante */
-  .premium-button::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 9999px;
-    background: var(--holographic-gradient);
-    background-size: 300% auto;
-    animation: holographic-shift 6s linear infinite;
-    opacity: 0.85;
-    transition: opacity 0.3s ease, filter 0.3s ease;
-    z-index: -1;
-  }
-
-  /* Halo diffus derrière le bouton, révélé au survol */
-  .premium-button::after {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: 9999px;
-    background: var(--holographic-gradient);
-    background-size: 300% auto;
-    animation: holographic-shift 6s linear infinite;
-    filter: blur(18px);
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    z-index: -2;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--step-body);
+    transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s ease;
   }
 
   .button-content {
-    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.95rem 1.5rem 0.95rem 1.85rem;
-    font-family: var(--font-sans);
-    font-weight: 600;
-    font-size: 0.95rem;
-    letter-spacing: 0.01em;
-    color: var(--text-main);
-    background: var(--bg-color);
-    border-radius: 9999px;
-    overflow: hidden;
-    transition: background 0.3s ease, color 0.3s ease;
-  }
-
-  /* Balayage lumineux */
-  .button-content::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -80%;
-    width: 60%;
-    height: 100%;
-    background: linear-gradient(100deg, transparent, color-mix(in oklch, var(--text-main) 14%, transparent), transparent);
-    transform: skewX(-20deg);
-    transition: left 0.7s var(--ease-out-quart);
-  }
-
-  .button-label {
-    position: relative;
-    z-index: 1;
+    padding: 0.85rem 0.9rem 0.85rem 1.5rem;
   }
 
   .button-arrow {
-    position: relative;
-    z-index: 1;
     display: inline-grid;
     place-items: center;
-    width: 1.6rem;
-    height: 1.6rem;
+    width: 1.75rem;
+    height: 1.75rem;
     border-radius: 50%;
-    background: color-mix(in oklch, var(--text-main) 10%, transparent);
-    color: var(--accent-pink);
-    transition: background 0.3s ease, transform 0.4s var(--ease-out-expo), color 0.3s ease;
-  }
-
-  .button-arrow svg {
+    background: color-mix(in oklch, var(--bg-color) 12%, transparent);
     transition: transform 0.4s var(--ease-out-expo);
   }
 
-  .premium-button:hover {
-    transform: translateY(-2px);
-  }
-
-  .premium-button:hover::before { opacity: 1; }
-  .premium-button:hover::after { opacity: 0.55; }
-
-  .premium-button:hover .button-content {
-    background: color-mix(in oklch, var(--bg-color) 82%, var(--accent-purple) 18%);
-  }
-
-  .premium-button:hover .button-content::before {
-    left: 130%;
-  }
-
-  .premium-button:hover .button-arrow {
-    background: var(--text-main);
-    color: var(--bg-color);
-  }
-
-  .premium-button:hover .button-arrow svg {
-    transform: translateX(2px);
-  }
-
-  .premium-button:active {
-    transform: translateY(0) scale(0.98);
-  }
-
+  .premium-button:hover,
   .premium-button:focus-visible {
-    outline: 2px solid var(--accent-pink);
-    outline-offset: 4px;
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px -14px color-mix(in oklch, var(--accent-purple) 60%, transparent);
   }
+
+  .premium-button:hover .button-arrow,
+  .premium-button:focus-visible .button-arrow { transform: translateX(3px); }
+
+  /* Dans l'OS : version terminal */
+  :global(html[data-experience="console"]) .premium-button {
+    background: transparent;
+    color: var(--cyber-cyan);
+    border: 1px solid var(--cyber-cyan);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+  }
+  :global(html[data-experience="console"]) .button-arrow { background: transparent; }
 </style>

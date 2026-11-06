@@ -2,6 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
+import BrowserWindow from '../../components/mockups/BrowserWindow.astro';
+import ScrollingMockup from '../../components/mockups/ScrollingMockup.astro';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -15,6 +17,7 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 const { Content } = await project.render();
 
+const outcome = project.data.outcome;
 const pageURL = new URL(Astro.url.pathname, Astro.site).href;
 const coverSrc = project.data.coverImage?.src;
 
@@ -47,7 +50,7 @@ const projectSchema = {
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"/></svg>
           Toutes les réalisations
         </a>
-        <p class="section-label reveal-up" style="--i: 1"><em>Étude de cas</em> {project.data.date.getFullYear()}</p>
+        <p class="section-label reveal-up" style="--i: 1">Étude de cas · {project.data.date.getFullYear()}</p>
         <h1 class="title reveal-up" style="--i: 2" transition:name={`title-${project.slug}`}>{project.data.title}</h1>
         <p class="lede reveal-up" style="--i: 3">{project.data.description}</p>
 
@@ -80,7 +83,22 @@ const projectSchema = {
         </dl>
       </div>
 
-      {project.data.coverImage && (
+      {project.data.fullpage ? (
+        <div class="cover-wrapper cover-live reveal-up" style="--i: 5">
+          <BrowserWindow title={project.data.url ? project.data.url.replace(/^https?:\/\/(www\.)?/, '') : project.data.title}>
+            <ScrollingMockup height="min(620px, 70vh)">
+              <Image
+                src={project.data.fullpage}
+                alt={`Page d'accueil complète du site ${project.data.title}`}
+                width={1100}
+                class="fullpage-img"
+                decoding="async"
+              />
+            </ScrollingMockup>
+          </BrowserWindow>
+          <p class="cover-hint">Faites défiler la fenêtre pour parcourir la page d'accueil.</p>
+        </div>
+      ) : project.data.coverImage && (
         <div class="cover-wrapper reveal-up" style="--i: 5">
           <Image
             src={project.data.coverImage}
@@ -94,14 +112,35 @@ const projectSchema = {
       )}
     </header>
 
+
     <div class="project-content">
       <Content />
     </div>
 
+    {outcome && (
+      <figure class="outcome">
+        <blockquote>{outcome.text}</blockquote>
+        {outcome.source && <figcaption>{outcome.source}</figcaption>}
+      </figure>
+    )}
+    {project.data.highlights && (
+      <section class="project-facts" aria-labelledby="result-title">
+        <h2 class="facts-title" id="result-title">En bref</h2>
+        <dl>
+          {project.data.highlights.map((h) => (
+            <div class="pfact">
+              <dt>{h.value}</dt>
+              <dd>{h.label}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    )}
+
     <footer class="project-footer">
       <a href="/contact" class="next-cta">
         <span class="next-label">Un projet similaire ?</span>
-        <span class="next-title">Initialiser le contact
+        <span class="next-title">Me contacter
           <svg width="28" height="28" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
         </span>
       </a>
@@ -140,7 +179,7 @@ const projectSchema = {
     gap: 0.5rem;
     width: fit-content;
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: var(--step-label);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text-dim);
@@ -153,7 +192,7 @@ const projectSchema = {
   .back-link:hover svg { transform: translateX(-3px); }
 
   .title {
-    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-size: var(--step-display);
     line-height: 0.98;
     letter-spacing: -0.035em;
     color: var(--text-main);
@@ -161,7 +200,7 @@ const projectSchema = {
   }
 
   .lede {
-    font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+    font-size: var(--step-body);
     font-weight: 300;
     color: var(--text-muted);
     max-width: 56ch;
@@ -181,7 +220,7 @@ const projectSchema = {
 
   .meta-item dt {
     font-family: var(--font-mono);
-    font-size: 0.68rem;
+    font-size: var(--step-label);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--text-dim);
@@ -189,7 +228,7 @@ const projectSchema = {
   }
 
   .meta-item dd {
-    font-size: 1rem;
+    font-size: var(--step-body);
     color: var(--text-main);
     display: flex;
     flex-wrap: wrap;
@@ -198,7 +237,7 @@ const projectSchema = {
 
   .tag {
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: var(--step-label);
     letter-spacing: 0.06em;
     padding: 0.3rem 0.7rem;
     border-radius: 999px;
@@ -211,7 +250,7 @@ const projectSchema = {
     align-items: center;
     gap: 0.4rem;
     font-family: var(--font-mono);
-    font-size: 0.9rem;
+    font-size: var(--step-body);
     color: var(--accent-blue);
     transition: color 0.3s ease;
   }
@@ -241,15 +280,15 @@ const projectSchema = {
     max-width: 900px;
     margin: 5rem auto 0;
     padding: 0 2rem;
-    font-size: 1.12rem;
-    font-weight: 300;
-    line-height: 1.85;
+    font-size: var(--step-body);
+    font-weight: 400;
+    line-height: 1.8;
     color: var(--text-muted);
   }
 
   .project-content :global(h2) {
     color: var(--text-main);
-    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-size: var(--step-title);
     margin: 4rem 0 1.5rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--line);
@@ -263,7 +302,7 @@ const projectSchema = {
 
   .project-content :global(h3) {
     color: var(--text-main);
-    font-size: 1.35rem;
+    font-size: var(--step-body);
     margin: 2.5rem 0 1rem;
   }
 
@@ -276,13 +315,13 @@ const projectSchema = {
     font-weight: 500;
   }
 
-  .project-content :global(a) {
+  .project-content :global(a:not([class])) {
     color: var(--accent-blue);
     border-bottom: 1px solid color-mix(in oklch, var(--accent-blue) 40%, transparent);
     transition: color 0.3s ease, border-color 0.3s ease;
   }
 
-  .project-content :global(a:hover) {
+  .project-content :global(a:not([class]):hover) {
     color: var(--accent-pink);
     border-color: var(--accent-pink);
   }
@@ -302,6 +341,95 @@ const projectSchema = {
     display: block;
     margin: 2rem auto;
     border-radius: var(--radius-md);
+  }
+
+  /* Captures dans les fenêtres défilantes : pas de marge ni d'arrondi */
+  .project-content :global(.scroll-content img) { margin: 0; border-radius: 0; cursor: auto !important; }
+  .project-content :global(.scroll-content p),
+  .project-content :global(.browser-content p) { margin: 0; }
+  .project-content :global(.scrolling-mockup) { margin: 0; border: 0; border-radius: 0; }
+
+  .project-content :global(.mockup-hint) {
+    margin: 0.9rem 0 0;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: var(--step-label);
+    color: var(--text-dim);
+  }
+
+  /* ───── Points clés ───── */
+  .project-facts {
+    max-width: 900px;
+    margin: 4rem auto 0;
+    padding: 0 2rem;
+  }
+
+  .outcome {
+    max-width: 900px;
+    margin: 4rem auto 0;
+    padding: 0 2rem;
+  }
+  .outcome blockquote {
+    font-family: var(--font-display);
+    font-size: var(--step-title);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--text-main);
+  }
+  .outcome figcaption {
+    margin-top: 1rem;
+    font-family: var(--font-mono);
+    font-size: var(--step-label);
+    color: var(--text-muted);
+  }
+
+  .facts-title {
+    font-size: var(--step-title);
+    color: var(--text-main);
+    margin-bottom: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  /* En-tête : fenêtre de navigateur défilante (la vraie page, pas une vignette) */
+  .cover-live :global(.scrolling-mockup) { margin: 0; border: 0; border-radius: 0; }
+  .cover-live :global(.fullpage-img) { width: 100%; height: auto; display: block; }
+  .cover-hint {
+    margin-top: 0.9rem;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: var(--step-label);
+    color: var(--text-dim);
+  }
+
+  .project-facts dl {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .pfact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1.75rem 1.5rem 1.75rem 0;
+  }
+
+  .pfact + .pfact { padding-left: 1.5rem; border-left: 1px solid var(--line); }
+
+  .pfact dt {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step-title);
+    color: var(--text-main);
+    letter-spacing: -0.02em;
+  }
+
+  .pfact dd { color: var(--text-muted); line-height: 1.5; max-width: 30ch; }
+
+  @media (max-width: 700px) {
+    .pfact + .pfact { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
   }
 
   /* ───── Pied d'article ───── */
@@ -325,10 +453,10 @@ const projectSchema = {
 
   .next-label {
     font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.14em;
+    font-size: var(--step-label);
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--text-dim);
+    color: var(--text-muted);
   }
 
   .next-title {
@@ -337,7 +465,7 @@ const projectSchema = {
     gap: 1rem;
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    font-size: var(--step-title);
     letter-spacing: -0.02em;
     color: var(--text-main);
   }
@@ -348,4 +476,13 @@ const projectSchema = {
   }
 
   .next-cta:hover .next-title svg { transform: translateX(8px); }
+
+  /* Gouttière mobile commune à tout le site */
+  @media (max-width: 480px) {
+    .header-content, .project-content, .project-facts, .outcome, .project-footer, .cover-wrapper { padding-left: 1.25rem; padding-right: 1.25rem; }
+  }
+
+  /* Longueur de ligne lisible (≈ 68 caractères), le conteneur garde l'alignement */
+  .project-content :global(p),
+  .project-content :global(li) { max-width: 68ch; }
 </style>

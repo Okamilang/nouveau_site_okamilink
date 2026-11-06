@@ -40,7 +40,7 @@ const appSchema = {
   ogType="article"
   jsonLd={appSchema}
 >
-  <article class={`project-article ${project.data.category === 'program' ? 'is-program' : ''}`}>
+  <article class={`project-article ${project.data.category === 'program' ? 'is-program' : ''}`} style={project.data.accent ? `--accent-app: ${project.data.accent}` : undefined}>
     <div class="program-topbar">
       <a href="/programmes" class="back-link">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"/></svg>
@@ -88,6 +88,15 @@ const appSchema = {
     <div class="project-content">
       <Content />
     </div>
+
+    <footer class="project-footer">
+      <a href="/contact" class="next-cta">
+        <span class="next-label">{project.data.ctaLabel ?? "Besoin d'un outil sur-mesure ?"}</span>
+        <span class="next-title">Me contacter
+          <svg width="28" height="28" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </span>
+      </a>
+    </footer>
   </article>
 </BaseLayout>
 
@@ -114,7 +123,7 @@ const appSchema = {
     align-items: center;
     gap: 0.5rem;
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: var(--step-label);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text-dim);
@@ -134,7 +143,7 @@ const appSchema = {
     background: var(--text-main);
     color: var(--bg-color);
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: var(--step-body);
     transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s ease;
   }
 
@@ -159,13 +168,13 @@ const appSchema = {
   }
 
   .title {
-    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-size: var(--step-display);
     margin-bottom: 1.5rem;
     color: var(--text-main);
   }
 
   .meta {
-    font-size: 1.1rem;
+    font-size: var(--step-body);
     color: var(--text-muted);
     margin-bottom: 2rem;
     display: flex;
@@ -183,7 +192,7 @@ const appSchema = {
   }
 
   .tag {
-    font-size: 0.85rem;
+    font-size: var(--step-label);
     padding: 0.4rem 1rem;
     border-radius: 999px;
     background: color-mix(in oklch, var(--text-main) 10%, transparent);
@@ -214,7 +223,7 @@ const appSchema = {
     max-width: 900px;
     margin: 4rem auto 0;
     padding: 0 2rem;
-    font-size: 1.12rem;
+    font-size: var(--step-body);
     font-weight: 300;
     line-height: 1.85;
     color: var(--text-muted);
@@ -229,20 +238,20 @@ const appSchema = {
 
   .project-content :global(h1) {
     color: var(--text-main);
-    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    font-size: var(--step-display);
     letter-spacing: -0.03em;
     margin: 0 0 2rem;
   }
 
   .project-content :global(h2) {
     color: var(--text-main);
-    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-size: var(--step-title);
     margin: 3.5rem 0 1.25rem;
   }
 
   .project-content :global(h3) {
     color: var(--text-main);
-    font-size: 1.3rem;
+    font-size: var(--step-body);
     margin: 2.5rem 0 1rem;
   }
 
@@ -255,13 +264,13 @@ const appSchema = {
     font-weight: 500;
   }
 
-  .project-content :global(a) {
+  .project-content :global(a:not([class])) {
     color: var(--accent-blue);
     border-bottom: 1px solid color-mix(in oklch, var(--accent-blue) 40%, transparent);
     transition: color 0.3s ease, border-color 0.3s ease;
   }
 
-  .project-content :global(a:hover) {
+  .project-content :global(a:not([class]):hover) {
     color: var(--accent-pink);
     border-color: var(--accent-pink);
   }
@@ -288,7 +297,7 @@ const appSchema = {
 
   .project-content :global(code) {
     font-family: var(--font-mono);
-    font-size: 0.88em;
+    font-size: var(--step-label);
     padding: 0.15em 0.45em;
     border-radius: 4px;
     background: color-mix(in oklch, var(--bg-color) 80%, transparent);
@@ -308,4 +317,156 @@ const appSchema = {
   .project-content :global(img:hover) {
     transform: scale(1.015);
   }
+
+  /* ───── Plan commun des pages programme ───── */
+  .project-content :global(.app-kicker) {
+    font-family: var(--font-mono);
+    font-size: var(--step-label);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+  .project-content :global(h1) { color: var(--accent-app, var(--text-main)); }
+  .project-content :global(.app-lede) { max-width: 60ch; color: var(--text-muted); }
+
+  .project-content :global(.shots-row) {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start; /* sinon les captures sont étirées à la plus haute */
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 0.5rem 0 1rem;
+  }
+  .project-content :global(.shots-row img) {
+    flex: 0 0 auto;
+    width: 240px;
+    height: auto;
+    aspect-ratio: 9 / 17;   /* même format pour toutes les captures */
+    object-fit: cover;
+    object-position: top;
+    margin: 0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line-strong);
+    scroll-snap-align: start;
+  }
+
+  .project-content :global(.feature-grid) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 3rem;
+    margin: 0;
+    list-style: none;
+    border-top: 1px solid var(--line-strong);
+  }
+  .project-content :global(.feature-grid li) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 1.4rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .project-content :global(.feature-grid strong) { font-family: var(--font-display); font-weight: 600; }
+  .project-content :global(.feature-grid span) { color: var(--text-muted); line-height: 1.6; }
+
+  .project-content :global(.app-cta) { margin-top: 1.5rem; }
+
+  .project-content :global(.two-col) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3rem;
+  }
+  .project-content :global(.two-col h2) { margin-top: 3rem; }
+
+  @media (max-width: 760px) {
+    .project-content :global(.feature-grid),
+    .project-content :global(.two-col) { grid-template-columns: 1fr; gap: 0; }
+  }
+
+  /* Démo interactive et captures légendées */
+  .project-content :global(.live-demo) {
+    display: block;
+    width: 100%;
+    height: min(720px, 80vh);
+    border: 0;
+    background: var(--bg-color);
+  }
+  .project-content :global(.browser-content p) { margin: 0; }
+  .project-content :global(.mockup-hint) {
+    margin: 0.9rem 0 0;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: var(--step-label);
+    color: var(--text-dim);
+  }
+  .project-content :global(figure.shot) { margin: 2.5rem 0; }
+  .project-content :global(figure.shot img) {
+    margin: 0 auto;
+    border: 1px solid var(--line-strong);
+  }
+  .project-content :global(figcaption) {
+    margin-top: 0.75rem;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: var(--step-label);
+    color: var(--text-dim);
+  }
+
+  .project-content :global(details.shots-more) {
+    margin: 2rem 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 1rem 0;
+  }
+  .project-content :global(details.shots-more summary) {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+  .project-content :global(details.shots-more summary:focus-visible) { outline-offset: 4px; }
+
+  /* Seuil final, identique aux études de cas, aligné sur le contenu */
+  .project-footer {
+    max-width: var(--container-width);
+    margin: 5rem auto 0;
+    padding: 0 2rem;
+  }
+  .next-cta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 2.5rem 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .next-label {
+    font-family: var(--font-mono);
+    font-size: var(--step-label);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .next-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-title);
+    letter-spacing: -0.02em;
+    color: var(--text-main);
+  }
+  .next-title svg { color: var(--accent-pink); transition: transform 0.5s var(--ease-out-expo); }
+  .next-cta:hover .next-title svg,
+  .next-cta:focus-visible .next-title svg { transform: translateX(8px); }
+
+  /* Gouttière mobile commune à tout le site */
+  @media (max-width: 480px) {
+    .program-topbar, .header-content, .project-content, .project-footer { padding-left: 1.25rem; padding-right: 1.25rem; }
+  }
+
+  /* Longueur de ligne lisible (≈ 68 caractères), le conteneur garde l'alignement */
+  .project-content :global(p),
+  .project-content :global(li) { max-width: 68ch; }
 </style>

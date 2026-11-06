@@ -1,0 +1,336 @@
+---
+/**
+ * Travaux — la preuve avant le discours.
+ * Études de cas en grand (alternées), puis les programmes en bande compacte.
+ */
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+
+interface Props {
+  /** 'home' : en-tête + études de cas + bande programmes ; 'cases' / 'programs' : pages d'index */
+  mode?: 'home' | 'cases' | 'programs';
+}
+const { mode = 'home' } = Astro.props;
+// Sur l'accueil, les projets sont sous le h2 de section ; sur les pages d'index, directement sous le h1
+const CaseHeading = mode === 'home' ? 'h3' : 'h2';
+
+const all = await getCollection('projects');
+const byDate = (a: any, b: any) => b.data.date.valueOf() - a.data.date.valueOf();
+const cases = all.filter((p) => p.data.category === 'website').sort(byDate);
+const programs = all.filter((p) => p.data.category === 'program').sort(byDate);
+---
+
+<section class:list={['work', `work--${mode}`]} id={mode === 'home' ? 'travaux' : undefined} aria-labelledby={mode === 'home' ? 'work-title' : undefined} aria-label={mode === 'cases' ? 'Études de cas' : mode === 'programs' ? 'Programmes' : undefined}>
+  {mode === 'home' && (
+    <header class="work-header">
+      <p class="section-label">Réalisations</p>
+      <h2 class="section-title" id="work-title">En ligne, utilisés chaque jour.</h2>
+    </header>
+  )}
+
+  {mode !== 'programs' && (
+  <div class="cases">
+    {cases.map((project, i) => (
+      <a href={`/realisations/${project.slug}`} class:list={['case', { 'case--flip': i % 2 === 1 }]}>
+        {project.data.coverImage && (
+          <div class="case-media">
+            <Image
+              src={project.data.coverImage}
+              alt={`Aperçu du site ${project.data.title}`}
+              width={1400}
+              height={875}
+              class="case-img"
+              transition:name={`cover-${project.slug}`}
+            />
+          </div>
+        )}
+
+        <div class="case-body">
+          <p class="case-meta">{project.data.client} · {project.data.date.getFullYear()}</p>
+          <CaseHeading class="case-title" transition:name={`title-${project.slug}`}>{project.data.title}</CaseHeading>
+          <p class="case-desc">{project.data.description}</p>
+
+          {project.data.highlights && (
+            <dl class="case-facts">
+              {project.data.highlights.map((h) => (
+                <div class="fact">
+                  <dt>{h.value}</dt>
+                  <dd>{h.label}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+
+          <span class="case-link">
+            Lire l'étude de cas
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </span>
+        </div>
+      </a>
+    ))}
+  </div>
+  )}
+
+  {mode !== 'cases' && programs.length > 0 && (
+    <div class="programs">
+      {mode === 'home' && (
+        <div class="programs-head">
+          <h3 class="programs-title">Applications &amp; outils</h3>
+          <a href="/programmes" class="programs-all">Tous les programmes <span aria-hidden="true">→</span></a>
+        </div>
+      )}
+      <ul class="programs-list">
+        {programs.map((p) => (
+          <li>
+            <a href={`/programmes/${p.slug}`} class="program">
+              {p.data.osIcon && <img src={p.data.osIcon} alt="" width="56" height="56" loading="lazy" class="program-icon" />}
+              <span class="program-text">
+                {mode === 'programs' && <span class="program-meta">{p.data.tags[0]}</span>}
+                {mode === 'programs'
+                  ? <h2 class="program-name">{p.data.title}</h2>
+                  : <span class="program-name">{p.data.title}</span>}
+                <span class="program-desc">{p.data.description}</span>
+              </span>
+              <svg class="program-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+</section>
+
+<style>
+  .work {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: clamp(5rem, 10vw, 8rem) 2rem 0;
+  }
+
+  .work-header {
+    max-width: var(--container-width);
+    margin: 0 auto clamp(3rem, 6vw, 4.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* ───────── Études de cas ───────── */
+  .cases {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(4rem, 8vw, 7rem);
+  }
+
+  .case {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: center;
+    gap: clamp(2rem, 5vw, 5rem);
+    color: inherit;
+  }
+
+  .case--flip { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+  .case--flip .case-media { order: 2; }
+
+  .case-media {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--bg-surface);
+    box-shadow: 0 40px 80px -40px oklch(0 0 0 / 0.7);
+  }
+
+  .case-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: top;
+    transition: transform 0.9s var(--ease-out-expo);
+  }
+
+  .case-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .case-meta {
+    font-family: var(--font-mono);
+    font-size: var(--step-label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .case-title {
+    font-size: var(--step-title);
+    color: var(--text-main);
+  }
+
+  .case-desc {
+    color: var(--text-muted);
+    font-size: var(--step-body);
+    line-height: 1.7;
+    max-width: 46ch;
+  }
+
+  .case-facts {
+    display: grid;
+    gap: 0;
+    margin: 0.5rem 0 0.25rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .fact {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 1rem;
+    align-items: baseline;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .fact dt {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step-body);
+    color: var(--text-main);
+    white-space: nowrap;
+  }
+
+  .fact dd {
+    color: var(--text-muted);
+    font-size: var(--step-body);
+    line-height: 1.5;
+  }
+
+  .case-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-weight: 600;
+    color: var(--text-main);
+    width: fit-content;
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 0.2rem;
+    transition: color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .case-link svg { transition: transform 0.4s var(--ease-out-expo); }
+
+  /* Toute la carte est un lien : l'image avance, la flèche glisse */
+  .case:hover .case-img,
+  .case:focus-visible .case-img { transform: scale(1.025); }
+  .case:hover .case-link,
+  .case:focus-visible .case-link { color: var(--accent-purple); border-color: var(--accent-purple); }
+  .case:hover .case-link svg,
+  .case:focus-visible .case-link svg { transform: translateX(4px); }
+
+  .case:focus-visible { outline-offset: 12px; border-radius: var(--radius-lg); }
+
+  /* ───────── Programmes ───────── */
+  .programs {
+    max-width: var(--container-width);
+    margin: clamp(5rem, 9vw, 7rem) auto 0;
+  }
+
+  .programs-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .programs-title {
+    font-size: var(--step-body);
+    color: var(--text-main);
+  }
+
+  .programs-all {
+    font-size: var(--step-body);
+    color: var(--text-muted);
+    transition: color 0.3s ease;
+  }
+  .programs-all:hover { color: var(--text-main); }
+
+  .programs-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .program {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1.5rem 1rem 1.5rem 0;
+    border-bottom: 1px solid var(--line);
+    height: 100%;
+  }
+
+  .programs-list li + li .program { padding-left: 1.25rem; border-left: 1px solid var(--line); }
+
+  /* Même tuile pour toutes les vignettes, quelle que soit l'image */
+  .program-icon {
+    width: 56px;
+    height: 56px;
+    padding: 6px;
+    object-fit: contain;
+    border-radius: 14px;
+    background: var(--bg-raised);
+    border: 1px solid var(--line-strong);
+  }
+
+  .program-text { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
+  .program-name { font-family: var(--font-sans); font-weight: 600; font-size: var(--step-body); letter-spacing: 0; line-height: 1.4; color: var(--text-main); }
+  .program-desc {
+    font-size: var(--step-body);
+    line-height: 1.45;
+    color: var(--text-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .program-arrow { color: var(--text-dim); transition: transform 0.4s var(--ease-out-expo), color 0.3s ease; }
+  .program:hover .program-arrow,
+  .program:focus-visible .program-arrow { transform: translateX(4px); color: var(--accent-purple); }
+  .program:hover .program-name { color: var(--accent-purple); }
+
+  /* Pages d'index : pas d'en-tête, la page fournit le sien */
+  .work--cases,
+  .work--programs { padding: 0; }
+  .work--programs .programs { margin-top: 0; }
+  .work--programs .programs-list { grid-template-columns: 1fr; }
+  .program-meta {
+    font-family: var(--font-mono);
+    font-size: var(--step-label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .work--programs .programs-list li + li .program { padding-left: 0; border-left: 0; }
+  .work--programs .program { grid-template-columns: 72px 1fr auto; padding: 1.75rem 0; gap: 1.5rem; }
+  .work--programs .program-icon { width: 72px; height: 72px; }
+  .work--programs .program-desc { -webkit-line-clamp: unset; display: block; }
+
+  @media (max-width: 900px) {
+    .case,
+    .case--flip { grid-template-columns: 1fr; gap: 1.75rem; }
+    .case--flip .case-media { order: 0; }
+    .programs-list { grid-template-columns: 1fr; }
+    .programs-list li + li .program { padding-left: 0; border-left: 0; }
+  }
+
+  @media (max-width: 480px) {
+    .work--home { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .programs-head { flex-direction: column; gap: 0.4rem; }
+    .fact { grid-template-columns: 1fr; gap: 0.2rem; }
+  }
+</style>
