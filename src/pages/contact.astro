@@ -1,5 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { vitrines } from '../lib/vitrines';
+
+// /contact?vitrine=<slug> : message prérempli depuis le bouton « Je veux le même » des démos
+const demoNames = JSON.stringify(Object.fromEntries(vitrines.map((v) => [v.slug, `${v.name} (${v.trade.toLowerCase()})`])));
 ---
 
 <BaseLayout
@@ -48,7 +52,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <span class="card-head-label">nouveau_message.txt</span>
           </div>
 
-          <form id="vitrine-contact-form" class="contact-form">
+          <form id="vitrine-contact-form" class="contact-form" data-demos={demoNames}>
             <div class="form-group">
               <label for="type">Vous êtes</label>
               <select id="type" name="type" required>
@@ -102,6 +106,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   document.addEventListener('astro:page-load', () => {
     const form = document.getElementById('vitrine-contact-form') as HTMLFormElement;
     const statusDiv = document.getElementById('form-status');
+
+    // Arrivée depuis une démo de vitrine : on prépare le message
+    const demo = new URLSearchParams(window.location.search).get('vitrine');
+    if (form && demo) {
+      const names = JSON.parse(form.dataset.demos || '{}') as Record<string, string>;
+      const message = form.querySelector<HTMLTextAreaElement>('#message');
+      const type = form.querySelector<HTMLSelectElement>('#type');
+      if (names[demo] && message && !message.value) {
+        message.value = `Bonjour, j'ai vu la démo « ${names[demo]} » sur votre site et j'aimerais un site dans cet esprit pour mon activité.\n\nMon activité : \nMa ville : `;
+        if (type && !type.value) type.value = 'Entreprise';
+      }
+    }
 
     if (form && statusDiv) {
       form.addEventListener('submit', async (e) => {

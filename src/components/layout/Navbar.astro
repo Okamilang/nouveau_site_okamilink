@@ -3,6 +3,7 @@
 const links = [
   { href: '/realisations', label: 'Réalisations' },
   { href: '/programmes', label: 'Programmes' },
+  { href: '/vitrines', label: 'Vitrines' },
 ];
 const currentPath = Astro.url.pathname;
 ---
@@ -48,10 +49,10 @@ const currentPath = Astro.url.pathname;
           {link.label}
         </a>
       ))}
-      <a href="/contact" class="mobile-link" style="--i: 2">
+      <a href="/contact" class="mobile-link" style={`--i: ${links.length}`}>
         Me contacter
       </a>
-      <button class="mobile-link mobile-mode" id="mobile-mode-toggle" style="--i: 3">
+      <button class="mobile-link mobile-mode" id="mobile-mode-toggle" style={`--i: ${links.length + 1}`}>
         <span class="mobile-index">&gt;_</span>
         Mode console
       </button>

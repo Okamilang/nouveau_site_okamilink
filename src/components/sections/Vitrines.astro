@@ -1,0 +1,277 @@
+---
+/**
+ * Vitrines — trois sites de démonstration (entreprises fictives) pour montrer
+ * ce qu'un site sur-mesure change pour un commerce de proximité.
+ * 'home' : bande de trois cartes sur l'accueil ; 'page' : présentation détaillée sur /vitrines.
+ */
+import { Image } from 'astro:assets';
+import { vitrines, photo } from '../../lib/vitrines';
+
+interface Props {
+  mode?: 'home' | 'page';
+}
+const { mode = 'home' } = Astro.props;
+const NameTag = mode === 'home' ? 'h3' : 'h2';
+---
+
+<section class:list={['vitrines', `vitrines--${mode}`]} id={mode === 'home' ? 'vitrines' : undefined} aria-labelledby={mode === 'home' ? 'vitrines-title' : undefined} aria-label={mode === 'page' ? 'Les sites de démonstration' : undefined}>
+  {mode === 'home' && (
+    <header class="v-head">
+      <div class="v-head-main">
+        <p class="section-label">Vitrines</p>
+        <h2 class="section-title" id="vitrines-title">Et si c’était votre commerce&nbsp;?</h2>
+      </div>
+      <div class="v-head-side">
+        <p class="v-intro">Trois sites de démonstration pour trois métiers, chacun avec sa propre identité. Les entreprises sont fictives, mais tout fonctionne : horaires en direct, commande, réservation. Essayez-les aussi sur votre téléphone.</p>
+        <a href="/vitrines" class="v-all">Voir les trois vitrines en détail <span aria-hidden="true">→</span></a>
+      </div>
+    </header>
+  )}
+
+  <div class="v-list">
+    {vitrines.map((v) => {
+      const style = `--v-bg:${v.tone.bg};--v-ink:${v.tone.ink};--v-accent:${v.tone.accent}`;
+      const media = (
+        <div class="v-media">
+          <Image src={photo(v.slug, 'hero')} alt="" widths={mode === 'home' ? [480, 800] : [640, 1024, 1400]} sizes={mode === 'home' ? '(max-width: 900px) 92vw, 33vw' : '(max-width: 900px) 92vw, 58vw'} class="v-img" />
+          <span class="v-brand">
+            <span class="v-trade">{v.trade}</span>
+            <span class="v-name">{v.name}</span>
+          </span>
+        </div>
+      );
+      return mode === 'home' ? (
+        <a href={`/vitrines/${v.slug}`} class="v-card" style={style}>
+          {media}
+          <span class="v-body">
+            <span class="v-pitch">{v.pitch}</span>
+            <span class="v-link">Ouvrir la démo <span aria-hidden="true">→</span></span>
+          </span>
+        </a>
+      ) : (
+        <article class="v-row" style={style}>
+          <a href={`/vitrines/${v.slug}`} class="v-row-media" aria-label={`Ouvrir la démo ${v.name}`}>{media}</a>
+          <div class="v-row-body">
+            <p class="v-row-trade">{v.trade}</p>
+            <NameTag class="v-row-name">{v.name}</NameTag>
+            <p class="v-row-pitch">{v.pitch}</p>
+            <ul class="v-features">
+              {v.features.map((f) => <li>{f}</li>)}
+            </ul>
+            <div class="v-actions">
+              <a href={`/vitrines/${v.slug}`} class="v-btn v-btn--main">Ouvrir la démo <span aria-hidden="true">→</span></a>
+              <a href={`/contact?vitrine=${v.slug}`} class="v-btn">Je veux le même</a>
+            </div>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</section>
+
+<style>
+  .vitrines {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: clamp(5rem, 10vw, 8rem) 2rem 0;
+  }
+  .vitrines--page { padding-top: 0; }
+
+  .v-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2rem 4rem;
+    align-items: end;
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+  }
+  .v-head-main { display: flex; flex-direction: column; gap: 1rem; }
+  .v-intro { color: var(--text-muted); font-size: var(--step-body); line-height: 1.7; max-width: 50ch; }
+  .v-all {
+    display: inline-flex;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    font-weight: 600;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 0.2rem;
+    transition: color 0.3s ease, border-color 0.3s ease;
+  }
+  .v-all:hover { color: var(--accent-purple); border-color: var(--accent-purple); }
+
+  /* ───────── Cartes (accueil) ───────── */
+  .vitrines--home .v-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .v-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--bg-surface);
+    color: inherit;
+    transition: transform 0.6s var(--ease-out-expo), border-color 0.4s ease, box-shadow 0.6s var(--ease-out-expo);
+  }
+  .v-card:hover, .v-card:focus-visible {
+    transform: translateY(-6px);
+    border-color: color-mix(in srgb, var(--v-accent) 55%, transparent);
+    box-shadow: 0 40px 80px -40px color-mix(in srgb, var(--v-accent) 45%, transparent);
+  }
+  .v-card:focus-visible { outline-offset: 6px; }
+
+  .v-media {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--v-bg);
+    isolation: isolate;
+  }
+  .v-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease-out-expo);
+  }
+  .v-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, var(--v-bg) 6%, color-mix(in srgb, var(--v-bg) 88%, transparent) 30%, color-mix(in srgb, var(--v-bg) 45%, transparent) 52%, transparent 75%);
+    z-index: 1;
+  }
+  .v-card:hover .v-img, .v-card:focus-visible .v-img,
+  .v-row-media:hover .v-img, .v-row-media:focus-visible .v-img { transform: scale(1.06); }
+
+  .v-brand {
+    position: absolute;
+    left: 1.4rem;
+    right: 1.4rem;
+    bottom: 1.2rem;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    color: var(--v-ink);
+  }
+  .v-trade {
+    font-family: var(--font-mono);
+    font-size: var(--step-label);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--v-accent);
+  }
+  .v-name {
+    font-family: var(--font-display);
+    font-size: var(--step-title);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .v-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    flex: 1;
+    padding: 1.4rem 1.4rem 1.6rem;
+  }
+  .v-pitch { color: var(--text-muted); font-size: var(--step-body); line-height: 1.6; }
+  .v-link {
+    margin-top: auto;
+    display: inline-flex;
+    gap: 0.4rem;
+    width: fit-content;
+    font-weight: 600;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 0.2rem;
+    transition: color 0.3s ease, border-color 0.3s ease, gap 0.3s ease;
+  }
+  .v-card:hover .v-link, .v-card:focus-visible .v-link { color: var(--accent-purple); border-color: var(--accent-purple); gap: 0.7rem; }
+
+  /* ───────── Lignes détaillées (page /vitrines) ───────── */
+  .vitrines--page .v-list { display: flex; flex-direction: column; gap: clamp(4rem, 8vw, 6.5rem); }
+  .v-row {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+  .v-row:nth-child(even) { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+  .v-row:nth-child(even) .v-row-media { order: 2; }
+  .v-row-media {
+    display: block;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: 0 40px 80px -40px oklch(0 0 0 / 0.7);
+    transition: border-color 0.4s ease, box-shadow 0.6s var(--ease-out-expo);
+  }
+  .v-row-media:hover, .v-row-media:focus-visible {
+    border-color: color-mix(in srgb, var(--v-accent) 55%, transparent);
+    box-shadow: 0 50px 90px -40px color-mix(in srgb, var(--v-accent) 40%, transparent);
+  }
+  .v-row-media .v-media { aspect-ratio: 16 / 10; }
+  .v-row-body { display: flex; flex-direction: column; gap: 1.1rem; }
+  .v-row-trade {
+    font-family: var(--font-mono);
+    font-size: var(--step-label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .v-row-name { font-size: var(--step-title); color: var(--text-main); }
+  .v-row-pitch { color: var(--text-muted); font-size: var(--step-body); line-height: 1.7; max-width: 46ch; }
+  .v-features {
+    list-style: none;
+    display: grid;
+    border-top: 1px solid var(--line);
+    margin: 0.4rem 0 0.6rem;
+  }
+  .v-features li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--line);
+    font-size: var(--step-body);
+    color: var(--text-main);
+  }
+  .v-features li::before {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--v-accent);
+    flex: none;
+  }
+  .v-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.5rem; }
+  .v-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.4rem;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    color: var(--text-main);
+    font-weight: 600;
+    transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease, transform 0.4s var(--ease-out-expo);
+  }
+  .v-btn:hover { border-color: var(--text-main); transform: translateY(-2px); }
+  .v-btn--main { background: var(--text-main); color: var(--bg-color); border-color: var(--text-main); }
+  .v-btn--main:hover { background: var(--accent-pink); border-color: var(--accent-pink); }
+
+  @media (max-width: 960px) {
+    .v-head { grid-template-columns: 1fr; }
+    .vitrines--home .v-list { grid-template-columns: 1fr; max-width: 560px; }
+    .v-row, .v-row:nth-child(even) { grid-template-columns: 1fr; }
+    .v-row:nth-child(even) .v-row-media { order: 0; }
+  }
+  @media (max-width: 480px) {
+    .vitrines { padding-left: 1.25rem; padding-right: 1.25rem; }
+  }
+</style>

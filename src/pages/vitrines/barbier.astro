@@ -1,0 +1,677 @@
+---
+/**
+ * Démo « Lame & Laiton » — barbier fictif.
+ * Identité : noir profond, laiton, typographie condensée, ton direct (tutoiement).
+ * Spécificités : attente sans RDV en direct, carte façon bar à cocktails, lookbook filtrable,
+ * réservation en trois gestes (prestation → barbier → créneau) avec ticket de confirmation.
+ */
+import '@fontsource/anton';
+import '@fontsource-variable/archivo';
+import { Image } from 'astro:assets';
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import { photo } from '../../lib/vitrines';
+import displayFont from '@fontsource/anton/files/anton-latin-400-normal.woff2?url';
+
+const p = (n: string) => photo('barbier', n);
+
+const services = [
+  { group: 'Les coupes', items: [
+    { id: 'coupe', name: 'Coupe homme', desc: 'Shampoing, coupe aux ciseaux et à la tondeuse, coiffage', min: 30, price: 25 },
+    { id: 'degrade', name: 'Coupe + dégradé', desc: 'Dégradé américain ou à blanc, contours au rasoir', min: 45, price: 30 },
+    { id: 'enfant', name: 'Coupe enfant', desc: 'Jusqu’à 12 ans, avec la patience en plus', min: 20, price: 18 },
+  ] },
+  { group: 'La barbe', items: [
+    { id: 'barbe', name: 'Taille de barbe', desc: 'Mise en forme à la tondeuse, huile de finition', min: 20, price: 18 },
+    { id: 'sculpt', name: 'Barbe sculptée', desc: 'Traçage des contours au rasoir, serviette tiède', min: 30, price: 24 },
+  ] },
+  { group: 'Les rituels', items: [
+    { id: 'rasage', name: 'Rasage à l’ancienne', desc: 'Serviette chaude, blaireau, coupe-chou, baume', min: 35, price: 30 },
+    { id: 'complet', name: 'Le complet', desc: 'Coupe, barbe sculptée et serviette chaude', min: 60, price: 48 },
+  ] },
+];
+const allServices = services.flatMap((g) => g.items);
+
+const barbers = [
+  { id: 'sami', name: 'Sami', role: 'Dégradés & coupes texturées', since: 'Au fauteuil depuis 2016', img: p('barbier-sami') },
+  { id: 'hugo', name: 'Hugo', role: 'Classiques, barbe & rasage', since: 'Vingt ans de métier', img: p('barbier-hugo') },
+];
+
+const looks = [
+  { id: 'degrade', tag: 'degrade', title: 'Dégradé', meta: '45 min · 30 € · Sami', service: 'degrade', barber: 'sami', img: p('coupe-degrade') },
+  { id: 'barbe', tag: 'barbe', title: 'Barbe sculptée', meta: '30 min · 24 € · Hugo', service: 'sculpt', barber: 'hugo', img: p('coupe-barbe') },
+  { id: 'classique', tag: 'classique', title: 'Raie classique', meta: '30 min · 25 € · Hugo', service: 'coupe', barber: 'hugo', img: p('coupe-classique') },
+  { id: 'texture', tag: 'texture', title: 'Crop texturé', meta: '30 min · 25 € · Sami', service: 'coupe', barber: 'sami', img: p('coupe-texture') },
+];
+const filters = [
+  { id: 'all', label: 'Tout' }, { id: 'degrade', label: 'Dégradé' }, { id: 'barbe', label: 'Barbe' },
+  { id: 'classique', label: 'Classique' }, { id: 'texture', label: 'Texturé' },
+];
+---
+
+<DemoLayout
+  title="Lame & Laiton — démo de site vitrine pour barbier | Okamilink"
+  description="Démo d'un site vitrine de barbier réalisé par Okamilink : réservation en trois étapes, choix du barbier, attente sans rendez-vous en direct et lookbook des coupes. Entreprise fictive."
+  slug="barbier"
+  themeColor="#0b0b0b"
+  favicon={{ text: 'L', bg: '#0b0b0b', fg: '#c9a26a' }}
+  image={p('hero')}
+>
+  <link slot="head" rel="preload" as="font" type="font/woff2" href={displayFont} crossorigin />
+  <div class="ll">
+    <header class="nav" id="ll-nav">
+      <a href="#top" class="logo" aria-label="Lame & Laiton — accueil">LAME <span>&amp;</span> LAITON</a>
+      <div class="nav-right">
+        <a href="#carte" class="nav-link">La carte</a>
+        <a href="#looks" class="nav-link">Lookbook</a>
+        <a href="#salon" class="nav-link">Le salon</a>
+        <a href="#reserver" class="btn btn-brass btn-sm">Réserver</a>
+      </div>
+    </header>
+
+    <section class="hero" id="top">
+      <Image src={p('hero')} alt="Un barbier termine un dégradé au rasoir sur la nuque d'un client" widths={[768, 1280, 1536]} sizes="100vw" loading="eager" fetchpriority="high" class="hero-img" />
+      <div class="hero-veil" aria-hidden="true"></div>
+      <div class="pole" aria-hidden="true"></div>
+
+      <div class="hero-content">
+        <p class="tag"><span class="tag-line"></span>Barbier · Val-des-Blés · depuis 2016</p>
+        <h1 class="hero-title">
+          <span class="mask"><span>Coupe nette.</span></span>
+          <span class="mask"><span class="outline">Barbe franche.</span></span>
+        </h1>
+        <p class="hero-lead">Dégradés au millimètre, rasage à l’ancienne et vraie discussion. Passe sans rendez-vous ou réserve ton fauteuil en trois gestes.</p>
+        <div class="hero-actions">
+          <a href="#reserver" class="btn btn-brass">Réserver mon créneau</a>
+          <a href="#carte" class="btn btn-line">Voir les tarifs</a>
+        </div>
+      </div>
+
+      <aside class="wait" aria-live="polite">
+        <div class="wait-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div>
+          <p class="wait-label" data-wait-label>Sans rendez-vous</p>
+          <p class="wait-value" data-wait-value>~15 min</p>
+          <p class="wait-sub" data-wait-sub>2 personnes avant toi</p>
+        </div>
+        <span class="demo-note">Démo · estimé selon l’heure</span>
+      </aside>
+    </section>
+
+    <div class="bands" aria-hidden="true">
+      <div class="band band-brass"><div class="band-track">{[0, 1].map(() => <span>Dégradé ✦ Taille de barbe ✦ Rasage à l’ancienne ✦ Serviette chaude ✦ Contours au rasoir ✦&nbsp;</span>)}</div></div>
+      <div class="band band-bone"><div class="band-track band-track--rev">{[0, 1].map(() => <span>Sans rendez-vous ✦ Mardi → samedi ✦ 9 h – 19 h 30 ✦ Café offert ✦&nbsp;</span>)}</div></div>
+    </div>
+
+    <!-- ───────── La carte ───────── -->
+    <section class="carte" id="carte" aria-labelledby="carte-title">
+      <div class="carte-frame">
+        <p class="carte-ornament" aria-hidden="true">✦ ✦ ✦</p>
+        <h2 id="carte-title" class="carte-title">La carte</h2>
+        <p class="carte-sub">Clique sur une prestation pour la réserver.</p>
+        <div class="carte-cols">
+          {services.map((g) => (
+            <div class="carte-group">
+              <h3 class="group-title">{g.group}</h3>
+              <ul>
+                {g.items.map((s) => (
+                  <li>
+                    <a href="#reserver" class="svc" data-pick-service={s.id}>
+                      <span class="svc-head"><span class="svc-name">{s.name}</span><span class="svc-dots" aria-hidden="true"></span><span class="svc-price">{s.price} €</span></span>
+                      <span class="svc-desc">{s.desc} · {s.min} min</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── Lookbook ───────── -->
+    <section class="looks" id="looks" aria-labelledby="looks-title">
+      <header class="looks-head">
+        <h2 id="looks-title" class="title">Le <span class="brass">lookbook</span></h2>
+        <div class="filters" role="group" aria-label="Filtrer les coupes">
+          {filters.map((f, i) => <button type="button" class="filter" data-filter={f.id} aria-pressed={i === 0 ? 'true' : 'false'}>{f.label}</button>)}
+        </div>
+      </header>
+      <ul class="look-list">
+        {looks.map((l) => (
+          <li class="look" data-tag={l.tag}>
+            <div class="look-media">
+              <Image src={l.img} alt={`Coupe ${l.title.toLowerCase()}`} widths={[400, 700]} sizes="(max-width: 700px) 80vw, 25vw" class="look-img" />
+            </div>
+            <div class="look-body">
+              <h3 class="look-title">{l.title}</h3>
+              <p class="look-meta">{l.meta}</p>
+              <a href="#reserver" class="look-cta" data-pick-service={l.service} data-pick-barber={l.barber}>Je veux cette coupe →</a>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- ───────── Réservation ───────── -->
+    <section class="book" id="reserver" aria-labelledby="book-title">
+      <h2 id="book-title" class="title title-xl">Réserve<br /><span class="brass">ton fauteuil.</span></h2>
+
+      <div class="book-card">
+        <ol class="book-steps" aria-label="Étapes de réservation">
+          <li data-stepdot="0" class="is-current"><span>01</span> Prestation</li>
+          <li data-stepdot="1"><span>02</span> Barbier</li>
+          <li data-stepdot="2"><span>03</span> Créneau</li>
+        </ol>
+        <div class="book-progress"><span data-progress></span></div>
+
+        <div class="book-viewport">
+          <div class="book-track" data-track>
+            <!-- 1. Prestation -->
+            <div class="book-pane" data-pane="0">
+              <div class="svc-grid">
+                {allServices.map((s) => (
+                  <button type="button" class="pick-card" data-service={s.id} data-price={s.price} data-min={s.min} data-name={s.name}>
+                    <span class="pick-name">{s.name}</span>
+                    <span class="pick-meta">{s.min} min</span>
+                    <span class="pick-price">{s.price} €</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <!-- 2. Barbier -->
+            <div class="book-pane" data-pane="1" inert>
+              <div class="barber-grid">
+                {barbers.map((b) => (
+                  <button type="button" class="barber-card" data-barber={b.id} data-name={b.name}>
+                    <Image src={b.img} alt="" widths={[300, 500]} sizes="(max-width: 700px) 45vw, 240px" class="barber-img" />
+                    <span class="barber-info"><span class="barber-name">{b.name}</span><span class="barber-role">{b.role}</span><span class="barber-since">{b.since}</span></span>
+                  </button>
+                ))}
+                <button type="button" class="barber-card barber-any" data-barber="any" data-name="Le premier dispo">
+                  <span class="any-icon" aria-hidden="true">
+                    <svg viewBox="0 0 48 48" width="56" height="56"><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="2"/><path d="M24 12v12l8 5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+                  </span>
+                  <span class="barber-info"><span class="barber-name">Peu importe</span><span class="barber-role">Le premier barbier disponible</span><span class="barber-since">Plus de créneaux</span></span>
+                </button>
+              </div>
+              <button type="button" class="back" data-back="0">← Changer de prestation</button>
+            </div>
+
+            <!-- 3. Créneau -->
+            <div class="book-pane" data-pane="2" inert>
+              <div class="days" data-days role="group" aria-label="Jour"></div>
+              <div class="times" data-times role="group" aria-label="Heure"></div>
+              <button type="button" class="back" data-back="1">← Changer de barbier</button>
+            </div>
+          </div>
+        </div>
+
+        <aside class="ticket" data-ticket aria-live="polite">
+          <p class="ticket-head">Ton ticket</p>
+          <dl class="ticket-rows">
+            <div><dt>Prestation</dt><dd data-t-service>—</dd></div>
+            <div><dt>Barbier</dt><dd data-t-barber>—</dd></div>
+            <div><dt>Quand</dt><dd data-t-when>—</dd></div>
+          </dl>
+          <div class="ticket-total"><span>Total</span><strong data-t-price>0 €</strong></div>
+          <button type="button" class="btn btn-brass btn-block" data-book disabled>Confirmer</button>
+          <div class="stamp" data-stamp aria-hidden="true">C’est calé</div>
+          <span class="demo-note">Démo · rien n’est envoyé</span>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ───────── Le salon ───────── -->
+    <section class="salon" id="salon" aria-labelledby="salon-title">
+      <div class="salon-media">
+        <Image src={p('salon')} alt="Le salon : fauteuils de barbier vintage, miroirs cerclés de laiton et carrelage noir" widths={[768, 1280, 1536]} sizes="(max-width: 900px) 100vw, 60vw" class="salon-img" />
+      </div>
+      <div class="salon-body">
+        <h2 id="salon-title" class="title">Le salon</h2>
+        <p class="lead">Trois fauteuils, du laiton, du bon son et un café qui t’attend. On prend le temps de comprendre ce que tu veux avant de toucher à la tondeuse.</p>
+        <address class="addr">22, rue des Tanneurs<br />Val-des-Blés</address>
+        <ul class="hours">
+          <li data-day="1"><span>Lundi</span><span>14 h – 19 h</span></li>
+          <li data-day="2"><span>Mardi</span><span>9 h – 19 h 30</span></li>
+          <li data-day="3"><span>Mercredi</span><span>9 h – 19 h 30</span></li>
+          <li data-day="4"><span>Jeudi</span><span>9 h – 19 h 30</span></li>
+          <li data-day="5"><span>Vendredi</span><span>9 h – 19 h 30</span></li>
+          <li data-day="6"><span>Samedi</span><span>9 h – 18 h</span></li>
+          <li data-day="0"><span>Dimanche</span><span>Fermé</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span class="logo">LAME <span>&amp;</span> LAITON</span>
+      <p class="foot-small">Entreprise fictive. Site de démonstration conçu et développé par <a href="/">Okamilink</a>.</p>
+    </footer>
+  </div>
+</DemoLayout>
+
+<script>
+  /* ───────── Horaires & attente ───────── */
+  const HOURS: Record<number, [number, number] | null> = { 0: null, 1: [840, 1140], 2: [540, 1170], 3: [540, 1170], 4: [540, 1170], 5: [540, 1170], 6: [540, 1080] };
+  const DAYS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+  const DAYS_FULL = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+  const fmt = (m: number) => { const h = Math.floor(m / 60), mi = m % 60; return mi ? `${h} h ${String(mi).padStart(2, '0')}` : `${h} h`; };
+  const iso = (d: Date) => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+  const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  const seeded = (key: string) => {
+    let h = 2166136261;
+    for (let i = 0; i < key.length; i++) { h ^= key.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return () => { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; return ((h >>> 0) % 10000) / 10000; };
+  };
+
+  function updateWait() {
+    const label = document.querySelector<HTMLElement>('[data-wait-label]')!;
+    const value = document.querySelector<HTMLElement>('[data-wait-value]')!;
+    const sub = document.querySelector<HTMLElement>('[data-wait-sub]')!;
+    const box = label.closest<HTMLElement>('.wait')!;
+    const d = new Date(), m = d.getHours() * 60 + d.getMinutes(), h = HOURS[d.getDay()];
+    if (!h || m < h[0] || m >= h[1] - 20) {
+      let next = { date: d, open: 540, offset: 1 };
+      for (let i = 0; i < 8; i++) {
+        const nd = new Date(d); nd.setDate(d.getDate() + i);
+        const nh = HOURS[nd.getDay()];
+        if (!nh || (i === 0 && m >= nh[0])) continue;
+        next = { date: nd, open: nh[0], offset: i };
+        break;
+      }
+      const when = next.offset === 0 ? 'aujourd’hui' : next.offset === 1 ? 'demain' : DAYS_FULL[next.date.getDay()];
+      label.textContent = 'Fermé pour le moment';
+      value.textContent = `Ouvre ${when}`;
+      sub.textContent = `à ${fmt(next.open)} · réserve dès maintenant`;
+      box.dataset.level = '0';
+      return;
+    }
+    const hour = d.getHours();
+    const peak = (hour >= 12 && hour < 14) || (hour >= 17 && hour < 19) ? 2 : 1;
+    const sat = d.getDay() === 6 ? 1 : 0;
+    const r = seeded(`${iso(d)}-${hour}-${Math.floor(d.getMinutes() / 15)}`)();
+    const people = Math.max(0, Math.round(peak + sat + r * 2) - 1);
+    const minutes = people === 0 ? 0 : people * 15 - Math.round(r * 5);
+    label.textContent = 'Sans rendez-vous';
+    value.textContent = minutes === 0 ? 'Fauteuil libre' : `~${minutes} min`;
+    sub.textContent = people === 0 ? 'Passe maintenant, on t’attend' : `${people} personne${people > 1 ? 's' : ''} avant toi`;
+    box.dataset.level = String(Math.min(4, people + 1));
+  }
+
+  /* ───────── Lookbook ───────── */
+  function initLooks() {
+    const filters = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const items = [...document.querySelectorAll<HTMLElement>('.look')];
+    filters.forEach((f) => f.addEventListener('click', () => {
+      filters.forEach((x) => x.setAttribute('aria-pressed', String(x === f)));
+      const id = f.dataset.filter;
+      items.forEach((it) => {
+        const show = id === 'all' || it.dataset.tag === id;
+        it.classList.toggle('is-out', !show);
+        it.setAttribute('aria-hidden', String(!show));
+        it.querySelectorAll('a').forEach((a) => (a.tabIndex = show ? 0 : -1));
+      });
+    }));
+  }
+
+  /* ───────── Réservation ───────── */
+  const state = { step: 0, service: '', price: 0, min: 0, serviceName: '', barber: '', barberName: '', day: '', dayLabel: '', time: '' };
+  const track = document.querySelector<HTMLElement>('[data-track]')!;
+  const viewport = track.parentElement!;
+  const panes = [...document.querySelectorAll<HTMLElement>('[data-pane]')];
+  // La hauteur suit l'étape affichée (sinon la plus haute impose la sienne aux autres)
+  const fit = () => { viewport.style.height = `${panes[state.step].offsetHeight}px`; };
+  const ro = new ResizeObserver(fit);
+  panes.forEach((p) => ro.observe(p));
+
+  function go(step: number) {
+    state.step = step;
+    track.style.transform = `translateX(${-100 * step}%)`;
+    panes.forEach((p, i) => p.toggleAttribute('inert', i !== step));
+    document.querySelectorAll<HTMLElement>('[data-stepdot]').forEach((li, i) => {
+      li.classList.toggle('is-current', i === step);
+      li.classList.toggle('is-done', i < step);
+    });
+    document.querySelector<HTMLElement>('[data-progress]')!.style.transform = `scaleX(${(step + 1) / 3})`;
+    if (step === 2) renderDays();
+    renderTicket();
+    fit();
+  }
+
+  function takenFor(barber: string, day: string) {
+    const r = seeded(`${barber}|${day}`);
+    const set = new Set<number>();
+    for (let m = 540; m < 1170; m += 30) if (r() < 0.42) set.add(m);
+    return set;
+  }
+
+  function availableTimes(date: Date): { m: number; free: boolean }[] {
+    const h = HOURS[date.getDay()];
+    if (!h) return [];
+    const now = new Date();
+    const today = iso(date) === iso(now);
+    const nowM = now.getHours() * 60 + now.getMinutes();
+    const out: { m: number; free: boolean }[] = [];
+    const ids = state.barber === 'any' ? ['sami', 'hugo'] : [state.barber];
+    const taken = ids.map((id) => takenFor(id, iso(date)));
+    for (let m = h[0]; m + state.min <= h[1]; m += 30) {
+      if (today && m < nowM + 30) continue;
+      out.push({ m, free: taken.some((t) => !t.has(m)) });
+    }
+    return out;
+  }
+
+  function renderDays() {
+    const box = document.querySelector<HTMLElement>('[data-days]')!;
+    box.innerHTML = '';
+    const start = new Date();
+    for (let i = 0; i < 10; i++) {
+      const d = new Date(start); d.setDate(start.getDate() + i); d.setHours(12, 0, 0, 0);
+      const times = availableTimes(d);
+      const closed = !HOURS[d.getDay()] || !times.some((t) => t.free);
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'day'; b.disabled = closed;
+      b.setAttribute('aria-pressed', String(iso(d) === state.day));
+      b.innerHTML = `<span>${i === 0 ? 'Auj.' : i === 1 ? 'Dem.' : DAYS[d.getDay()]}</span><strong>${d.getDate()}</strong>`;
+      b.setAttribute('aria-label', `${DAYS_FULL[d.getDay()]} ${d.getDate()}${closed ? ', complet ou fermé' : ''}`);
+      b.addEventListener('click', () => {
+        state.day = iso(d); state.dayLabel = i === 0 ? 'Aujourd’hui' : i === 1 ? 'Demain' : `${cap(DAYS_FULL[d.getDay()])} ${d.getDate()}`;
+        state.time = ''; renderDays(); renderTimes(d); renderTicket();
+      });
+      box.append(b);
+      if (!state.day && !closed) { state.day = iso(d); state.dayLabel = i === 0 ? 'Aujourd’hui' : i === 1 ? 'Demain' : `${cap(DAYS_FULL[d.getDay()])} ${d.getDate()}`; b.setAttribute('aria-pressed', 'true'); }
+      if (state.day === iso(d)) renderTimes(d);
+    }
+  }
+
+  function renderTimes(d: Date) {
+    const box = document.querySelector<HTMLElement>('[data-times]')!;
+    box.innerHTML = '';
+    availableTimes(d).forEach(({ m, free }) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'time'; b.disabled = !free;
+      b.textContent = fmt(m);
+      b.setAttribute('aria-pressed', String(state.time === fmt(m)));
+      b.addEventListener('click', () => { state.time = fmt(m); renderTimes(d); renderTicket(); });
+      box.append(b);
+    });
+  }
+
+  function renderTicket() {
+    document.querySelector('[data-t-service]')!.textContent = state.serviceName || '—';
+    document.querySelector('[data-t-barber]')!.textContent = state.barberName || '—';
+    document.querySelector('[data-t-when]')!.textContent = state.time ? `${state.dayLabel} · ${state.time}` : '—';
+    document.querySelector('[data-t-price]')!.textContent = `${state.price} €`;
+    (document.querySelector('[data-book]') as HTMLButtonElement).disabled = !(state.service && state.barber && state.time);
+  }
+
+  function pickService(id: string) {
+    const btn = document.querySelector<HTMLElement>(`[data-service="${id}"]`);
+    if (!btn) return;
+    document.querySelectorAll('[data-service]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    Object.assign(state, { service: id, price: Number(btn.dataset.price), min: Number(btn.dataset.min), serviceName: btn.dataset.name ?? '' });
+  }
+  function pickBarber(id: string) {
+    const btn = document.querySelector<HTMLElement>(`[data-barber="${id}"]`);
+    if (!btn) return;
+    document.querySelectorAll('[data-barber]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    Object.assign(state, { barber: id, barberName: btn.dataset.name ?? '', day: '', time: '' });
+  }
+
+  function initBooking() {
+    document.querySelectorAll<HTMLElement>('[data-service]').forEach((b) => b.addEventListener('click', () => { pickService(b.dataset.service!); go(state.barber ? 2 : 1); }));
+    document.querySelectorAll<HTMLElement>('[data-barber]').forEach((b) => b.addEventListener('click', () => { pickBarber(b.dataset.barber!); go(2); }));
+    document.querySelectorAll<HTMLElement>('[data-back]').forEach((b) => b.addEventListener('click', () => go(Number(b.dataset.back))));
+    // Raccourcis depuis la carte et le lookbook
+    document.querySelectorAll<HTMLElement>('[data-pick-service]').forEach((a) => a.addEventListener('click', () => {
+      pickService(a.dataset.pickService!);
+      if (a.dataset.pickBarber) { pickBarber(a.dataset.pickBarber); go(2); } else go(state.barber ? 2 : 1);
+    }));
+    const ticket = document.querySelector<HTMLElement>('[data-ticket]')!;
+    document.querySelector('[data-book]')?.addEventListener('click', () => {
+      ticket.classList.remove('is-booked'); void ticket.offsetWidth; ticket.classList.add('is-booked');
+      (document.querySelector('[data-book]') as HTMLButtonElement).textContent = 'Réservé · à bientôt';
+    });
+    go(0);
+  }
+
+  /* ───────── Navigation ───────── */
+  const nav = document.getElementById('ll-nav');
+  const onNav = () => nav?.classList.toggle('is-scrolled', window.scrollY > 40);
+  window.addEventListener('scroll', onNav, { passive: true });
+  onNav();
+  document.querySelector(`.hours li[data-day="${new Date().getDay()}"]`)?.classList.add('is-today');
+
+  updateWait(); initLooks(); initBooking();
+  setInterval(updateWait, 60_000);
+</script>
+
+<style>
+  .ll {
+    --black: #0b0b0b;
+    --coal: #141414;
+    --graphite: #1f1f1f;
+    --bone: #ede6da;
+    --bone-dim: #a09a90;
+    --brass: #c9a26a;
+    --brass-hot: #e3c088;
+    --brass-deep: #7d5f35;
+    --display: 'Anton', 'Impact', 'Arial Narrow', sans-serif;
+    --sans: 'Archivo Variable', system-ui, sans-serif;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --snap: cubic-bezier(0.7, 0, 0.2, 1);
+    background: var(--black);
+    color: var(--bone);
+    font-family: var(--sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  .ll :focus-visible { outline: 2px solid var(--brass-hot); outline-offset: 3px; }
+  .ll h1, .ll h2, .ll h3 { font-family: var(--display); font-weight: 400; text-transform: uppercase; line-height: 0.92; letter-spacing: 0.01em; }
+  .brass { color: var(--brass); }
+  .title { font-size: clamp(3rem, 7vw, 6rem); margin-bottom: 1.5rem; }
+  .title-xl { font-size: clamp(3.6rem, 10vw, 9rem); }
+  .lead { color: var(--bone-dim); max-width: 44ch; font-size: 1.1rem; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 1.6rem; font-family: var(--sans); font-weight: 700; font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; border: 2px solid transparent; transition: transform 0.3s var(--ease), background 0.3s, color 0.3s, border-color 0.3s; }
+  .btn:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--bone); }
+  .btn-brass { background: var(--brass); color: var(--black); }
+  .btn-brass:hover { background: var(--brass-hot); }
+  .btn-brass:disabled { background: var(--graphite); color: var(--bone-dim); transform: none; box-shadow: none; cursor: not-allowed; }
+  .btn-line { border-color: var(--bone); color: var(--bone); background: transparent; }
+  .btn-line:hover { background: var(--bone); color: var(--black); box-shadow: 4px 4px 0 var(--brass); }
+  .btn-sm { padding: 0.65rem 1.1rem; font-size: 0.82rem; }
+  .btn-block { width: 100%; }
+
+  .demo-note { position: absolute; top: -12px; right: 16px; padding: 4px 10px; border-radius: 999px; background: oklch(0.16 0.022 262); color: #fff; font-family: 'Hanken Grotesk Variable', system-ui, sans-serif; font-size: 11px; letter-spacing: 0.02em; text-transform: none; white-space: nowrap; border: 1px solid oklch(1 0 0 / 0.15); }
+
+  /* ───────── Navigation ───────── */
+  .nav { position: fixed; inset: 0 0 auto; z-index: 50; display: flex; justify-content: space-between; align-items: center; padding: 1.1rem clamp(1.25rem, 4vw, 3rem); transition: background 0.3s, padding 0.3s; }
+  .nav.is-scrolled { background: rgb(11 11 11 / 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding-block: 0.7rem; border-bottom: 1px solid var(--graphite); }
+  .logo { font-family: var(--display); font-size: 1.6rem; letter-spacing: 0.04em; text-decoration: none; color: var(--bone); }
+  .logo span { color: var(--brass); }
+  .nav-right { display: flex; align-items: center; gap: 1.8rem; }
+  .nav-link { text-decoration: none; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bone-dim); transition: color 0.2s; }
+  .nav-link:hover { color: var(--brass); }
+
+  /* ───────── Hero ───────── */
+  .hero { position: relative; min-height: 100svh; display: grid; align-items: end; padding: 8rem clamp(1.25rem, 5vw, 4.5rem) clamp(3rem, 7vh, 5rem); overflow: hidden; isolation: isolate; }
+  .hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 70% 40%; z-index: -2; filter: contrast(1.05) saturate(0.9); animation: hero-in 1.6s var(--ease) both; }
+  @keyframes hero-in { from { transform: scale(1.12); filter: contrast(1.05) saturate(0.9) brightness(0.4); } }
+  .hero-veil { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgb(11 11 11 / 0.94) 0%, rgb(11 11 11 / 0.7) 40%, rgb(11 11 11 / 0.25) 65%, rgb(11 11 11 / 0.05) 85%), linear-gradient(0deg, var(--black) 0%, transparent 40%), linear-gradient(180deg, rgb(11 11 11 / 0.6) 0%, transparent 18%); }
+  .pole { position: absolute; top: 0; bottom: 0; right: clamp(1rem, 3vw, 2.5rem); width: 14px; background: repeating-linear-gradient(135deg, var(--brass) 0 12px, var(--bone) 12px 24px, var(--black) 24px 36px); background-size: 100% 51px; animation: pole 1.4s linear infinite; border-inline: 2px solid var(--brass-deep); opacity: 0.9; }
+  @keyframes pole { to { background-position: 0 51px; } }
+  .hero-content { max-width: 64rem; }
+  .tag { display: flex; align-items: center; gap: 0.8rem; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--brass); margin-bottom: 1.4rem; }
+  .tag-line { width: 48px; height: 2px; background: var(--brass); transform-origin: left; animation: line 1s 0.3s var(--ease) both; }
+  @keyframes line { from { transform: scaleX(0); } }
+  .hero-title { font-size: clamp(3.8rem, 11vw, 10.5rem); margin-bottom: 1.8rem; }
+  .mask { display: block; overflow: hidden; }
+  .mask > span { display: inline-block; animation: slam 1s var(--snap) both; }
+  .mask:nth-child(2) > span { animation-delay: 0.14s; }
+  @keyframes slam { from { transform: translateY(110%); } }
+  .outline { color: transparent; -webkit-text-stroke: 2px var(--brass); }
+  .hero-lead { max-width: 36rem; font-size: 1.15rem; color: var(--bone-dim); margin-bottom: 2.2rem; animation: up 0.9s 0.5s var(--ease) both; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 1rem; animation: up 0.9s 0.65s var(--ease) both; }
+  @keyframes up { from { opacity: 0; transform: translateY(16px); } }
+
+  .wait { position: absolute; bottom: clamp(3rem, 7vh, 5rem); right: calc(clamp(1rem, 3vw, 2.5rem) + 40px); display: flex; align-items: center; gap: 1rem; padding: 1rem 1.3rem; background: rgb(11 11 11 / 0.72); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--brass-deep); animation: up 0.9s 0.9s var(--ease) both; }
+  .wait-bars { display: flex; align-items: flex-end; gap: 3px; height: 30px; }
+  .wait-bars i { width: 6px; background: var(--graphite); }
+  .wait-bars i:nth-child(1) { height: 25%; } .wait-bars i:nth-child(2) { height: 50%; } .wait-bars i:nth-child(3) { height: 75%; } .wait-bars i:nth-child(4) { height: 100%; }
+  .wait[data-level='1'] .wait-bars i:nth-child(-n+1), .wait[data-level='2'] .wait-bars i:nth-child(-n+2), .wait[data-level='3'] .wait-bars i:nth-child(-n+3), .wait[data-level='4'] .wait-bars i { background: var(--brass); }
+  .wait-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--bone-dim); }
+  .wait-value { font-family: var(--display); font-size: 1.9rem; line-height: 1.05; text-transform: uppercase; }
+  .wait-sub { font-size: 0.85rem; color: var(--bone-dim); }
+
+  /* ───────── Bandeaux ───────── */
+  .bands { position: relative; height: 150px; overflow: hidden; margin: -10px 0; }
+  .band { position: absolute; left: -5%; right: -5%; padding: 0.9rem 0; overflow: hidden; }
+  .band-brass { top: 30px; background: var(--brass); color: var(--black); transform: rotate(-2.5deg); z-index: 2; }
+  .band-bone { top: 50px; background: var(--bone); color: var(--black); transform: rotate(2deg); }
+  .band-track { display: flex; width: max-content; animation: band 28s linear infinite; }
+  .band-track--rev { animation-direction: reverse; animation-duration: 34s; }
+  .band-track span { font-family: var(--display); font-size: 1.7rem; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; }
+  @keyframes band { to { transform: translateX(-50%); } }
+
+  /* ───────── Carte ───────── */
+  .carte { padding: clamp(5rem, 10vw, 8rem) clamp(1.25rem, 5vw, 4.5rem); }
+  .carte-frame { max-width: 1100px; margin: 0 auto; padding: clamp(2rem, 5vw, 4rem); border: 1px solid var(--brass-deep); outline: 1px solid var(--brass-deep); outline-offset: 8px; text-align: center; background: radial-gradient(70% 50% at 50% 0%, rgb(201 162 106 / 0.08), transparent 70%), var(--coal); }
+  .carte-ornament { color: var(--brass); letter-spacing: 0.6em; font-size: 0.8rem; }
+  .carte-title { font-size: clamp(3.4rem, 8vw, 6.5rem); color: var(--bone); margin: 0.6rem 0 0.4rem; }
+  .carte-sub { color: var(--bone-dim); font-size: 0.95rem; margin-bottom: 3rem; }
+  .carte-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1.5rem, 4vw, 3rem); text-align: left; }
+  .group-title { font-size: 1.5rem; color: var(--brass); letter-spacing: 0.08em; padding-bottom: 0.8rem; margin-bottom: 0.6rem; border-bottom: 1px solid var(--brass-deep); text-align: center; }
+  .carte-group ul { list-style: none; }
+  .svc { display: block; padding: 0.9rem 0.5rem; text-decoration: none; border-bottom: 1px dashed var(--graphite); transition: background 0.25s, padding 0.3s var(--ease); }
+  .svc:hover { background: rgb(201 162 106 / 0.08); padding-inline: 0.9rem; }
+  .svc-head { display: flex; align-items: baseline; gap: 0.6rem; }
+  .svc-name { font-weight: 700; font-size: 0.95rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .svc-dots { flex: 1; border-bottom: 1px dotted var(--brass-deep); transform: translateY(-0.25em); }
+  .svc-price { font-family: var(--display); font-size: 1.4rem; color: var(--brass); }
+  .svc-desc { display: block; font-size: 0.86rem; color: var(--bone-dim); margin-top: 0.2rem; }
+
+  /* ───────── Lookbook ───────── */
+  .looks { padding: 0 clamp(1.25rem, 5vw, 4.5rem) clamp(5rem, 10vw, 8rem); }
+  .looks-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1.5rem; margin-bottom: 2.5rem; }
+  .looks-head .title { margin: 0; }
+  .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .filter { padding: 0.55rem 1.1rem; border: 1.5px solid var(--graphite); background: transparent; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; transition: all 0.25s; }
+  .filter:hover { border-color: var(--bone); }
+  .filter[aria-pressed='true'] { background: var(--brass); color: var(--black); border-color: var(--brass); }
+  .look-list { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.2rem; }
+  .look { position: relative; transition: opacity 0.5s var(--ease), transform 0.6s var(--ease), filter 0.5s; }
+  .look.is-out { opacity: 0.12; filter: grayscale(1); transform: scale(0.96); pointer-events: none; }
+  .look-media { overflow: hidden; aspect-ratio: 2 / 3; position: relative; }
+  .look-media::after { content: ''; position: absolute; inset: 10px; border: 1px solid var(--brass); opacity: 0; transform: scale(1.04); transition: opacity 0.4s, transform 0.6s var(--ease); }
+  .look:hover .look-media::after, .look:focus-within .look-media::after { opacity: 1; transform: none; }
+  .look-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.35) contrast(1.05); transition: transform 0.9s var(--ease), filter 0.5s; }
+  .look:hover .look-img, .look:focus-within .look-img { transform: scale(1.06); filter: none; }
+  .look-body { padding-top: 1rem; }
+  .look-title { font-size: 2rem; }
+  .look-meta { color: var(--bone-dim); font-size: 0.9rem; margin: 0.2rem 0 0.6rem; }
+  .look-cta { font-weight: 700; font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brass); text-decoration: none; border-bottom: 1px solid var(--brass-deep); padding-bottom: 2px; }
+  .look-cta:hover { color: var(--brass-hot); border-color: var(--brass-hot); }
+
+  /* ───────── Réservation ───────── */
+  .book { padding: clamp(4rem, 8vw, 6rem) clamp(1.25rem, 5vw, 4.5rem); background: var(--coal); border-block: 1px solid var(--graphite); overflow-x: clip; }
+  .book-card { display: grid; grid-template-columns: minmax(0, 1fr) 320px; grid-template-rows: auto auto 1fr; column-gap: 2.5rem; max-width: 1320px; }
+  .book-steps { grid-column: 1; list-style: none; display: flex; gap: 2rem; margin-bottom: 1rem; }
+  .book-steps li { font-weight: 700; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bone-dim); transition: color 0.3s; }
+  .book-steps li span { font-family: var(--display); font-size: 1.2rem; margin-right: 0.3rem; color: #6f6a62; transition: color 0.3s; }
+  .book-steps li.is-current, .book-steps li.is-done { color: var(--bone); }
+  .book-steps li.is-current span, .book-steps li.is-done span { color: var(--brass); }
+  .book-progress { grid-column: 1; height: 3px; background: var(--graphite); margin-bottom: 2rem; }
+  .book-progress span { display: block; height: 100%; background: var(--brass); transform-origin: left; transform: scaleX(0.33); transition: transform 0.6s var(--snap); }
+  .book-viewport { grid-column: 1; overflow: hidden; transition: height 0.6s var(--snap); }
+  .book-track { display: flex; align-items: flex-start; transition: transform 0.7s var(--snap); }
+  .book-pane { flex: 0 0 100%; min-width: 0; padding: 4px; }
+  .svc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.8rem; }
+  .pick-card { display: grid; gap: 0.2rem; text-align: left; padding: 1.2rem; background: var(--black); border: 1.5px solid var(--graphite); transition: border-color 0.25s, transform 0.3s var(--ease), background 0.25s; }
+  .pick-card:hover { border-color: var(--brass); transform: translateY(-3px); }
+  .pick-card[aria-pressed='true'] { border-color: var(--brass); background: rgb(201 162 106 / 0.1); }
+  .pick-name { font-family: var(--display); font-size: 1.45rem; text-transform: uppercase; line-height: 1; }
+  .pick-meta { font-size: 0.85rem; color: var(--bone-dim); }
+  .pick-price { font-family: var(--display); font-size: 1.6rem; color: var(--brass); margin-top: 0.4rem; }
+  .barber-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .barber-card { display: grid; text-align: left; padding: 0; background: var(--black); border: 1.5px solid var(--graphite); overflow: hidden; transition: border-color 0.25s, transform 0.3s var(--ease); }
+  .barber-card:hover, .barber-card[aria-pressed='true'] { border-color: var(--brass); transform: translateY(-3px); }
+  .barber-img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; filter: grayscale(0.4); transition: filter 0.4s; }
+  .barber-card:hover .barber-img { filter: none; }
+  .barber-info { display: grid; gap: 0.15rem; padding: 1rem; }
+  .barber-name { font-family: var(--display); font-size: 1.8rem; text-transform: uppercase; line-height: 1; }
+  .barber-role { font-size: 0.9rem; }
+  .barber-since { font-size: 0.8rem; color: var(--bone-dim); }
+  .barber-any { align-content: space-between; }
+  .any-icon { display: grid; place-items: center; aspect-ratio: 4 / 5; color: var(--brass); background: repeating-linear-gradient(135deg, var(--black) 0 14px, var(--coal) 14px 28px); }
+  .back { margin-top: 1.2rem; background: none; border: none; color: var(--bone-dim); font-weight: 600; font-size: 0.9rem; }
+  .back:hover { color: var(--brass); }
+  .days { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 1rem; scrollbar-width: thin; }
+  .days :global(.day) { flex: none; display: grid; justify-items: center; width: 64px; padding: 0.6rem 0; background: var(--black); border: 1.5px solid var(--graphite); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--bone-dim); transition: all 0.25s; }
+  .days :global(.day strong) { font-family: var(--display); font-size: 1.7rem; font-weight: 400; color: var(--bone); line-height: 1.05; }
+  .days :global(.day:hover:not(:disabled)) { border-color: var(--bone); }
+  .days :global(.day[aria-pressed='true']) { background: var(--brass); border-color: var(--brass); color: var(--black); }
+  .days :global(.day[aria-pressed='true'] strong) { color: var(--black); }
+  .days :global(.day:disabled) { opacity: 0.3; cursor: not-allowed; }
+  .times { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 0.5rem; }
+  .times :global(.time) { padding: 0.75rem 0; background: var(--black); border: 1.5px solid var(--graphite); font-weight: 700; font-variant-numeric: tabular-nums; transition: all 0.2s; }
+  .times :global(.time:hover:not(:disabled)) { border-color: var(--brass); color: var(--brass); }
+  .times :global(.time[aria-pressed='true']) { background: var(--bone); color: var(--black); border-color: var(--bone); }
+  .times :global(.time:disabled) { color: #444; text-decoration: line-through; cursor: not-allowed; }
+
+  .ticket { grid-column: 2; grid-row: 1 / 4; align-self: start; position: sticky; top: 6rem; padding: 1.6rem 1.5rem 1.5rem; background: var(--bone); color: var(--black); -webkit-mask: radial-gradient(circle 10px at 0 62%, transparent 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 10px at 100% 62%, transparent 98%, #000) right / 51% 100% no-repeat; mask: radial-gradient(circle 10px at 0 62%, transparent 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 10px at 100% 62%, transparent 98%, #000) right / 51% 100% no-repeat; overflow: visible; }
+  .ticket-head { font-family: var(--display); font-size: 1.9rem; text-transform: uppercase; line-height: 1; padding-bottom: 1rem; border-bottom: 2px dashed rgb(11 11 11 / 0.25); margin-bottom: 1rem; }
+  .ticket-rows { display: grid; gap: 0.7rem; }
+  .ticket-rows dt { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #6d675e; }
+  .ticket-rows dd { font-weight: 700; font-size: 1.05rem; }
+  .ticket-total { display: flex; justify-content: space-between; align-items: baseline; margin: 1.3rem 0; padding-top: 1rem; border-top: 2px dashed rgb(11 11 11 / 0.25); }
+  .ticket-total strong { font-family: var(--display); font-size: 2.2rem; font-weight: 400; }
+  .ticket .btn-brass { background: var(--black); color: var(--brass); }
+  .ticket .btn-brass:hover { box-shadow: 4px 4px 0 var(--brass); }
+  .ticket .btn-brass:disabled { background: #cfc7b9; color: #8b857b; box-shadow: none; }
+  .ticket .demo-note { top: auto; bottom: -30px; right: 0; }
+  .stamp { position: absolute; top: 38%; left: 50%; padding: 0.4rem 1rem; border: 4px solid #a3322a; color: #a3322a; font-family: var(--display); font-size: 2.2rem; text-transform: uppercase; letter-spacing: 0.04em; transform: translate(-50%, -50%) rotate(-12deg) scale(2.4); opacity: 0; pointer-events: none; mix-blend-mode: multiply; }
+  .ticket.is-booked .stamp { animation: stamp 0.5s cubic-bezier(0.3, 1.6, 0.6, 1) forwards; }
+  @keyframes stamp { to { opacity: 0.9; transform: translate(-50%, -50%) rotate(-12deg) scale(1); } }
+
+  /* ───────── Salon ───────── */
+  .salon { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(2rem, 5vw, 4.5rem); align-items: center; padding: clamp(5rem, 10vw, 8rem) clamp(1.25rem, 5vw, 4.5rem); }
+  .salon-media { overflow: hidden; border: 1px solid var(--brass-deep); outline: 1px solid var(--brass-deep); outline-offset: 8px; }
+  .salon-img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; }
+  .addr { font-style: normal; font-family: var(--display); font-size: 1.8rem; text-transform: uppercase; line-height: 1.1; margin: 1.8rem 0 1.4rem; color: var(--brass); }
+  .hours { list-style: none; }
+  .hours li { display: flex; justify-content: space-between; padding: 0.55rem 0; border-bottom: 1px solid var(--graphite); font-size: 0.95rem; }
+  .hours li span:last-child { color: var(--bone-dim); font-variant-numeric: tabular-nums; }
+  .hours li.is-today { color: var(--brass); font-weight: 700; }
+  .hours li.is-today span:last-child { color: var(--brass); }
+
+  .foot { display: grid; justify-items: center; gap: 0.8rem; padding: 3rem 1.5rem 7rem; border-top: 1px solid var(--graphite); }
+  .foot .logo { font-size: 2.4rem; }
+  .foot-small { font-size: 0.82rem; color: var(--bone-dim); }
+
+  @media (max-width: 1000px) {
+    .nav-link { display: none; }
+    .wait { position: relative; inset: auto; margin-top: 2.2rem; justify-self: start; }
+    .carte-cols { grid-template-columns: 1fr; }
+    .look-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .book-card { grid-template-columns: 1fr; }
+    .ticket { grid-column: 1; grid-row: auto; position: relative; top: 0; margin-top: 2rem; }
+    .salon { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .hero { padding-bottom: 6rem; padding-right: 2.2rem; }
+    .hero-veil { background: linear-gradient(0deg, var(--black) 28%, rgb(11 11 11 / 0.82) 58%, rgb(11 11 11 / 0.55) 100%); }
+    .pole { width: 8px; right: 0.6rem; }
+    .outline { -webkit-text-stroke-width: 1.5px; }
+    .bands { height: 120px; }
+    .band-track span { font-size: 1.3rem; }
+    .barber-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .barber-any { grid-column: span 2; grid-template-columns: 96px 1fr; }
+    .barber-any .any-icon { aspect-ratio: 1; }
+    .book-steps { gap: 1rem; }
+    .logo { font-size: 1.3rem; }
+    .nav { padding-inline: 1rem; }
+    .book-steps li { font-size: 0.72rem; }
+    .look-title { font-size: 1.5rem; }
+  }
+</style>
